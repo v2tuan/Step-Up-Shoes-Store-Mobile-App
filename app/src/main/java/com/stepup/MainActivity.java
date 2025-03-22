@@ -21,6 +21,7 @@ import com.stepup.adapter.ProductCardAdapter;
 import com.stepup.databinding.ActivityMainBinding;
 import com.stepup.model.Banner;
 import com.stepup.model.ProductCard;
+import com.stepup.model.ZoomOutPageTransformer;
 import com.stepup.retrofit2.APIService;
 import com.stepup.retrofit2.RetrofitClient;
 
@@ -82,6 +83,8 @@ public class MainActivity extends BaseActivity {
 
                     // Gán hiệu ứng chuyển trang vào ViewPager2
                     binding.viewpagerslider.setPageTransformer(compositePageTransformer);
+
+                    binding.viewpagerslider.setPageTransformer(new ZoomOutPageTransformer());
 
                     // Nếu có nhiều hơn 1 ảnh, hiển thị chỉ báo (dot indicator)
                     if (banners.size() > 1) {
