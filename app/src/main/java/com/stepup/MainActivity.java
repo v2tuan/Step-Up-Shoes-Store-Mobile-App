@@ -10,14 +10,17 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.Observer;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.CompositePageTransformer;
 import androidx.viewpager2.widget.MarginPageTransformer;
 
 import com.stepup.activity.BaseActivity;
 import com.stepup.adapter.BannerAdapter;
+import com.stepup.adapter.ProductCardAdapter;
 import com.stepup.databinding.ActivityMainBinding;
 import com.stepup.model.Banner;
+import com.stepup.model.ProductCard;
 import com.stepup.retrofit2.APIService;
 import com.stepup.retrofit2.RetrofitClient;
 
@@ -44,6 +47,7 @@ public class MainActivity extends BaseActivity {
 
 //        initBanner();
         getBanner();
+        getProducts();
 
     }
 
@@ -94,52 +98,22 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-//    private void initBanner() {
-//        // Hiển thị ProgressBar khi bắt đầu load
-//        binding.progressBarBanner.setVisibility(View.VISIBLE);
-//
-//        // Quan sát LiveData từ ViewModel
-//        viewModel.getBanners().observe(this, new Observer<List<SliderModel>>() {
-//            @Override
-//            public void onChanged(List<SliderModel> items) {
-//                // Khi có dữ liệu, ẩn ProgressBar
-//                binding.progressBarBanner.setVisibility(View.GONE);
-//
-//                // Gọi hàm hiển thị banners
-//                banners(items);
-//            }
-//        });
-//
-//        // Gọi hàm load banner từ ViewModel
-//        viewModel.loadBanners();
-//    }
-//
-//
-//    private void banners(List<SliderModel> images) {
-//        // Gán adapter cho ViewPager2 để hiển thị slider
-//        binding.viewpagerslider.setAdapter(new SliderAdapter(images, binding.viewpagerslider));
-//
-//        // Không cắt padding và children (để tạo hiệu ứng hiển thị nhiều ảnh cạnh nhau)
-//        binding.viewpagerslider.setClipToPadding(false);
-//        binding.viewpagerslider.setClipChildren(false);
-//
-//        // Tải sẵn 3 trang bên trái/phải để cuộn mượt hơn
-//        binding.viewpagerslider.setOffscreenPageLimit(3);
-//
-//        // Tắt hiệu ứng overscroll (kéo dẻo khi vuốt tới đầu/cuối)
-//        ((RecyclerView) binding.viewpagerslider.getChildAt(0)).setOverScrollMode(RecyclerView.OVER_SCROLL_NEVER);
-//
-//        // Tạo hiệu ứng chuyển trang bằng cách thêm khoảng cách giữa các slide
-//        CompositePageTransformer compositePageTransformer = new CompositePageTransformer();
-//        compositePageTransformer.addTransformer(new MarginPageTransformer(40)); // khoảng cách 40px giữa các slide
-//
-//        // Gán hiệu ứng chuyển trang vào ViewPager2
-//        binding.viewpagerslider.setPageTransformer(compositePageTransformer);
-//
-//        // Nếu có nhiều hơn 1 ảnh, hiển thị chỉ báo (dot indicator)
-//        if (images.size() > 1) {
-//            binding.dotIndicator.setVisibility(View.VISIBLE);
-//            binding.dotIndicator.attachTo(binding.viewpagerslider); // gắn indicator với ViewPager2
-//        }
-//    }
+    private void getProducts(){
+        APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
+        Call<List<ProductCard>> callBanners = apiService.getProductAll();
+        callBanners.enqueue(new Callback<List<ProductCard>>() {
+            @Override
+            public void onResponse(Call<List<ProductCard>> call, Response<List<ProductCard>> response) {
+                List<ProductCard> items = response.body();
+                binding.viewPopular.setLayoutManager(new GridLayoutManager(MainActivity.this, 2));
+                binding.viewPopular.setAdapter(new ProductCardAdapter(items));
+                binding.progressBarPopular.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<List<ProductCard>> call, Throwable t) {
+                Log.e("RetrofitError", "Error: " + t.getMessage());
+            }
+        });
+    }
 }
