@@ -20,12 +20,12 @@ import java.util.List;
 
 public class BannerAdapter extends RecyclerView.Adapter<BannerAdapter.BannerViewHolder> {
     private List<Banner> bannerList;
+    private Context context;
 
     public BannerAdapter(List<Banner> bannerList) {
         this.bannerList = bannerList;
     }
 
-    private Context context;
     @NonNull
     @Override
     public BannerAdapter.BannerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

@@ -19,6 +19,10 @@ public class Banner {
         return title;
     }
 
+    public Banner(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }

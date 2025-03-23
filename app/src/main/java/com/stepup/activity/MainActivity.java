@@ -1,21 +1,19 @@
-package com.stepup;
+package com.stepup.activity;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.CompositePageTransformer;
 import androidx.viewpager2.widget.MarginPageTransformer;
 
-import com.stepup.activity.BaseActivity;
+import com.stepup.R;
 import com.stepup.adapter.BannerAdapter;
 import com.stepup.adapter.ProductCardAdapter;
 import com.stepup.databinding.ActivityMainBinding;
