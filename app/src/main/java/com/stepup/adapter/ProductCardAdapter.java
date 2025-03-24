@@ -59,7 +59,7 @@ public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.
         RequestOptions requestOptions = new RequestOptions().transform(new CenterCrop());
 
         Glide.with(holder.itemView.getContext())
-                .load(items.get(position).getProductImages().get(0).getImageUrl())
+                .load(items.get(position).getImageUrl())
                 .apply(requestOptions)
                 .into(holder.binding.pic);
 

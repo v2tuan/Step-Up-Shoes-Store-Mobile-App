@@ -5,27 +5,38 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
 public class ProductCard implements Parcelable {
     private long id;
     private String name;
 
-    List<ProductImage> productImages;
+    @SerializedName("imageUrl")
+    private String ImageUrl;
 
     private Double rating;
 
     private Double price;
     private Double promotionPrice;
-    public ProductCard(String name, List<ProductImage> productImages, Double rating) {
+
+    public ProductCard(long id, String name, String imageUrl, Double rating, Double price, Double promotionPrice) {
+        this.id = id;
         this.name = name;
-        this.productImages = productImages;
+        ImageUrl = imageUrl;
         this.rating = rating;
+        this.price = price;
+        this.promotionPrice = promotionPrice;
+    }
+
+    public ProductCard() {
     }
 
     protected ProductCard(Parcel in) {
         id = in.readLong();
         name = in.readString();
+        ImageUrl = in.readString();
         if (in.readByte() == 0) {
             rating = null;
         } else {
@@ -41,6 +52,36 @@ public class ProductCard implements Parcelable {
         } else {
             promotionPrice = in.readDouble();
         }
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(name);
+        dest.writeString(ImageUrl);
+        if (rating == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeDouble(rating);
+        }
+        if (price == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeDouble(price);
+        }
+        if (promotionPrice == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeDouble(promotionPrice);
+        }
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     public static final Creator<ProductCard> CREATOR = new Creator<ProductCard>() {
@@ -62,6 +103,7 @@ public class ProductCard implements Parcelable {
     public void setId(long id) {
         this.id = id;
     }
+
     public String getName() {
         return name;
     }
@@ -70,12 +112,12 @@ public class ProductCard implements Parcelable {
         this.name = name;
     }
 
-    public List<ProductImage> getProductImages() {
-        return productImages;
+    public String getImageUrl() {
+        return ImageUrl;
     }
 
-    public void setProductImages(List<ProductImage> productImages) {
-        this.productImages = productImages;
+    public void setImageUrl(String imageUrl) {
+        ImageUrl = imageUrl;
     }
 
     public Double getRating() {
@@ -100,34 +142,5 @@ public class ProductCard implements Parcelable {
 
     public void setPromotionPrice(Double promotionPrice) {
         this.promotionPrice = promotionPrice;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(@NonNull Parcel parcel, int i) {
-        parcel.writeLong(id);
-        parcel.writeString(name);
-        if (rating == null) {
-            parcel.writeByte((byte) 0);
-        } else {
-            parcel.writeByte((byte) 1);
-            parcel.writeDouble(rating);
-        }
-        if (price == null) {
-            parcel.writeByte((byte) 0);
-        } else {
-            parcel.writeByte((byte) 1);
-            parcel.writeDouble(price);
-        }
-        if (promotionPrice == null) {
-            parcel.writeByte((byte) 0);
-        } else {
-            parcel.writeByte((byte) 1);
-            parcel.writeDouble(promotionPrice);
-        }
     }
 }

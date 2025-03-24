@@ -5,27 +5,42 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Product {
+    private long id;
     private String name;
     private String slug;
     private String description;
     private boolean isActive;
-
     private Double price;
     private Double promotionPrice;
 
-    List<ProductImage> productImages;
+    private List<Color> colors = new ArrayList<>();
 
-    private String thumbnail;
+    private List<Size> sizes = new ArrayList<>();
 
-    public Product(String name, String slug, String description, boolean isActive, Double price, Double promotionPrice, List<ProductImage> productImages, String thumbnail) {
+    private List<ProductVariant> productVariants = new ArrayList<>();
+
+    private Double rating;
+
+    public Product(long id, String name, String slug, String description, boolean isActive, Double price, Double promotionPrice, List<Color> colors, List<Size> sizes, List<ProductVariant> productVariants, Double rating) {
+        this.id = id;
         this.name = name;
         this.slug = slug;
         this.description = description;
         this.isActive = isActive;
         this.price = price;
         this.promotionPrice = promotionPrice;
-        this.productImages = productImages;
-        this.thumbnail = thumbnail;
+        this.colors = colors;
+        this.sizes = sizes;
+        this.productVariants = productVariants;
+        this.rating = rating;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -76,19 +91,35 @@ public class Product {
         this.promotionPrice = promotionPrice;
     }
 
-    public List<ProductImage> getProductImages() {
-        return productImages;
+    public List<Color> getColors() {
+        return colors;
     }
 
-    public void setProductImages(List<ProductImage> productImages) {
-        this.productImages = productImages;
+    public void setColors(List<Color> colors) {
+        this.colors = colors;
     }
 
-    public String getThumbnail() {
-        return thumbnail;
+    public List<Size> getSizes() {
+        return sizes;
     }
 
-    public void setThumbnail(String thumbnail) {
-        this.thumbnail = thumbnail;
+    public void setSizes(List<Size> sizes) {
+        this.sizes = sizes;
+    }
+
+    public List<ProductVariant> getProductVariants() {
+        return productVariants;
+    }
+
+    public void setProductVariants(List<ProductVariant> productVariants) {
+        this.productVariants = productVariants;
+    }
+
+    public Double getRating() {
+        return rating;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
     }
 }
