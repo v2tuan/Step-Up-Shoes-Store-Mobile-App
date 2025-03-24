@@ -67,4 +67,6 @@ dependencies {
     //load ảnh với Glide
     implementation("com.github.bumptech.glide:glide:4.14.2")
     annotationProcessor("com.github.bumptech.glide:compiler:4.14.2")
+
+    implementation ("com.google.android.material:material:1.4.0")
 }
