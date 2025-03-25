@@ -19,8 +19,23 @@
         <activity
             android:name=".activity.DetailActivity"
             android:exported="false" />
+		<activity
+            android:name=".activity.ResetPasswordActivity"
+            android:exported="false" />
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".activity.ConfirmOtpActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.ForgetPasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.RegisterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
