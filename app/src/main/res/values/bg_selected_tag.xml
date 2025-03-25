@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="bg_selected_tag" type="id" /> <!-- ID dùng làm key cho tag -->
+</resources>

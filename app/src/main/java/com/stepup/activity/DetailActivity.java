@@ -52,9 +52,9 @@ public class DetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         binding = ActivityDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        EdgeToEdge.enable(this);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -85,6 +85,7 @@ public class DetailActivity extends AppCompatActivity {
 
                     // Tạo danh sách sliderItems chứa các hình ảnh để hiển thị
                     ArrayList<Banner> sliderItems = new ArrayList<>();
+                    BannerAdapter bannerAdapter = null;
 
                     try {
                         // Duyệt qua danh sách đường dẫn ảnh (picUrl) của item và thêm vào sliderItems
@@ -93,7 +94,8 @@ public class DetailActivity extends AppCompatActivity {
                         }
 
                         // Gán adapter cho ViewPager2 (slider) để hiển thị danh sách hình ảnh
-                        binding.slider.setAdapter(new BannerAdapter(sliderItems));
+                        bannerAdapter = new BannerAdapter(sliderItems);
+                        binding.slider.setAdapter(bannerAdapter);
 
                         // Cấu hình ViewPager2:
                         // Cắt padding ngoài
@@ -137,7 +139,7 @@ public class DetailActivity extends AppCompatActivity {
                     ViewPager2 viewPager2 = binding.slider;
 
                     DotsIndicator dotsIndicator = binding.dotIndicator;
-                    binding.colorList.setAdapter(new ColorAdapter(colorList, viewPager2, dotsIndicator, product));
+                    binding.colorList.setAdapter(new ColorAdapter(colorList, viewPager2, dotsIndicator, product, sliderItems, bannerAdapter, binding.sizeList));
 
                     // Gán layoutManager cho RecyclerView màu, cũng theo chiều ngang
                     binding.colorList.setLayoutManager(
@@ -165,7 +167,7 @@ public class DetailActivity extends AppCompatActivity {
         }
 
         // Gán adapter cho RecyclerView hiển thị kích thước
-        binding.sizeList.setAdapter(new SizeAdapter(sizeList));
+        binding.sizeList.setAdapter(new SizeAdapter(sizeList, product));
 
         // Gán layoutManager cho RecyclerView để hiển thị theo chiều ngang
         binding.sizeList.setLayoutManager(

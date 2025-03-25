@@ -1,6 +1,7 @@
 package com.stepup.adapter;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.stepup.R;
 import com.stepup.databinding.ViewholderSizeBinding;
+import com.stepup.model.Product;
+import com.stepup.model.Size;
 
 import java.util.List;
 
@@ -17,18 +20,30 @@ public class SizeAdapter extends RecyclerView.Adapter<SizeAdapter.ViewHolder> {
     private List<String> items;
     private Context context;
 
+    private Product product;
+
     private int selectedPosition = -1; // -1 là mặc định chưa chọn item nào
 
-    public SizeAdapter(List<String> items) {
+    public SizeAdapter(List<String> items, Product product) {
         this.items = items;
+        this.product = product;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
+        private Size size;
         ViewholderSizeBinding binding;
 
         public ViewHolder(ViewholderSizeBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
+        }
+
+        public Size getSize() {
+            return size;
+        }
+
+        public void setSize(Size size) {
+            this.size = size;
         }
     }
     @NonNull
@@ -47,7 +62,9 @@ public class SizeAdapter extends RecyclerView.Adapter<SizeAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.binding.sizeTxt.setText(items.get(position));
 
-// Xử lý sự kiện click vào item
+        holder.setSize(product.getSizes().get(position));
+
+        // Xử lý sự kiện click vào item
         holder.binding.getRoot().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,14 +80,20 @@ public class SizeAdapter extends RecyclerView.Adapter<SizeAdapter.ViewHolder> {
             }
         });
 
-// Kiểm tra nếu item này đang được chọn thì đổi màu nền
+        // Kiểm tra nếu item này đang được chọn thì đổi màu nền
         if (selectedPosition == position) {
             // Nếu item này là item đang được chọn → nền tím
             holder.binding.colorLayout.setBackgroundResource(R.drawable.black_bg_selected);
+
+            holder.binding.colorLayout.setTag(R.id.bg_selected_tag, R.drawable.black_bg_selected); // Lưu ID vào tag
+            Integer currentBgId = (Integer) holder.binding.colorLayout.getTag(R.id.bg_selected_tag);
+
+            holder.binding.sizeTxt.setTextColor(context.getResources().getColor(R.color.white));
 //            holder.binding.sizeTxt.setTextColor(context.getResources().getColor(R.color.purple));
         } else {
             // Nếu không phải → nền xám
             holder.binding.colorLayout.setBackgroundResource(R.drawable.grey_bg);
+            holder.binding.colorLayout.setTag(R.id.bg_selected_tag, null); // Lưu ID vào tag
             holder.binding.sizeTxt.setTextColor(context.getResources().getColor(R.color.black));
         }
 
