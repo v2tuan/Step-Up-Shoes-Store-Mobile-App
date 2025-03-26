@@ -239,11 +239,11 @@
 
                     <ImageView
                         android:id="@+id/imageView411"
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
                         android:layout_gravity="center"
                         android:layout_marginTop="8dp"
-                        app:srcCompat="@drawable/btn_1"
+                        android:src="@drawable/home"
                         app:tint="@color/black" />
 
                     <TextView
@@ -251,10 +251,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Explorer"
+                        android:text="Home"
                         android:textAlignment="center"
                         android:textColor="@color/black"
-                        android:textSize="12sp" />
+                        android:textSize="10sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -266,11 +266,11 @@
 
                     <ImageView
                         android:id="@+id/imageView42"
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
                         android:layout_gravity="center"
                         android:layout_marginTop="8dp"
-                        app:srcCompat="@drawable/btn_2"
+                        app:srcCompat="@drawable/search2"
                         app:tint="@color/black"/>
 
                     <TextView
@@ -278,11 +278,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Explorer"
+                        android:text="Search"
                         android:textAlignment="center"
                         android:textColor="@color/black"
 
-                        android:textSize="12sp" />
+                        android:textSize="10sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -294,11 +294,11 @@
 
                     <ImageView
                         android:id="@+id/imageView43"
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
                         android:layout_gravity="center"
                         android:layout_marginTop="8dp"
-                        app:srcCompat="@drawable/btn_3"
+                        app:srcCompat="@drawable/favorite"
                         app:tint="@color/black"/>
 
                     <TextView
@@ -306,11 +306,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Explorer"
+                        android:text="Favorite"
                         android:textAlignment="center"
                         android:textColor="@color/black"
 
-                        android:textSize="12sp" />
+                        android:textSize="10sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -322,11 +322,11 @@
 
                     <ImageView
                         android:id="@+id/imageView44"
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
                         android:layout_gravity="center"
                         android:layout_marginTop="8dp"
-                        app:srcCompat="@drawable/btn_4"
+                        app:srcCompat="@drawable/cart"
                         app:tint="@color/black"/>
 
                     <TextView
@@ -334,11 +334,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Explorer"
+                        android:text="Cart"
                         android:textAlignment="center"
                         android:textColor="@color/black"
 
-                        android:textSize="12sp" />
+                        android:textSize="10sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -350,11 +350,11 @@
 
                     <ImageView
                         android:id="@+id/imageView45"
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
                         android:layout_gravity="center"
                         android:layout_marginTop="8dp"
-                        app:srcCompat="@drawable/btn_5"
+                        app:srcCompat="@drawable/person"
                         app:tint="@color/black"/>
 
                     <TextView
@@ -362,11 +362,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Explorer"
+                        android:text="Person"
                         android:textAlignment="center"
                         android:textColor="@color/black"
 
-                        android:textSize="12sp" />
+                        android:textSize="10sp" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.bottomnavigation.BottomNavigationView>
