@@ -71,4 +71,6 @@ dependencies {
     implementation ("com.google.android.material:material:1.4.0")
 
     implementation("com.google.android.gms:play-services-auth:20.7.0") // dung de dang nhap google
+
+    implementation ("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0") // thư viện lam hieu ung load lai du lieu
 }
