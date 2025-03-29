@@ -36,6 +36,6 @@ public interface APIService {
     Call<ApiResponse> resendOtp(@Query("email") String email);
 
     @POST("users/auth/social/callback")
-    Call<Object> callbackBackend(@Query("code") String code);
+    Call<String> callbackBackend(@Query("code") String code);
 
 }

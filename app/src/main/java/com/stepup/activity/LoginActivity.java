@@ -11,6 +11,8 @@ import androidx.core.view.ViewCompat;
 
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
+
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.CompositePageTransformer;
@@ -97,7 +99,9 @@ public class LoginActivity extends AppCompatActivity {
 //                sendAuthCodeToServer(authCode);
                 // Gửi authCode lên server
                 sendAuthCodeToServer(authCode);
+                showLoading(); // Hiển thị process bar
             } catch (ApiException e) {
+                hideLoading(); // Ẩn process bar
                 Log.w("GoogleAuth", "Sign-in failed", e);
             }
         }
@@ -105,19 +109,35 @@ public class LoginActivity extends AppCompatActivity {
 
     private void sendAuthCodeToServer(String authCode) {
         APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
-        Call<Object> callBanners = apiService.callbackBackend(authCode);
-        callBanners.enqueue(new Callback<Object>() {
+        Call<String> callBanners = apiService.callbackBackend(authCode);
+        callBanners.enqueue(new Callback<String>() {
             @Override
-            public void onResponse(Call<Object> call, Response<Object> response) {
+            public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful() && response.body() != null) {
+//                    String token = response.body().toString();
                     Log.d("Backend", "Token: " + response.body().toString());
+                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
                 }
             }
 
             @Override
-            public void onFailure(Call<Object> call, Throwable t) {
+            public void onFailure(Call<String> call, Throwable t) {
                 Log.e("RetrofitError", "Error: " + t.getMessage());
             }
         });
+    }
+
+    // Hiển thị process bar
+    private void showLoading() {
+        FrameLayout overlay = findViewById(R.id.overlay);
+        overlay.setVisibility(View.VISIBLE);
+        overlay.setClickable(true); // Chặn tương tác với các view bên dưới
+    }
+
+    // Ẩn process bar
+    private void hideLoading() {
+        FrameLayout overlay = findViewById(R.id.overlay);
+        overlay.setVisibility(View.GONE);
+        overlay.setClickable(false);
     }
 }
