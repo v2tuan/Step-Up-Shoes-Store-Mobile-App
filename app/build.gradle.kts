@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
 }
 
 android {
@@ -73,4 +74,8 @@ dependencies {
     implementation("com.google.android.gms:play-services-auth:20.7.0") // dung de dang nhap google
 
     implementation ("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0") // thư viện lam hieu ung load lai du lieu
+
+    implementation ("com.google.android.gms:play-services-maps:18.2.0")  // thu vien su dung google map
+    implementation ("com.google.android.gms:play-services-location:21.0.1")
+    implementation ("com.google.android.libraries.places:places:3.5.0")
 }

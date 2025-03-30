@@ -1,0 +1,43 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp">
+
+        <AutoCompleteTextView
+            android:id="@+id/etSearchLocation"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Nhập vị trí cần tìm"
+            android:padding="12dp"
+            android:dropDownHeight="300dp"
+            android:dropDownVerticalOffset="10dp"
+            android:dropDownWidth="match_parent"
+            android:background="@drawable/rounded_border" />
+
+        <Button
+            android:id="@+id/btnSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tìm kiếm" />
+    </LinearLayout>
+    <Button
+        android:id="@+id/btnSelect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Chọn Địa Chỉ"
+        android:layout_gravity="bottom"
+        android:layout_margin="16dp" />
+</FrameLayout>

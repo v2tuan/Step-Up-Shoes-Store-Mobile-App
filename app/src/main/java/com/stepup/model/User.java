@@ -23,6 +23,11 @@ public class User {
         this.retype_password = retype_password;
     }
 
+    public User(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
+
     public String getEmail() {
         return email;
     }

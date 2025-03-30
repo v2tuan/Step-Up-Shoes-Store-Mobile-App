@@ -1,6 +1,7 @@
 package com.stepup.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -11,6 +12,10 @@ import androidx.core.view.ViewCompat;
 
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.CompositePageTransformer;
@@ -27,11 +32,13 @@ import com.stepup.adapter.BannerAdapter;
 import com.stepup.databinding.ActivityLoginBinding;
 import com.stepup.databinding.ActivityMainBinding;
 import com.stepup.model.Banner;
+import com.stepup.model.User;
 import com.stepup.model.ZoomOutPageTransformer;
 import com.stepup.retrofit2.APIService;
 import com.stepup.retrofit2.RetrofitClient;
 
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -40,6 +47,7 @@ import retrofit2.Response;
 public class LoginActivity extends AppCompatActivity {
     private ActivityLoginBinding activityLoginBinding;
 
+    private SharedPreferences sharedPreferences;
     private static final int RC_SIGN_IN = 100;
     private GoogleSignInClient googleSignInClient;
 
@@ -53,6 +61,16 @@ public class LoginActivity extends AppCompatActivity {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
+        });
+//        SharedPreferences.Editor editor = getSharedPreferences("MyAppPrefs", MODE_PRIVATE).edit();
+//        editor.remove("token");
+ //       editor.apply();
+        checkLogin();
+
+        activityLoginBinding.signInBtn.setOnClickListener(v -> {
+            String email = activityLoginBinding.emailTxt.getText().toString();
+            String password = activityLoginBinding.passwordTxt.getText().toString();
+            loginUser(email, password);
         });
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -72,6 +90,56 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void loginUser(String email, String password) {
+        User userLoginDTO = new User(email, password);
+        APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
+        apiService.login(userLoginDTO).enqueue(new Callback<Map<String, String>>() {
+            @Override
+            public void onResponse(Call<Map<String, String>> call, Response<Map<String, String>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    String token = response.body().get("token");
+                    Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
+                    boolean rememberMe = activityLoginBinding.checkboxRemember.isChecked();
+                    saveToken(token, rememberMe);
+                    // Truyền token qua màn hình chính
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.putExtra("token", token);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Toast.makeText(LoginActivity.this, "Sai tài khoản hoặc mật khẩu", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, String>> call, Throwable t) {
+                Log.e("LoginError", t.getMessage());
+                Toast.makeText(LoginActivity.this, "Lỗi kết nối API", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    // Hàm lưu token vào SharedPreferences
+    private void saveToken(String token, boolean rememberMe) {
+        SharedPreferences.Editor editor = getSharedPreferences("MyAppPrefs", MODE_PRIVATE).edit();
+        if (rememberMe) {
+            editor.putString("token", token);
+        } else {
+            editor.remove("token");
+        }
+        editor.apply();
+    }
+
+    // Kiểm tra đăng nhập khi mở ứng dụng
+    private void checkLogin() {
+        String token = getSharedPreferences("MyAppPrefs", MODE_PRIVATE).getString("token", null);
+        if (token != null) {
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            intent.putExtra("token", token);
+            startActivity(intent);
+            finish();
+        }
     }
     public void goToRegister(View view) {
         Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);

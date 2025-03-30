@@ -94,7 +94,6 @@
                         android:ellipsize="end"
                         android:scrollHorizontally="true"
                         android:singleLine="true"
-                        android:text="zenithsneaks@mail.com"
                         android:textColor="@color/black"
                         android:inputType="text"
                         android:textDirection="locale"

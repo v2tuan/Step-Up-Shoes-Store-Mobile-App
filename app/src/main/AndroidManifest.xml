@@ -4,9 +4,12 @@
     package="com.stepup">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- Khai báo quyền vị trí -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
+        android:name=".retrofit2.MyApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -17,10 +20,27 @@
         android:theme="@style/Theme.StepUpShoesStoreMobileApp"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyB4hfY11JIyUF-6b-hQM2zu0oPowjq7l6Q" />
+        <meta-data
+            android:name="com.google.android.libraries.places.API_KEY"
+            android:value="AIzaSyB4hfY11JIyUF-6b-hQM2zu0oPowjq7l6Q" />
+
+        <activity
+            android:name=".activity.MapsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.AddressActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.LoginActivity"
+            android:exported="false" />
         <activity
             android:name=".activity.DetailActivity"
             android:exported="false" />
-		<activity
+        <activity
             android:name=".activity.ResetPasswordActivity"
             android:exported="false" />
         <activity
@@ -33,10 +53,10 @@
             android:name=".activity.RegisterActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.LoginActivity"
+            android:name=".activity.MainActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".activity.AddAddressActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

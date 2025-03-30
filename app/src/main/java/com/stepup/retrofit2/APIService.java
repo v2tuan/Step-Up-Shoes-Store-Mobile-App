@@ -8,6 +8,7 @@ import com.stepup.model.User;
 import com.stepup.model.VerifyOtpRequest;
 
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -37,5 +38,9 @@ public interface APIService {
 
     @POST("users/auth/social/callback")
     Call<Object> callbackBackend(@Query("code") String code);
+
+    @POST("users/login")
+    Call<Map<String, String>> login(@Body User userLoginDTO);
+    
 
 }
