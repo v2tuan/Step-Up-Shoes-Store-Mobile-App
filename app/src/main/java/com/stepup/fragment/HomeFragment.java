@@ -123,7 +123,31 @@ public class HomeFragment extends Fragment {
         homeViewModel.getBannerList().observe(getViewLifecycleOwner(), banners -> {
             if (banners != null) {
                 binding.progressBarBanner.setVisibility(View.GONE);
+                binding.dotIndicator.setVisibility(View.GONE);
+
                 binding.viewpagerslider.setAdapter(new BannerAdapter(banners));
+                // Không cắt padding và children (để tạo hiệu ứng hiển thị nhiều ảnh cạnh nhau)
+                binding.viewpagerslider.setClipToPadding(false);
+                binding.viewpagerslider.setClipChildren(false);
+
+                // Tải sẵn 3 trang bên trái/phải để cuộn mượt hơn
+                binding.viewpagerslider.setOffscreenPageLimit(3);
+
+                // Tắt hiệu ứng overscroll (kéo dẻo khi vuốt tới đầu/cuối)
+                ((RecyclerView) binding.viewpagerslider.getChildAt(0)).setOverScrollMode(RecyclerView.OVER_SCROLL_NEVER);
+
+                // Tạo hiệu ứng chuyển trang bằng cách thêm khoảng cách giữa các slide
+                // CompositePageTransformer compositePageTransformer = new CompositePageTransformer();
+                // compositePageTransformer.addTransformer(new MarginPageTransformer(40)); // khoảng cách 40px giữa các slide
+
+                // Gán hiệu ứng chuyển trang vào ViewPager2
+                binding.viewpagerslider.setPageTransformer(new ZoomOutPageTransformer());
+
+                // Nếu có nhiều hơn 1 ảnh, hiển thị chỉ báo (dot indicator)
+                if (banners.size() > 1) {
+                    binding.dotIndicator.setVisibility(View.VISIBLE);
+                    binding.dotIndicator.attachTo(binding.viewpagerslider); // gắn indicator với ViewPager2
+                }
             }
             binding.swipeRefreshLayout.setRefreshing(false); // Tắt hiệu ứng làm mới
         });

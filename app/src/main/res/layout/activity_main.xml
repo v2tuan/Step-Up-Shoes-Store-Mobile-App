@@ -172,167 +172,201 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+<!--    <androidx.coordinatorlayout.widget.CoordinatorLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="75dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent">-->
+<!--        <com.google.android.material.bottomnavigation.BottomNavigationView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="75dp"-->
+<!--            android:layout_gravity="bottom"-->
+<!--            android:background="@drawable/purple_bg">-->
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:layout_marginBottom="8dp">-->
+
+<!--                <LinearLayout-->
+<!--                    android:id="@+id/homeButton"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="0.2"-->
+<!--                    android:orientation="vertical"-->
+<!--                    android:gravity="center">-->
+
+<!--                    <ImageView-->
+<!--                        android:id="@+id/imageView411"-->
+<!--                        android:layout_width="32dp"-->
+<!--                        android:layout_height="32dp"-->
+<!--                        android:layout_gravity="center"-->
+<!--                        android:layout_marginTop="8dp"-->
+<!--                        android:src="@drawable/home"-->
+<!--                        app:tint="@color/black" />-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/textView81"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginTop="4dp"-->
+<!--                        android:text="Home"-->
+<!--                        android:textAlignment="center"-->
+<!--                        android:textColor="@color/black"-->
+<!--                        android:textSize="10sp" />-->
+<!--                </LinearLayout>-->
+
+<!--                <LinearLayout-->
+<!--                    android:id="@+id/searchButton"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="0.2"-->
+<!--                    android:orientation="vertical"-->
+<!--                    android:gravity="center">-->
+
+<!--                    <ImageView-->
+<!--                        android:id="@+id/imageView42"-->
+<!--                        android:layout_width="32dp"-->
+<!--                        android:layout_height="32dp"-->
+<!--                        android:layout_gravity="center"-->
+<!--                        android:layout_marginTop="8dp"-->
+<!--                        app:srcCompat="@drawable/search2"-->
+<!--                        app:tint="@color/black"/>-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/textView82"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginTop="4dp"-->
+<!--                        android:text="Search"-->
+<!--                        android:textAlignment="center"-->
+<!--                        android:textColor="@color/black"-->
+
+<!--                        android:textSize="10sp" />-->
+<!--                </LinearLayout>-->
+
+<!--                <LinearLayout-->
+<!--                    android:id="@+id/favoriteButton"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="0.2"-->
+<!--                    android:orientation="vertical"-->
+<!--                    android:gravity="center">-->
+
+<!--                    <ImageView-->
+<!--                        android:id="@+id/imageView43"-->
+<!--                        android:layout_width="32dp"-->
+<!--                        android:layout_height="32dp"-->
+<!--                        android:layout_gravity="center"-->
+<!--                        android:layout_marginTop="8dp"-->
+<!--                        app:srcCompat="@drawable/favorite"-->
+<!--                        app:tint="@color/black"/>-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/textView83"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginTop="4dp"-->
+<!--                        android:text="Favorite"-->
+<!--                        android:textAlignment="center"-->
+<!--                        android:textColor="@color/black"-->
+
+<!--                        android:textSize="10sp" />-->
+<!--                </LinearLayout>-->
+
+<!--                <LinearLayout-->
+<!--                    android:id="@+id/cartButton"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="0.2"-->
+<!--                    android:orientation="vertical"-->
+<!--                    android:gravity="center">-->
+
+<!--                    <ImageView-->
+<!--                        android:id="@+id/imageView44"-->
+<!--                        android:layout_width="32dp"-->
+<!--                        android:layout_height="32dp"-->
+<!--                        android:layout_gravity="center"-->
+<!--                        android:layout_marginTop="8dp"-->
+<!--                        app:srcCompat="@drawable/cart"-->
+<!--                        app:tint="@color/black"/>-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/textView84"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginTop="4dp"-->
+<!--                        android:text="Cart"-->
+<!--                        android:textAlignment="center"-->
+<!--                        android:textColor="@color/black"-->
+
+<!--                        android:textSize="10sp" />-->
+<!--                </LinearLayout>-->
+
+<!--                <LinearLayout-->
+<!--                    android:id="@+id/personButton"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="0.2"-->
+<!--                    android:orientation="vertical"-->
+<!--                    android:gravity="center">-->
+
+<!--                    <ImageView-->
+<!--                        android:id="@+id/imageView45"-->
+<!--                        android:layout_width="32dp"-->
+<!--                        android:layout_height="32dp"-->
+<!--                        android:layout_gravity="center"-->
+<!--                        android:layout_marginTop="8dp"-->
+<!--                        app:srcCompat="@drawable/person"-->
+<!--                        app:tint="@color/black"/>-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/textView85"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginTop="4dp"-->
+<!--                        android:text="Person"-->
+<!--                        android:textAlignment="center"-->
+<!--                        android:textColor="@color/black"-->
+
+<!--                        android:textSize="10sp" />-->
+<!--                </LinearLayout>-->
+<!--            </LinearLayout>-->
+<!--        </com.google.android.material.bottomnavigation.BottomNavigationView>-->
+
+<!--    </androidx.coordinatorlayout.widget.CoordinatorLayout>-->
+
+<!--    <com.google.android.material.bottomnavigation.BottomNavigationView-->
+<!--        android:id="@+id/bottom_nav"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:background="?android:attr/windowBackground"-->
+<!--        app:itemBackground="@color/white"-->
+<!--        app:itemRippleColor="@android:color/transparent"-->
+<!--        app:itemIconTint="@color/bottom_nav_selector"-->
+<!--        app:itemTextColor="@color/bottom_nav_selector"-->
+<!--        app:menu="@menu/bottom_menu"-->
+<!--        app:labelVisibilityMode="labeled"-->
+<!--        android:layout_gravity="bottom"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"/>-->
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_nav"
         android:layout_width="match_parent"
-        android:layout_height="75dp"
+        android:layout_height="wrap_content"
+        android:paddingTop="1dp"
+        android:background="@drawable/purple_bg"
+        app:itemBackground="@color/white"
+        app:itemRippleColor="@android:color/transparent"
+        app:itemIconTint="@color/bottom_nav_selector"
+        app:itemTextColor="@color/bottom_nav_selector"
+        style="@style/Widget.MaterialComponents.BottomNavigationView"
+        app:menu="@menu/bottom_menu"
+        app:labelVisibilityMode="labeled"
+        android:layout_gravity="bottom"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:layout_width="match_parent"
-            android:layout_height="75dp"
-            android:layout_gravity="bottom"
-            android:background="@drawable/purple_bg">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="8dp">
-
-                <LinearLayout
-                    android:id="@+id/homeButton"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.2"
-                    android:orientation="vertical"
-                    android:gravity="center">
-
-                    <ImageView
-                        android:id="@+id/imageView411"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="8dp"
-                        android:src="@drawable/home"
-                        app:tint="@color/black" />
-
-                    <TextView
-                        android:id="@+id/textView81"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="Home"
-                        android:textAlignment="center"
-                        android:textColor="@color/black"
-                        android:textSize="10sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/searchButton"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.2"
-                    android:orientation="vertical"
-                    android:gravity="center">
-
-                    <ImageView
-                        android:id="@+id/imageView42"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="8dp"
-                        app:srcCompat="@drawable/search2"
-                        app:tint="@color/black"/>
-
-                    <TextView
-                        android:id="@+id/textView82"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="Search"
-                        android:textAlignment="center"
-                        android:textColor="@color/black"
-
-                        android:textSize="10sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/favoriteButton"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.2"
-                    android:orientation="vertical"
-                    android:gravity="center">
-
-                    <ImageView
-                        android:id="@+id/imageView43"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="8dp"
-                        app:srcCompat="@drawable/favorite"
-                        app:tint="@color/black"/>
-
-                    <TextView
-                        android:id="@+id/textView83"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="Favorite"
-                        android:textAlignment="center"
-                        android:textColor="@color/black"
-
-                        android:textSize="10sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/cartButton"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.2"
-                    android:orientation="vertical"
-                    android:gravity="center">
-
-                    <ImageView
-                        android:id="@+id/imageView44"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="8dp"
-                        app:srcCompat="@drawable/cart"
-                        app:tint="@color/black"/>
-
-                    <TextView
-                        android:id="@+id/textView84"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="Cart"
-                        android:textAlignment="center"
-                        android:textColor="@color/black"
-
-                        android:textSize="10sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/personButton"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.2"
-                    android:orientation="vertical"
-                    android:gravity="center">
-
-                    <ImageView
-                        android:id="@+id/imageView45"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="8dp"
-                        app:srcCompat="@drawable/person"
-                        app:tint="@color/black"/>
-
-                    <TextView
-                        android:id="@+id/textView85"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="Person"
-                        android:textAlignment="center"
-                        android:textColor="@color/black"
-
-                        android:textSize="10sp" />
-                </LinearLayout>
-            </LinearLayout>
-        </com.google.android.material.bottomnavigation.BottomNavigationView>
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+        app:layout_constraintStart_toStartOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

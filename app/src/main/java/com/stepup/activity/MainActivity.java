@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.CompositePageTransformer;
 import androidx.viewpager2.widget.MarginPageTransformer;
 
+import com.google.android.material.badge.BadgeDrawable;
 import com.stepup.R;
 import com.stepup.adapter.BannerAdapter;
 import com.stepup.adapter.ProductCardAdapter;
@@ -61,17 +62,59 @@ public class MainActivity extends BaseActivity {
             currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         }
 
-        setupButtonListeners();
+//        setupButtonListeners();
 
+        // Xử lý sự kiện chọn item
+        binding.bottomNav.setOnItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.nav_home) {
+                switchFragment(HomeFragment.class);
+            } else if (item.getItemId() == R.id.nav_search) {
+                switchFragment(SearchFragment.class);
+            } else if (item.getItemId() == R.id.nav_favorite) {
+                switchFragment(FavoriteFragment.class);
+            } else if (item.getItemId() == R.id.nav_cart) {
+                switchFragment(CartFragment.class);
+            } else if (item.getItemId() == R.id.nav_profile) {
+                switchFragment(PersonFragment.class);
+            }
+            return true;
+        });
+
+        // Test hien thi thong bao tren item
+        // Badge cho giỏ hàng
+        BadgeDrawable badgeCart = binding.bottomNav.getOrCreateBadge(R.id.nav_cart);
+        badgeCart.setVisible(true); // Hiển thị dấu chấm
+        badgeCart.setBackgroundColor(getResources().getColor(R.color.green));
+
+        // Badge cho thông báo
+        BadgeDrawable badgeNotification = binding.bottomNav.getOrCreateBadge(R.id.nav_favorite);
+        badgeNotification.setNumber(1);  // Ví dụ: có 5 thông báo mới
+        badgeNotification.setBackgroundColor(getResources().getColor(R.color.green));
+
+        // Lắng nghe sự kiện thay đổi của Fragment
+        getSupportFragmentManager().addOnBackStackChangedListener(() -> {
+            Fragment current = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+            if (current instanceof HomeFragment) {
+                binding.bottomNav.setSelectedItemId(R.id.nav_home);
+            } else if (current instanceof SearchFragment) {
+                binding.bottomNav.setSelectedItemId(R.id.nav_search);
+            } else if (current instanceof FavoriteFragment) {
+                binding.bottomNav.setSelectedItemId(R.id.nav_favorite);
+            } else if (current instanceof CartFragment) {
+                binding.bottomNav.setSelectedItemId(R.id.nav_cart);
+            } else if (current instanceof PersonFragment) {
+                binding.bottomNav.setSelectedItemId(R.id.nav_profile);
+            }
+        });
     }
 
-    private void setupButtonListeners() {
-        binding.homeButton.setOnClickListener(view -> switchFragment(HomeFragment.class));
-        binding.searchButton.setOnClickListener(view -> switchFragment(SearchFragment.class));
-        binding.favoriteButton.setOnClickListener(view -> switchFragment(FavoriteFragment.class));
-        binding.cartButton.setOnClickListener(view -> switchFragment(CartFragment.class));
-        binding.personButton.setOnClickListener(view -> switchFragment(PersonFragment.class));
-    }
+//    private void setupButtonListeners() {
+//        binding.homeButton.setOnClickListener(view -> switchFragment(HomeFragment.class));
+//        binding.searchButton.setOnClickListener(view -> switchFragment(SearchFragment.class));
+//        binding.favoriteButton.setOnClickListener(view -> switchFragment(FavoriteFragment.class));
+//        binding.cartButton.setOnClickListener(view -> switchFragment(CartFragment.class));
+//        binding.personButton.setOnClickListener(view -> switchFragment(PersonFragment.class));
+//    }
 
     private void switchFragment(Class<? extends Fragment> fragmentClass) {
         // Lấy FragmentManager để quản lý các Fragment
