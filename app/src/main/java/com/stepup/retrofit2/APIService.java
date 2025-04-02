@@ -1,7 +1,9 @@
 package com.stepup.retrofit2;
 
+import com.stepup.model.AddToCartDTO;
 import com.stepup.model.ApiResponse;
 import com.stepup.model.Banner;
+import com.stepup.model.CartItem;
 import com.stepup.model.Product;
 import com.stepup.model.ProductCard;
 import com.stepup.model.User;
@@ -41,6 +43,10 @@ public interface APIService {
 
     @POST("users/login")
     Call<Map<String, String>> login(@Body User userLoginDTO);
-    
 
+    @POST("cart/add")
+    Call<String> addCart(@Body AddToCartDTO addToCartDTO);
+
+    @GET("cart")
+    Call<List<CartItem>> getAllCartItem();
 }

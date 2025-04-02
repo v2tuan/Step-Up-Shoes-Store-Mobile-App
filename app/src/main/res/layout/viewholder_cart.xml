@@ -44,7 +44,7 @@
         android:layout_marginBottom="8dp"
         android:text="$0"
         android:textColor="@color/black"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/feeEachItem" />
@@ -87,11 +87,12 @@
 
         <TextView
             android:id="@+id/numberItemTxt"
-            android:layout_width="13dp"
-            android:layout_height="18dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:text="0"
+            android:gravity="center"
             android:textColor="@color/black"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/plusCartBtn"

@@ -1,14 +1,40 @@
 package com.stepup.fragment;
 
+import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.stepup.R;
+import com.stepup.activity.DetailActivity;
+import com.stepup.adapter.CartAdapter;
+import com.stepup.adapter.SizeAdapter;
+import com.stepup.databinding.FragmentCartBinding;
+import com.stepup.databinding.FragmentHomeBinding;
+import com.stepup.listener.ChangeNumberItemsListener;
+import com.stepup.model.CartItem;
+import com.stepup.model.ProductVariant;
+import com.stepup.retrofit2.APIService;
+import com.stepup.retrofit2.RetrofitClient;
+
+import java.text.NumberFormat;
+import java.util.List;
+import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -48,6 +74,7 @@ public class CartFragment extends Fragment {
         return fragment;
     }
 
+    private FragmentCartBinding binding;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +88,83 @@ public class CartFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_cart, container, false);
+        binding = FragmentCartBinding.inflate(inflater, container, false);
+
+        showLoading();
+
+        APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
+        Call<List<CartItem>> callCart = apiService.getAllCartItem();
+        callCart.enqueue(new Callback<List<CartItem>>() {
+            @Override
+            public void onResponse(Call<List<CartItem>> call, Response<List<CartItem>> response) {
+                hideLoading();
+                if (response.isSuccessful() && response.body() != null) {
+                    List<CartItem> cartItems = response.body();
+                    binding.viewCart.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
+                    // Thiết lập Adapter
+                    CartAdapter cartAdapter = new CartAdapter(cartItems, new ChangeNumberItemsListener() {
+                        @Override
+                        public void onChanged() {
+                            calculateCart();
+                        }
+                    });
+
+                    binding.viewCart.setAdapter(cartAdapter);
+
+                    // Đảm bảo tính toán tổng sau khi Adapter hoàn tất quá trình binding dữ liệu
+                    // Bởi vì khi dùng post(), hành động calculateCart() sẽ được đưa vào queueMessage
+                    binding.viewCart.post(() -> calculateCart());
+
+                    if (cartItems.isEmpty()) {
+                        binding.emptyTxt.setVisibility(View.VISIBLE);
+                        binding.scrollView2.setVisibility(View.GONE);
+                    } else {
+                        binding.emptyTxt.setVisibility(View.GONE);
+                        binding.scrollView2.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<CartItem>> call, Throwable t) {
+                hideLoading();
+                Log.e("RetrofitError", "Error: " + t.getMessage());
+            }
+        });
+        return binding.getRoot();
+    }
+
+    // Hiển thị process bar
+    private void showLoading() {
+        binding.overlay.setVisibility(View.VISIBLE);
+        binding.overlay.setClickable(true); // Chặn tương tác với các view bên dưới
+    }
+
+    // Ẩn process bar
+    private void hideLoading() {
+        binding.overlay.setVisibility(View.GONE);
+        binding.overlay.setClickable(false);
+    }
+
+    private void calculateCart() {
+        double total = 0;
+        if (binding.viewCart.getAdapter() == null) return; // Kiểm tra tránh lỗi NullPointerException
+
+        // Duyệt qua tất cả các item trong RecyclerView để tính tổng
+        for (int i = 0; i < binding.viewCart.getChildCount(); i++) {
+            View child = binding.viewCart.getChildAt(i);
+            RecyclerView.ViewHolder holder = binding.viewCart.getChildViewHolder(child);
+
+            if (holder instanceof CartAdapter.ViewHolder) {
+                CartAdapter.ViewHolder holderCartItem = (CartAdapter.ViewHolder) holder;
+                ProductVariant variant = holderCartItem.getCartItem().getProductVariant();
+                total += variant.getPromotionPrice() * holderCartItem.getCartItem().getCount();
+            }
+        }
+
+        // Định dạng tiền tệ
+        NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+        String priceText = format.format(total);
+        binding.totalTxt.setText(priceText);
     }
 }

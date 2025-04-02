@@ -68,12 +68,16 @@ public class LoginActivity extends AppCompatActivity {
  //       editor.apply();
         checkLogin();
 
+
+        // Đăng nhập mặc định
         activityLoginBinding.signInBtn.setOnClickListener(v -> {
+            showLoading(); // Hiển thị process bar
             String email = activityLoginBinding.emailTxt.getText().toString();
             String password = activityLoginBinding.passwordTxt.getText().toString();
             loginUser(email, password);
         });
 
+        // Đăng nhập với gogle
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .requestServerAuthCode("94795259707-gesvi3nivrc8mi24pmrq39d45vro2vi6.apps.googleusercontent.com") // Lấy Authorization Code
@@ -110,6 +114,7 @@ public class LoginActivity extends AppCompatActivity {
                     startActivity(intent);
                     finish();
                 } else {
+                    hideLoading(); // Ẩn process bar
                     Toast.makeText(LoginActivity.this, "Sai tài khoản hoặc mật khẩu", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -153,6 +158,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        showLoading(); // Hiển thị process bar
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RC_SIGN_IN) {
@@ -166,7 +172,6 @@ public class LoginActivity extends AppCompatActivity {
 //                sendAuthCodeToServer(authCode);
                 // Gửi authCode lên server
                 sendAuthCodeToServer(authCode);
-                showLoading(); // Hiển thị process bar
             } catch (ApiException e) {
                 hideLoading(); // Ẩn process bar
                 Log.w("GoogleAuth", "Sign-in failed", e);
@@ -181,8 +186,10 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful() && response.body() != null) {
-//                    String token = response.body().toString();
-                    Log.d("Backend", "Token: " + response.body().toString());
+                    String token = response.body().toString();
+                    Log.d("Backend", "Token: " + token);
+                    boolean rememberMe = activityLoginBinding.checkboxRemember.isChecked();
+                    saveToken(token, rememberMe);
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                 }
             }

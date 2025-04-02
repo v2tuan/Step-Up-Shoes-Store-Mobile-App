@@ -27,6 +27,7 @@ import com.stepup.fragment.HomeFragment;
 import com.stepup.fragment.PersonFragment;
 import com.stepup.fragment.SearchFragment;
 import com.stepup.model.Banner;
+import com.stepup.model.CartItem;
 import com.stepup.model.ProductCard;
 import com.stepup.model.ZoomOutPageTransformer;
 import com.stepup.retrofit2.APIService;
@@ -55,6 +56,8 @@ public class MainActivity extends BaseActivity {
             return insets;
         });
 
+        setCartItemCount();
+
         // Hiển thị Fragment mặc định
         if (savedInstanceState == null) {
             switchFragment(HomeFragment.class);
@@ -80,12 +83,6 @@ public class MainActivity extends BaseActivity {
             return true;
         });
 
-        // Test hien thi thong bao tren item
-        // Badge cho giỏ hàng
-        BadgeDrawable badgeCart = binding.bottomNav.getOrCreateBadge(R.id.nav_cart);
-        badgeCart.setVisible(true); // Hiển thị dấu chấm
-        badgeCart.setBackgroundColor(getResources().getColor(R.color.green));
-
         // Badge cho thông báo
         BadgeDrawable badgeNotification = binding.bottomNav.getOrCreateBadge(R.id.nav_favorite);
         badgeNotification.setNumber(1);  // Ví dụ: có 5 thông báo mới
@@ -107,14 +104,6 @@ public class MainActivity extends BaseActivity {
             }
         });
     }
-
-//    private void setupButtonListeners() {
-//        binding.homeButton.setOnClickListener(view -> switchFragment(HomeFragment.class));
-//        binding.searchButton.setOnClickListener(view -> switchFragment(SearchFragment.class));
-//        binding.favoriteButton.setOnClickListener(view -> switchFragment(FavoriteFragment.class));
-//        binding.cartButton.setOnClickListener(view -> switchFragment(CartFragment.class));
-//        binding.personButton.setOnClickListener(view -> switchFragment(PersonFragment.class));
-//    }
 
     private void switchFragment(Class<? extends Fragment> fragmentClass) {
         // Lấy FragmentManager để quản lý các Fragment
@@ -155,4 +144,25 @@ public class MainActivity extends BaseActivity {
         currentFragment = existingFragment;
     }
 
+    private void setCartItemCount(){
+        APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
+        Call<List<CartItem>> callCart = apiService.getAllCartItem();
+        callCart.enqueue(new Callback<List<CartItem>>() {
+            @Override
+            public void onResponse(Call<List<CartItem>> call, Response<List<CartItem>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<CartItem> cartItems = response.body();
+                    // Badge cho giỏ hàng
+                    BadgeDrawable badgeCart = binding.bottomNav.getOrCreateBadge(R.id.nav_cart);
+                    badgeCart.setNumber(cartItems.size());
+                    badgeCart.setBackgroundColor(getResources().getColor(R.color.green));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<CartItem>> call, Throwable t) {
+                Log.e("RetrofitError", "Error: " + t.getMessage());
+            }
+        });
+    }
 }
