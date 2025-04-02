@@ -13,7 +13,7 @@ public class RetrofitClient {
             retrofit = new Retrofit.Builder()
                     // duong dan API
                     .baseUrl("http://10.0.2.2:8089/api/v1/")
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(new OkHttpClient.Builder().addInterceptor(new AuthInterceptor()).build())
                     .addConverterFactory(ScalarsConverterFactory.create()) // Cho phép nhận chuỗi thay vì JSON
                     .addConverterFactory(GsonConverterFactory.create()) // Dùng Gson nếu có API trả về JSON
                     .build();
