@@ -8,6 +8,8 @@ public class ProductVariant {
     private Color color;
     private Size size;
     private int quantity;
+    private Double price;
+    private Double promotionPrice;
 
     public ProductVariant(Long id, Product product, Color color, Size size, int quantity) {
         this.id = id;
@@ -55,5 +57,21 @@ public class ProductVariant {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public Double getPromotionPrice() {
+        return promotionPrice;
+    }
+
+    public void setPromotionPrice(Double promotionPrice) {
+        this.promotionPrice = promotionPrice;
     }
 }

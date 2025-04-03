@@ -19,6 +19,7 @@ import java.util.List;
 public class SizeAdapter extends RecyclerView.Adapter<SizeAdapter.ViewHolder> {
     private List<String> items;
     private Context context;
+    public static Size sizeSelected = null;
 
     private Product product;
 
@@ -90,6 +91,8 @@ public class SizeAdapter extends RecyclerView.Adapter<SizeAdapter.ViewHolder> {
 
             holder.binding.sizeTxt.setTextColor(context.getResources().getColor(R.color.white));
 //            holder.binding.sizeTxt.setTextColor(context.getResources().getColor(R.color.purple));
+
+            sizeSelected = holder.size;
         } else {
             // Nếu không phải → nền xám
             holder.binding.colorLayout.setBackgroundResource(R.drawable.grey_bg);

@@ -178,7 +178,7 @@
 
                 <androidx.appcompat.widget.AppCompatButton
                     style="@android:style/Widget.Button"
-                    android:id="@+id/addToCartBtn"
+                    android:id="@+id/checkOutBtn"
                     android:textSize="18sp"
                     android:textColor="@color/white"
                     android:layout_width="wrap_content"
@@ -189,7 +189,7 @@
                     android:text="Buy Now" />
 
                 <ImageButton
-                    android:id="@+id/cartBtn"
+                    android:id="@+id/addToCartBtn"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:background="@drawable/grey_bg"

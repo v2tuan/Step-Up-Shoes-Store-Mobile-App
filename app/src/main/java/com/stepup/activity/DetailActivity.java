@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,12 +22,14 @@ import com.stepup.adapter.BannerAdapter;
 import com.stepup.adapter.ColorAdapter;
 import com.stepup.adapter.SizeAdapter;
 import com.stepup.databinding.ActivityDetailBinding;
+import com.stepup.model.AddToCartDTO;
 import com.stepup.model.Banner;
 import com.stepup.model.Color;
 import com.stepup.model.ColorImage;
 import com.stepup.model.Product;
 import com.stepup.model.ProductCard;
 import com.stepup.model.ProductImage;
+import com.stepup.model.ProductVariant;
 import com.stepup.model.Size;
 import com.stepup.model.ZoomOutPageTransformer;
 import com.stepup.retrofit2.APIService;
@@ -63,6 +66,49 @@ public class DetailActivity extends AppCompatActivity {
 
         getBundle();
         getBanner();
+
+        // Xử lý khi nhấn nút "Cart" -> chuyển sang màn hình giỏ hàng
+        binding.addToCartBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Xử lý thêm vào giỏ hàng ở đây
+                if(ColorAdapter.colorSelected == null){
+                    Toast.makeText(DetailActivity.this, "Vui lòng chọn color", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if(SizeAdapter.sizeSelected == null){
+                    Toast.makeText(DetailActivity.this, "Vui lòng chọn size", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Long productVariant_id = null;
+                for(ProductVariant variant: product.getProductVariants()){
+                    if(variant.getColor().equals(ColorAdapter.colorSelected) && variant.getSize().equals(SizeAdapter.sizeSelected)){
+                        productVariant_id = variant.getId();
+                        break;
+                    }
+                }
+
+                AddToCartDTO addToCartDTO = new AddToCartDTO(productVariant_id, 1);
+                APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
+                Call<String> callAddCart = apiService.addCart(addToCartDTO);
+                callAddCart.enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            Toast.makeText(DetailActivity.this, response.body(), Toast.LENGTH_SHORT).show();
+                            Log.d("Add To Cart", "Message: : " + response.body());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+                        Log.e("RetrofitError", "Error: " + t.getMessage());
+                    }
+                });
+            }
+        });
     }
 
     private void getBanner(){
@@ -107,12 +153,6 @@ public class DetailActivity extends AppCompatActivity {
                         // Hiển thị trước 1 ảnh gần nhất (giúp tạo hiệu ứng mượt hơn)
                         binding.slider.setOffscreenPageLimit(1);
 
-                        // Tắt hiệu ứng kéo quá đà (overscroll) của RecyclerView bên trong ViewPager2
-//        if (binding.slider.getChildAt(0) instanceof RecyclerView) {
-//            ((RecyclerView) binding.slider.getChildAt(0)).setOverScrollMode(View.OVER_SCROLL_NEVER);
-//        }
-
-
                         // Nếu có nhiều hơn 1 ảnh thì hiển thị dotIndicator
                         if (sliderItems.size() > 1) {
                             binding.dotIndicator.setVisibility(View.VISIBLE);
@@ -123,23 +163,19 @@ public class DetailActivity extends AppCompatActivity {
                         Log.e("TAG", "Lỗi xảy ra: " + exception.getMessage(), exception);
                     }
 
-
-
-
-
-                    // Tạo danh sách colorList để lưu các ảnh đại diện màu sắc (hoặc màu)
-                    ArrayList<String> colorList = new ArrayList<>();
-
-                    // Duyệt qua danh sách đường dẫn ảnh (có thể là hình ảnh màu)
-                    for (Color color : product.getColors()) {
-                        colorList.add(color.getColorImages().get(0).getImageUrl());
-                    }
+//                    // Tạo danh sách colorList để lưu các ảnh đại diện màu sắc (hoặc màu)
+//                    ArrayList<String> colorList = new ArrayList<>();
+//
+//                    // Duyệt qua danh sách đường dẫn ảnh (có thể là hình ảnh màu)
+//                    for (Color color : product.getColors()) {
+//                        colorList.add(color.getColorImages().get(0).getImageUrl());
+//                    }
 
                     // Gán adapter cho RecyclerView hiển thị màu sắc (hoặc ảnh đại diện màu)
                     ViewPager2 viewPager2 = binding.slider;
 
                     DotsIndicator dotsIndicator = binding.dotIndicator;
-                    binding.colorList.setAdapter(new ColorAdapter(colorList, viewPager2, dotsIndicator, product, sliderItems, bannerAdapter, binding.sizeList));
+                    binding.colorList.setAdapter(new ColorAdapter(product.getColors(), viewPager2, dotsIndicator, product, sliderItems, bannerAdapter, binding.sizeList));
 
                     // Gán layoutManager cho RecyclerView màu, cũng theo chiều ngang
                     binding.colorList.setLayoutManager(

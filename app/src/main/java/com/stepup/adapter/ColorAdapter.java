@@ -3,6 +3,7 @@ package com.stepup.adapter;
 import android.content.Context;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ViewHolder> {
-    private List<String> items;
+    private List<Color> colors;
     private Context context;
     private ViewPager2 viewPager2;
 
@@ -41,13 +42,10 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ViewHolder> 
     private BannerAdapter bannerAdapter;
 
     private RecyclerView recyclerViewSize;
+    public static Color colorSelected = null;
 
-    public ColorAdapter(List<String> items) {
-        this.items = items;
-    }
-
-    public ColorAdapter(List<String> items, ViewPager2 viewPager2, DotsIndicator dotsIndicator, Product product, ArrayList<Banner> sliderItems, BannerAdapter bannerAdapter, RecyclerView recyclerViewSize) {
-        this.items = items;
+    public ColorAdapter(List<Color> items, ViewPager2 viewPager2, DotsIndicator dotsIndicator, Product product, ArrayList<Banner> sliderItems, BannerAdapter bannerAdapter, RecyclerView recyclerViewSize) {
+        this.colors = items;
         this.viewPager2 = viewPager2;
         this.dotsIndicator = dotsIndicator;
         this.product = product;
@@ -89,10 +87,10 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         // Sử dụng Glide để tải ảnh vào ImageView
         Glide.with(holder.itemView.getContext()) // Lấy context từ itemView
-                .load(items.get(position))          // Load ảnh từ item (có thể là URL hoặc resource)
+                .load(colors.get(position).getColorImages().get(0).getImageUrl()) // Load ảnh từ item (có thể là URL hoặc resource)
                 .into(holder.binding.pic);         // Hiển thị ảnh trong ImageView pic
 
-        holder.setColor(product.getColors().get(position));
+        holder.setColor(colors.get(position));
 
         // Xử lý sự kiện click vào item
         holder.binding.getRoot().setOnClickListener(new View.OnClickListener() {
@@ -105,6 +103,7 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ViewHolder> 
                 selectedPosition = position;
 
                 // Cập nhật lại item cũ và item mới (tạo hiệu ứng refresh)
+                // khi gọi hàm này thì onBindViewHolder sẽ đợc gọi lại và set background
                 notifyItemChanged(lastSelectedPosition);
                 notifyItemChanged(selectedPosition);
 
@@ -112,7 +111,7 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ViewHolder> 
                 holder.itemView.post(() -> {
                     try {
                         sliderItems.clear();
-                        for (ColorImage image : product.getColors().get(position).getColorImages()) {
+                        for (ColorImage image : colors.get(position).getColorImages()) {
                             sliderItems.add(new Banner(image.getImageUrl()));
                         }
 
@@ -139,7 +138,7 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ViewHolder> 
                     View child = recyclerViewSize.getChildAt(i);
                     RecyclerView.ViewHolder holderSize = recyclerViewSize.getChildViewHolder(child);
 
-                    // ép kiểu nếu bạn có ViewBinding cụ thể
+                    // ép kiểu
                     SizeAdapter.ViewHolder sizeHolder = (SizeAdapter.ViewHolder) holderSize;
 
                     for (ProductVariant variant : product.getProductVariants()) {
@@ -153,6 +152,11 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ViewHolder> 
                                 sizeHolder.binding.colorLayout.setBackgroundResource(R.drawable.bg_out_of_stock);
                                 holder.binding.colorLayout.setTag(R.id.bg_selected_tag, null); // Lưu ID vào tag
                                 sizeHolder.binding.getRoot().setEnabled(false);
+
+                                // Nếu size đang chọn đã hết hàng thì set null sizeSelected
+                                if(SizeAdapter.sizeSelected == sizeHolder.getSize()){
+                                    SizeAdapter.sizeSelected = null;
+                                }
                             }
                             else {
                                 // xử lý: ví dụ gạch ngang chữ size
@@ -161,6 +165,7 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ViewHolder> 
                                 );
                                 Drawable currentDrawable = sizeHolder.binding.colorLayout.getBackground();
                                 Drawable expectedDrawable = ContextCompat.getDrawable(context, R.drawable.black_bg_selected);
+
 
 //                                if (currentDrawable != null && expectedDrawable != null && !currentDrawable.getConstantState().equals(expectedDrawable.getConstantState())) {
 //                                    sizeHolder.binding.sizeTxt.setTextColor(context.getResources().getColor(R.color.black));
@@ -186,6 +191,7 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ViewHolder> 
         if (selectedPosition == position) {
             // Nếu item này là item đang được chọn → nền tím
             holder.binding.colorLayout.setBackgroundResource(R.drawable.black_bg_selected);
+            colorSelected = holder.color;
         } else {
             // Nếu không phải → nền xám
             holder.binding.colorLayout.setBackgroundResource(R.drawable.grey_bg);
@@ -195,6 +201,6 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return colors.size();
     }
 }
