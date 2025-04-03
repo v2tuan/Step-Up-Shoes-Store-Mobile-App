@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -38,6 +39,9 @@ import com.stepup.model.ZoomOutPageTransformer;
 import com.stepup.retrofit2.APIService;
 import com.stepup.retrofit2.RetrofitClient;
 
+import org.json.JSONObject;
+
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -65,7 +69,8 @@ public class LoginActivity extends AppCompatActivity {
         });
 //        SharedPreferences.Editor editor = getSharedPreferences("MyAppPrefs", MODE_PRIVATE).edit();
 //        editor.remove("token");
- //       editor.apply();
+//        editor.remove("remember");
+//        editor.apply();
         checkLogin();
 
 
@@ -108,7 +113,6 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
                     boolean rememberMe = activityLoginBinding.checkboxRemember.isChecked();
                     saveToken(token, rememberMe);
-                    // Truyền token qua màn hình chính
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     intent.putExtra("token", token);
                     startActivity(intent);
@@ -126,26 +130,67 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-    // Hàm lưu token vào SharedPreferences
     private void saveToken(String token, boolean rememberMe) {
         SharedPreferences.Editor editor = getSharedPreferences("MyAppPrefs", MODE_PRIVATE).edit();
-        if (rememberMe) {
-            editor.putString("token", token);
-        } else {
-            editor.remove("token");
-        }
+        editor.putString("token", token);
+        editor.putBoolean("rememberMe", rememberMe);
         editor.apply();
     }
 
-    // Kiểm tra đăng nhập khi mở ứng dụng
     private void checkLogin() {
-        String token = getSharedPreferences("MyAppPrefs", MODE_PRIVATE).getString("token", null);
-        if (token != null) {
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            intent.putExtra("token", token);
-            startActivity(intent);
-            finish();
+        SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        String token = prefs.getString("token", null);
+        boolean rememberMe = prefs.getBoolean("rememberMe", false);
+
+        // Kiểm tra token hợp lệ và Remember Me
+        if (token != null && rememberMe) {
+            if (checkTokenValid(token)) {
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                intent.putExtra("token", token);
+                startActivity(intent);
+                finish();
+            } else {
+                clearToken();
+                Toast.makeText(this, "Đăng nhập hết hạn. Vui lòng đăng nhập lại!", Toast.LENGTH_SHORT).show();
+            }
         }
+    }
+    private boolean checkTokenValid(String token) {
+        try {
+            // Tách phần payload từ token
+            String[] parts = token.split("\\.");
+            if (parts.length != 3) {
+                throw new IllegalArgumentException("Token không hợp lệ");
+            }
+
+            // Giải mã payload
+            String payloadJson = new String(Base64.decode(parts[1], Base64.URL_SAFE), StandardCharsets.UTF_8);
+            JSONObject payload = new JSONObject(payloadJson);
+
+            // Lấy thời gian hết hạn từ payload
+            long exp = payload.getLong("exp");
+
+            // Lấy thời gian hiện tại (timestamp tính bằng giây)
+            long currentTime = System.currentTimeMillis() / 1000;
+
+            // So sánh thời gian hết hạn
+            if (currentTime < exp) {
+                Log.d("AuthInterceptor", "Token hợp lệ, thời gian hết hạn: " + exp);
+                return true;
+            } else {
+                Log.e("AuthInterceptor", "Token đã hết hạn");
+                return false;
+            }
+        } catch (Exception e) {
+            Log.e("AuthInterceptor", "Có lỗi xảy ra khi kiểm tra token: " + e.getMessage());
+            return false;
+        }
+    }
+    private void clearToken() {
+        SharedPreferences.Editor editor = getSharedPreferences("MyAppPrefs", MODE_PRIVATE).edit();
+        editor.remove("token");
+        editor.remove("rememberMe");
+        editor.apply();
     }
     public void goToRegister(View view) {
         Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
