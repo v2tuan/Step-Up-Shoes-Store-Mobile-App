@@ -3,12 +3,29 @@ package com.stepup.fragment;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
 import com.stepup.R;
+import com.stepup.adapter.CartAdapter;
+import com.stepup.databinding.FragmentHomeBinding;
+import com.stepup.databinding.FragmentPersonBinding;
+import com.stepup.listener.ChangeNumberItemsListener;
+import com.stepup.model.CartItem;
+import com.stepup.model.User;
+import com.stepup.retrofit2.APIService;
+import com.stepup.retrofit2.RetrofitClient;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -48,6 +65,7 @@ public class PersonFragment extends Fragment {
         return fragment;
     }
 
+    FragmentPersonBinding binding;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +78,31 @@ public class PersonFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        binding = FragmentPersonBinding.inflate(inflater, container, false);
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_person, container, false);
+        return binding.getRoot();
+    }
+
+    private void getUser(){
+        APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
+        Call<User> callProfile = apiService.profile();
+        callProfile.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                User user = response.body();
+                binding.tvName.setText(user.getFullName());
+                if(user.getProfileImage() != null) {
+                    Glide.with(getContext())
+                            .load(user.getProfileImage())
+                            .into(binding.profileImage);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.e("RetrofitError", "Error: " + t.getMessage());
+            }
+        });
     }
 }

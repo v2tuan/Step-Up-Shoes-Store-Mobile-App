@@ -44,6 +44,9 @@ public interface APIService {
     @POST("users/login")
     Call<Map<String, String>> login(@Body User userLoginDTO);
 
+    @POST("users/profile")
+    Call<User> profile();
+
     @POST("cart/add")
     Call<String> addCart(@Body AddToCartDTO addToCartDTO);
 
