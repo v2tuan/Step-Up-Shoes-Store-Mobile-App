@@ -1,5 +1,6 @@
 package com.stepup.fragment;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import com.bumptech.glide.Glide;
 import com.stepup.R;
@@ -79,7 +81,8 @@ public class PersonFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentPersonBinding.inflate(inflater, container, false);
-
+        getUser();
+        showLoading();
         // Inflate the layout for this fragment
         return binding.getRoot();
     }
@@ -91,18 +94,40 @@ public class PersonFragment extends Fragment {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 User user = response.body();
+                if(user == null){
+                    return;
+                }
                 binding.tvName.setText(user.getFullName());
                 if(user.getProfileImage() != null) {
                     Glide.with(getContext())
                             .load(user.getProfileImage())
                             .into(binding.profileImage);
                 }
+                else {
+                    binding.profileImage.setImageResource(R.drawable.default_avatar);
+                }
+                hideLoading();
             }
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
+                hideLoading();
                 Log.e("RetrofitError", "Error: " + t.getMessage());
             }
         });
+    }
+
+    // Hiển thị process bar
+    private void showLoading() {
+        FrameLayout overlay = binding.overlay;
+        overlay.setVisibility(View.VISIBLE);
+        overlay.setClickable(true); // Chặn tương tác với các view bên dưới
+    }
+
+    // Ẩn process bar
+    private void hideLoading() {
+        FrameLayout overlay = binding.overlay;
+        overlay.setVisibility(View.GONE);
+        overlay.setClickable(false);
     }
 }

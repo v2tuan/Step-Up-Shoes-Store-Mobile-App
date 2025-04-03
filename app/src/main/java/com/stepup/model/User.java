@@ -3,7 +3,7 @@ package com.stepup.model;
 import com.google.gson.annotations.SerializedName;
 
 public class User {
-    @SerializedName("fullname")
+    @SerializedName("fullName")
     private String fullName;
 
     @SerializedName("email")
