@@ -36,7 +36,8 @@ public class AuthInterceptor implements Interceptor {
         Request newRequest = originalRequest.newBuilder()
                 .header("Authorization", "Bearer " + token)
                 .build();
-
+        Log.d("AuthInterceptor", "Request URL: " + originalRequest.url());
+        Log.d("AuthInterceptor", "Headers: " + originalRequest.headers());
         Response response = chain.proceed(newRequest);
 
         // Xử lý khi token hết hạn (401 Unauthorized)
