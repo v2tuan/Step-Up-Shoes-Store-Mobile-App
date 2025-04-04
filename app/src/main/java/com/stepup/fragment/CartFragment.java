@@ -107,7 +107,7 @@ public class CartFragment extends Fragment {
                         public void onChanged() {
                             calculateCart();
                         }
-                    });
+                    }, binding);
 
                     binding.viewCart.setAdapter(cartAdapter);
 

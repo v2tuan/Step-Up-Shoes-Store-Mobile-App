@@ -55,4 +55,7 @@ public interface APIService {
 
     @GET("cart")
     Call<List<CartItem>> getAllCartItem();
+
+    @POST("cart/remove/{id}")
+    Call<String> removeCartItem(@Path("id") long cartItemId);
 }
