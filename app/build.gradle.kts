@@ -81,4 +81,6 @@ dependencies {
     implementation ("com.github.ismaeldivita:chip-navigation-bar:1.4.0")
 
     implementation ("de.hdodenhof:circleimageview:3.1.0")
+
+//    implementation ("com.agrawalsuneet.androidlibs:dotsloader:1.4")
 }

@@ -99,7 +99,7 @@
 
     <!-- Nike Member Benefits Section -->
     <LinearLayout
-        android:id="@+id/inbox"
+        android:id="@+id/btnInbox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
@@ -139,7 +139,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/address"
+        android:id="@+id/btnAddress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
@@ -179,7 +179,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/benefits"
+        android:id="@+id/btnBenefits"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"

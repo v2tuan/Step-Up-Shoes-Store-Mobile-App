@@ -1,5 +1,6 @@
 package com.stepup.fragment;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
@@ -14,6 +15,7 @@ import android.widget.FrameLayout;
 
 import com.bumptech.glide.Glide;
 import com.stepup.R;
+import com.stepup.activity.AddressActivity;
 import com.stepup.adapter.CartAdapter;
 import com.stepup.databinding.FragmentHomeBinding;
 import com.stepup.databinding.FragmentPersonBinding;
@@ -83,8 +85,18 @@ public class PersonFragment extends Fragment {
         binding = FragmentPersonBinding.inflate(inflater, container, false);
         getUser();
         showLoading();
+        setEvent();
         // Inflate the layout for this fragment
         return binding.getRoot();
+    }
+
+    private void setEvent() {
+        binding.btnAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getActivity(), AddressActivity.class));
+            }
+        });
     }
 
     private void getUser(){
