@@ -144,8 +144,10 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:orientation="vertical"
+        android:background="?attr/selectableItemBackground"
         android:paddingTop="32dp"
         android:paddingStart="24dp"
+        android:checkable="true"
         android:paddingEnd="24dp">
         <LinearLayout
             android:layout_width="match_parent"
