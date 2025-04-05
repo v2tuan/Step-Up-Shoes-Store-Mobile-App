@@ -114,8 +114,8 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/colorList"
-                android:layout_width="56dp"
-                android:layout_height="192dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginTop="4dp"
                 android:clipToPadding="false"
                 android:paddingStart="8dp"
