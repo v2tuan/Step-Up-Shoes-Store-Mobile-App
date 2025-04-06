@@ -1,5 +1,6 @@
 package com.stepup.fragment;
 
+import android.content.Intent;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,9 +19,12 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.stepup.R;
+import com.stepup.activity.AddAddressActivity;
+import com.stepup.activity.CheckOutActivity;
 import com.stepup.activity.DetailActivity;
 import com.stepup.adapter.CartAdapter;
 import com.stepup.adapter.SizeAdapter;
+import com.stepup.databinding.ActivityAddAddressBinding;
 import com.stepup.databinding.FragmentCartBinding;
 import com.stepup.databinding.FragmentHomeBinding;
 import com.stepup.listener.ChangeNumberItemsListener;
@@ -84,6 +89,7 @@ public class CartFragment extends Fragment {
         }
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -129,6 +135,14 @@ public class CartFragment extends Fragment {
             public void onFailure(Call<List<CartItem>> call, Throwable t) {
                 hideLoading();
                 Log.e("RetrofitError", "Error: " + t.getMessage());
+            }
+        });
+
+        binding.btnCheckOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), CheckOutActivity.class);
+                startActivity(intent);
             }
         });
         return binding.getRoot();
