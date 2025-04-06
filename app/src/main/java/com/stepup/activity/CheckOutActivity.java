@@ -5,6 +5,8 @@ import static androidx.core.content.ContentProviderCompat.requireContext;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.LinearLayout;
 
 import androidx.activity.EdgeToEdge;
 import androidx.core.graphics.Insets;
@@ -13,9 +15,13 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.android.material.materialswitch.MaterialSwitch;
+import com.google.android.material.search.SearchBar;
+import com.google.android.material.search.SearchView;
 import com.stepup.R;
 import com.stepup.adapter.OrderItemAdapter;
 import com.stepup.databinding.ActivityCheckOutBinding;
+import com.stepup.fragment.MyBottomSheetFragment;
 import com.stepup.model.CartItem;
 
 import java.util.List;
@@ -36,6 +42,18 @@ public class CheckOutActivity extends BaseActivity {
         });
 
         getOrderItems();
+
+        binding.btnCoupon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MyBottomSheetFragment bottomSheet = new MyBottomSheetFragment();
+                bottomSheet.show(getSupportFragmentManager(), bottomSheet.getTag());
+            }
+        });
+
+//        SearchBar searchBar = binding.catSearchBar;
+//        SearchView searchView = binding.catSearchView;
+//        searchView.setupWithSearchBar(searchBar);
     }
 
     private void getOrderItems() {
