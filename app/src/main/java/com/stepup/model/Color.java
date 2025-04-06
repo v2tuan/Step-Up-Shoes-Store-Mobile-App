@@ -1,9 +1,14 @@
 package com.stepup.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
 import java.util.List;
 import java.util.Objects;
 
-public class Color {
+public class Color implements Parcelable {
     private Long id;
     private String name;
     private List<ColorImage> colorImages;
@@ -13,6 +18,30 @@ public class Color {
         this.name = name;
         this.colorImages = colorImages;
     }
+
+    protected Color(Parcel in) {
+        if (in.readByte() == 0) {
+            id = null;
+        } else {
+            id = in.readLong();
+        }
+        name = in.readString();
+
+        ///////////////////////
+        colorImages = in.createTypedArrayList(ColorImage.CREATOR); // ✅ Đọc lại
+    }
+
+    public static final Creator<Color> CREATOR = new Creator<Color>() {
+        @Override
+        public Color createFromParcel(Parcel in) {
+            return new Color(in);
+        }
+
+        @Override
+        public Color[] newArray(int size) {
+            return new Color[size];
+        }
+    };
 
     @Override
     public boolean equals(Object obj) {
@@ -49,5 +78,24 @@ public class Color {
 
     public void setColorImages(List<ColorImage> colorImages) {
         this.colorImages = colorImages;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel parcel, int i) {
+        if (id == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeLong(id);
+        }
+        parcel.writeString(name);
+
+        //////////////////////////
+        parcel.writeTypedList(colorImages); // ✅ Thay vì writeParcelable
     }
 }
