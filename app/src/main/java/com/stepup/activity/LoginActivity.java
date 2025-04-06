@@ -35,6 +35,7 @@ import com.stepup.databinding.ActivityLoginBinding;
 import com.stepup.databinding.ActivityMainBinding;
 import com.stepup.model.Banner;
 import com.stepup.model.User;
+import com.stepup.model.UserDTO;
 import com.stepup.model.ZoomOutPageTransformer;
 import com.stepup.retrofit2.APIService;
 import com.stepup.retrofit2.RetrofitClient;
@@ -67,10 +68,10 @@ public class LoginActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-//        SharedPreferences.Editor editor = getSharedPreferences("MyAppPrefs", MODE_PRIVATE).edit();
-//        editor.remove("token");
-//        editor.remove("remember");
-//        editor.apply();
+        SharedPreferences.Editor editor = getSharedPreferences("MyAppPrefs", MODE_PRIVATE).edit();
+        editor.remove("token");
+        editor.remove("remember");
+        editor.apply();
         checkLogin();
 
 
@@ -103,7 +104,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void loginUser(String email, String password) {
-        User userLoginDTO = new User(email, password);
+        UserDTO userLoginDTO = new UserDTO(email, password);
         APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
         apiService.login(userLoginDTO).enqueue(new Callback<Map<String, String>>() {
             @Override
@@ -131,6 +132,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
     private void saveToken(String token, boolean rememberMe) {
+
         SharedPreferences.Editor editor = getSharedPreferences("MyAppPrefs", MODE_PRIVATE).edit();
         Log.e("Tokenn", token);
         editor.putString("token", token);

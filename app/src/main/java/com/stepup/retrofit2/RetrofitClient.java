@@ -9,6 +9,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public class RetrofitClient {
     private static Retrofit retrofit;
 
+    private static Retrofit locationRetrofit;
     public static Retrofit getRetrofit(){
         if(retrofit==null){
             HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
@@ -22,5 +23,22 @@ public class RetrofitClient {
                     .build();
         }
         return retrofit;
+    }
+    public static Retrofit getLocationRetrofit() {
+        if (locationRetrofit== null) {
+            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+            OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                    .addInterceptor(loggingInterceptor)
+                    .build();
+
+            locationRetrofit= new Retrofit.Builder()
+                    .baseUrl("https://vn-public-apis.fpo.vn/")
+                    .client(okHttpClient)
+                    .addConverterFactory(GsonConverterFactory.create()) // For JSON responses
+                    .build();
+        }
+        return locationRetrofit;
     }
 }

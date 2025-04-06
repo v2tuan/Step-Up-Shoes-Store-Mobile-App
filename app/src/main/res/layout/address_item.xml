@@ -1,47 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#EEEEEE"
-    android:padding="12dp"
-    android:layout_marginBottom="8dp">
+    android:layout_marginBottom="12dp"
+    app:cardBackgroundColor="#FFFFFF"
+    app:cardElevation="2dp"
+    app:cardCornerRadius="8dp">
 
-    <TextView
-        android:id="@+id/tvName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Tên người nhận"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:textColor="@color/black"
-        android:layout_marginBottom="4dp"/>
-
-    <TextView
-        android:id="@+id/tvPhone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Số điện thoại"
-        android:textColor="@color/grey"
-        android:layout_marginBottom="4dp"/>
-
-    <TextView
-        android:id="@+id/tvAddress"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Địa chỉ chi tiết"
-        android:textColor="@color/grey"
-        android:layout_marginBottom="4dp"/>
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <!-- Button Mặc định -->
-    <Button
-        android:id="@+id/btnSetDefault"
-        android:layout_width="80dp"
-        android:layout_height="40dp"
-        android:text="Mặc định"
-        android:textSize="12sp"
-        android:textColor="@color/white"
-        android:backgroundTint="@color/black"
-        android:paddingHorizontal="8dp"
-        android:paddingVertical="4dp"/>
-</LinearLayout>
+        <!-- Tên người nhận -->
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tên người nhận"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- Số điện thoại -->
+        <TextView
+            android:id="@+id/tvPhone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Số điện thoại"
+            android:textSize="14sp"
+            android:textColor="#000000"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- Địa chỉ -->
+        <TextView
+            android:id="@+id/tvAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Địa chỉ chi tiết"
+            android:textSize="14sp"
+            android:textColor="#000000"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Đường phân cách nhẹ -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E0E0E0"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- Layout chứa nút và biểu tượng -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:paddingTop="2dp">
+
+            <!-- Nút Mặc định (kiểu text button) -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSetDefault"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="Mặc định"
+                android:textSize="14sp"
+                android:textColor="#000000"
+                style="@style/Widget.Material3.Button.TextButton"
+                app:strokeColor="#000000"
+                app:strokeWidth="1dp"
+                android:paddingHorizontal="12dp"
+                android:layout_marginEnd="8dp"/>
+
+
+
+
+            <ImageView
+                android:id="@+id/imgEdit"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_edit"
+                app:tint="#000000" />
+
+            <ImageView
+                android:id="@+id/imgDelete"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="8dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_delete"
+                app:tint="#000000"
+                android:background="?attr/selectableItemBackgroundBorderless"/>
+
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

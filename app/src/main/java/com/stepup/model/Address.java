@@ -2,11 +2,17 @@ package com.stepup.model;
 
 public class Address {
     private Long id;
-    private String fullname;
-    private String Address;
+    private String fullName;
+    private String address;
     private String phone;
 
     public Address() {
+    }
+
+    public Address(String fullName, String phone, String address) {
+        this.fullName = fullName;
+        this.phone = phone;
+        this.address = address;
     }
 
     public Long getId() {
@@ -17,20 +23,12 @@ public class Address {
         this.id = id;
     }
 
-    public String getFullname() {
-        return fullname;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setFullname(String fullname) {
-        this.fullname = fullname;
-    }
-
-    public String getAddress() {
-        return Address;
-    }
-
-    public void setAddress(String address) {
-        Address = address;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getPhone() {
@@ -39,5 +37,13 @@ public class Address {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getAddr() {
+        return address;
+    }
+
+    public void setAddr(String addr) {
+        this.address = addr;
     }
 }

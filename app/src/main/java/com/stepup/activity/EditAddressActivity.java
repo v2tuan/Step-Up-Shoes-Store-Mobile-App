@@ -28,7 +28,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class AddAddressActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class EditAddressActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private ActivityAddAddressBinding binding; // Khai báo View Binding
     private static final int REQUEST_LOCATION = 100;
@@ -38,6 +38,7 @@ public class AddAddressActivity extends AppCompatActivity implements OnMapReadyC
     private GoogleMap mMap;
     private LatLng selectedLatLng;
     private String firstAddress;
+    Long addressId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +47,57 @@ public class AddAddressActivity extends AppCompatActivity implements OnMapReadyC
         // Khởi tạo View Binding
         binding = ActivityAddAddressBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        Intent intent = getIntent();
+        addressId = intent.getLongExtra("addressId", -1);
+        String name = intent.getStringExtra("name");
+        String phoneNumber = intent.getStringExtra("phoneNumber");
+        String address = intent.getStringExtra("address");
+        binding.etName.setText(name);
+        binding.etPhoneNumber.setText(phoneNumber);
+        binding.etAddress.setText(address);
+
+        // Tách firstAddress và houseNumber từ address
+        if (address != null && !address.isEmpty()) {
+            String houseNumber = "";
+            firstAddress = "";
+
+            // Các từ khóa để tách: "Phường", "Xã", "Thôn"
+            String[] keywords = {"Phường", "Xã"};
+            int splitIndex = -1;
+
+            // Tìm vị trí của từ khóa đầu tiên xuất hiện
+            for (String keyword : keywords) {
+                splitIndex = address.indexOf(keyword);
+                if (splitIndex != -1) {
+                    break; // Thoát vòng lặp khi tìm thấy từ khóa
+                }
+            }
+
+            if (splitIndex != -1) {
+                houseNumber = address.substring(0, splitIndex).trim(); // Phần trước từ khóa
+                firstAddress = address.substring(splitIndex).trim(); // Phần từ từ khóa trở đi
+            } else {
+                // Nếu không tìm thấy từ khóa, mặc định tách theo dấu phẩy đầu tiên
+                if (address.contains(",")) {
+                    String[] parts = address.split(", ", 2);
+                    if (parts.length == 2) {
+                        houseNumber = parts[0].trim();
+                        firstAddress = parts[1].trim();
+                    }
+                } else {
+                    // Nếu không có từ khóa và dấu phẩy, gán toàn bộ cho houseNumber
+                    houseNumber = address.trim();
+                }
+            }
+
+            // Ánh xạ dữ liệu lên giao diện
+            binding.etHouseNumber.setText(houseNumber);
+            binding.etProvinceDistrictWard.setText(firstAddress);
+        }
+        selectedLatLng = getLatLngFromAddress(address);
+        if (selectedLatLng != null) {
+            showMapLocation(selectedLatLng, address);
+        }
 
         // Sự kiện quay lại
         binding.btnBack.setOnClickListener(v -> finish());
@@ -64,13 +116,13 @@ public class AddAddressActivity extends AppCompatActivity implements OnMapReadyC
                     if (selectedLatLng != null) {
                         showMapLocation(selectedLatLng, fullAddress);
                     } else {
-                        Toast.makeText(AddAddressActivity.this, "Không tìm thấy tọa độ cho địa chỉ này", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(EditAddressActivity.this, "Không tìm thấy tọa độ cho địa chỉ này", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     if (houseNumber.isEmpty()) {
-                        Toast.makeText(AddAddressActivity.this, "Vui lòng nhập số nhà", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(EditAddressActivity.this, "Vui lòng nhập số nhà", Toast.LENGTH_SHORT).show();
                     } else if (firstAddress == null || firstAddress.isEmpty()) {
-                        Toast.makeText(AddAddressActivity.this, "Vui lòng chọn tỉnh, huyện, xã", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(EditAddressActivity.this, "Vui lòng chọn tỉnh, huyện, xã", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -82,14 +134,14 @@ public class AddAddressActivity extends AppCompatActivity implements OnMapReadyC
 
         // Chọn vị trí từ MapsActivity
         binding.btnSelectFromMap.setOnClickListener(v -> {
-            Intent mapIntent = new Intent(AddAddressActivity.this, MapsActivity.class);
+            Intent mapIntent = new Intent(EditAddressActivity.this, MapsActivity.class);
             startActivityForResult(mapIntent, REQUEST_LOCATION);
         });
 
         // Hoàn thành
         binding.btnComplete.setOnClickListener(v -> {
-            String address = binding.etAddress.getText().toString();
-            if (address.isEmpty()) {
+            String address1 = binding.etAddress.getText().toString();
+            if (address1.isEmpty()) {
                 Toast.makeText(this, "Vui lòng nhập địa chỉ", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "Địa chỉ đã được lưu!", Toast.LENGTH_SHORT).show();
@@ -97,38 +149,40 @@ public class AddAddressActivity extends AppCompatActivity implements OnMapReadyC
         });
 
         binding.btnComplete.setOnClickListener(v -> {
-            String name = binding.etName.getText().toString().trim();
-            String phoneNumber = binding.etPhoneNumber.getText().toString().trim();
-            String address = binding.etAddress.getText().toString().trim();
+            String nameUpdate = binding.etName.getText().toString().trim();
+            String phoneNumberUpdate = binding.etPhoneNumber.getText().toString().trim();
+            String addressUpdate = binding.etAddress.getText().toString().trim();
 
-            if (name.isEmpty() || phoneNumber.isEmpty() || address.isEmpty()) {
+            if (nameUpdate.isEmpty() || phoneNumberUpdate.isEmpty() || addressUpdate.isEmpty()) {
                 Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Tạo AddressDTO để gửi lên API
-            com.stepup.model.Address addressDTO = new com.stepup.model.Address(name, phoneNumber, address);
+            // Tạo Address để gửi lên API
+            com.stepup.model.Address addressDTO = new com.stepup.model.Address(nameUpdate, phoneNumberUpdate, addressUpdate);
             APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
-            // Gửi yêu cầu POST đến API
-            apiService.createAddress(addressDTO).enqueue(new Callback<ApiResponse>() {
+
+            // Gửi yêu cầu PUT đến API
+            apiService.updateAddress(addressId, addressDTO).enqueue(new Callback<ApiResponse>() {
                 @Override
                 public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
                         ApiResponse responseObject = response.body();
-                        if (responseObject.getMessage().equals("Created new address successfully")) {
-                            Toast.makeText(AddAddressActivity.this, responseObject.getMessage(), Toast.LENGTH_SHORT).show();
-                            finish(); // Quay lại màn hình trước sau khi lưu thành công
+                        if (responseObject.getMessage().equals("Cập nhật địa chỉ thành công")) {
+                            Toast.makeText(EditAddressActivity.this, responseObject.getMessage(), Toast.LENGTH_SHORT).show();
+                            setResult(RESULT_OK); // Thông báo cho AddressActivity rằng đã cập nhật thành công
+                            finish();
                         } else {
-                            Toast.makeText(AddAddressActivity.this, responseObject.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(EditAddressActivity.this, responseObject.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(AddAddressActivity.this, "Lỗi: " + response.message(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(EditAddressActivity.this, "Lỗi: " + response.message(), Toast.LENGTH_SHORT).show();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ApiResponse> call, Throwable t) {
-                    Toast.makeText(AddAddressActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EditAddressActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         });

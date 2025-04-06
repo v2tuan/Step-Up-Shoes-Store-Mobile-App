@@ -28,7 +28,7 @@
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Thêm Địa Chỉ Mới"
+            android:text="Sửa Địa Chỉ"
             android:textSize="20sp"
             android:textColor="@android:color/black"
             android:layout_gravity="center" />
@@ -228,7 +228,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="24dp"
-        android:text="Hoàn Thành"
+        android:text="Cập Nhập"
         android:textSize="16sp"
         android:textColor="#FFFFFF"
         android:paddingVertical="12dp"

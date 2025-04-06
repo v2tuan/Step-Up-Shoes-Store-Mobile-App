@@ -26,7 +26,15 @@
         <activity
             android:name=".activity.CheckOutActivity"
             android:exported="false" />
-
+ 		<activity
+            android:name=".activity.EditAddressActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.HouseNumberActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.SelectLocationActivity"
+            android:exported="false" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyB4hfY11JIyUF-6b-hQM2zu0oPowjq7l6Q" />
