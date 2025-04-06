@@ -3,7 +3,7 @@ package com.stepup.model;
 import com.google.gson.annotations.SerializedName;
 
 public class User {
-    @SerializedName("fullname")
+    @SerializedName("fullName")
     private String fullName;
 
     @SerializedName("email")
@@ -15,6 +15,11 @@ public class User {
 
     @SerializedName("retype_password")
     private String retype_password;
+    private String givenName;
+    private String familyName;
+    private String profileImage;
+    private String phone;
+    private int points;
 
     public User(String fullName, String email, String password, String retype_password) {
         this.fullName = fullName;
@@ -58,5 +63,45 @@ public class User {
 
     public void setRetype_password(String retype_password) {
         this.retype_password = retype_password;
+    }
+
+    public String getGivenName() {
+        return givenName;
+    }
+
+    public void setGivenName(String givenName) {
+        this.givenName = givenName;
+    }
+
+    public String getFamilyName() {
+        return familyName;
+    }
+
+    public void setFamilyName(String familyName) {
+        this.familyName = familyName;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
     }
 }

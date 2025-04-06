@@ -133,6 +133,7 @@ public class LoginActivity extends AppCompatActivity {
     private void saveToken(String token, boolean rememberMe) {
 
         SharedPreferences.Editor editor = getSharedPreferences("MyAppPrefs", MODE_PRIVATE).edit();
+        Log.e("Tokenn", token);
         editor.putString("token", token);
         editor.putBoolean("rememberMe", rememberMe);
         editor.apply();
@@ -148,6 +149,7 @@ public class LoginActivity extends AppCompatActivity {
             if (checkTokenValid(token)) {
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 intent.putExtra("token", token);
+                Log.e("Token", token);
                 startActivity(intent);
                 finish();
             } else {

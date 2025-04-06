@@ -79,4 +79,8 @@ dependencies {
     implementation ("com.google.android.gms:play-services-location:21.0.1")
     implementation ("com.google.android.libraries.places:places:3.5.0")
     implementation ("com.github.ismaeldivita:chip-navigation-bar:1.4.0")
+
+    implementation ("de.hdodenhof:circleimageview:3.1.0")
+
+//    implementation ("com.agrawalsuneet.androidlibs:dotsloader:1.4")
 }

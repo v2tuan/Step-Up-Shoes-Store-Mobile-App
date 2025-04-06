@@ -45,6 +45,10 @@ public interface APIService {
 
     @POST("users/login")
     Call<Map<String, String>> login(@Body User userLoginDTO);
+
+    @GET("users/profile")
+    Call<User> profile();
+
 	@GET("/api/check-token")
     Call<String> checkToken(@Header("Authorization") String token);
     @POST("cart/add")
@@ -53,6 +57,9 @@ public interface APIService {
     @GET("cart")
     Call<List<CartItem>> getAllCartItem();
 
-    @GET("/api/v1/address/user/addresses")
+    @POST("cart/remove/{id}")
+    Call<String> removeCartItem(@Path("id") long cartItemId);
+	
+	@GET("/api/v1/address/user/addresses")
     Call<List<Address>> getAddressesByUserId();
 }

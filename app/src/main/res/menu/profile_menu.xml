@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/confirmation"
+        android:icon="@drawable/wallet"
+        android:title="Confirmation"/>
+    <item
+        android:id="@+id/goods"
+        android:icon="@drawable/order"
+        android:title="Await Goods"/>
+    <item
+        android:id="@+id/delivery"
+        android:icon="@drawable/shipping"
+        android:title="Delivery"/>
+    <item
+        android:id="@+id/settings"
+        android:icon="@drawable/settings"
+        android:title="Settings"/>
+</menu>
