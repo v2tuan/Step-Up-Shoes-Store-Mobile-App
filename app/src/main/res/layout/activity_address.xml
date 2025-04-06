@@ -5,7 +5,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="@android:color/white"
+    android:padding="0dp">
 
     <!-- Thanh tiêu đề -->
     <RelativeLayout
@@ -31,37 +32,42 @@
             android:layout_centerHorizontal="true" />
     </RelativeLayout>
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="16dp">
     <!-- RecyclerView Danh Sách Địa Chỉ -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewAddress"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:padding="12dp" />
+        android:padding="8dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Nút Thêm Địa Chỉ Mới -->
-    <LinearLayout
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnAddNewAddress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/rounded_border"
-        android:gravity="center"
-        android:padding="16dp">
-
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/add"
-            app:tint="@color/black" />
-
-        <TextView
-            android:id="@+id/btnAddNewAddress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingStart="8dp"
-            android:text="Thêm Địa Chỉ Mới"
-            android:textColor="@color/black"
-            android:textSize="16sp" />
-    </LinearLayout>
-
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="24dp"
+        android:text="Thêm Địa Chỉ Mới"
+        android:textSize="16sp"
+        android:textColor="#000000"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        app:strokeColor="#000000"
+        app:strokeWidth="1dp"
+        app:icon="@drawable/add"
+        app:iconTint="#000000"
+        app:iconGravity="start"
+        android:paddingVertical="12dp"
+        android:paddingHorizontal="16dp"
+        app:layout_constraintTop_toBottomOf="@id/recyclerViewAddress"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

@@ -113,7 +113,6 @@ public class AddAddressActivity extends AppCompatActivity implements OnMapReadyC
             }
         }
     }
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;

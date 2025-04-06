@@ -1,6 +1,7 @@
 package com.stepup.retrofit2;
 
 import com.stepup.model.AddToCartDTO;
+import com.stepup.model.Address;
 import com.stepup.model.ApiResponse;
 import com.stepup.model.Banner;
 import com.stepup.model.CartItem;
@@ -51,4 +52,7 @@ public interface APIService {
 
     @GET("cart")
     Call<List<CartItem>> getAllCartItem();
+
+    @GET("/api/v1/address/user/addresses")
+    Call<List<Address>> getAddressesByUserId();
 }

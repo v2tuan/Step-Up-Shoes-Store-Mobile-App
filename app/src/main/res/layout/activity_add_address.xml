@@ -1,125 +1,183 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:map="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:padding="0dp">
 
-    <!-- Thanh tiêu đề -->
-    <RelativeLayout
+    <!-- Thanh tiêu đề (Toolbar) -->
+    <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="64dp"
         android:background="@color/black"
-        android:padding="12dp">
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        app:contentInsetStart="0dp">
 
         <ImageView
             android:id="@+id/btnBack"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/back"
-            android:layout_alignParentStart="true" />
+            android:layout_gravity="start" />
 
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Thêm Địa Chỉ Mới"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:textColor="@android:color/white"
-            android:layout_centerHorizontal="true" />
-    </RelativeLayout>
+            android:layout_gravity="center" />
+    </androidx.appcompat.widget.Toolbar>
 
-    <!-- Form Nhập Địa Chỉ -->
-    <LinearLayout
-        android:orientation="vertical"
+    <!-- ScrollView để hỗ trợ cuộn khi nội dung dài -->
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp">
-        <TextView
-            android:id="@+id/tvTitleAddress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Địa Chỉ"
-            android:textSize="16sp"
-            android:padding="12dp"
-            android:textColor="@android:color/black"
-            android:layout_centerHorizontal="true" />
-        <EditText
-            android:id="@+id/etName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Họ và Tên"
-            android:padding="12dp"
-            android:textSize="14sp"
-            android:background="@drawable/rounded_border"
-            android:layout_marginTop="12dp"/>
-
-        <EditText
-            android:id="@+id/etPhoneNumber"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Số Điện Thoại"
-            android:inputType="phone"
-            android:padding="12dp"
-            android:textSize="14sp"
-            android:background="@drawable/rounded_border"
-            android:layout_marginTop="12dp" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:layout_marginTop="12dp">
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <EditText
-                android:id="@+id/etAddress"
-                android:layout_width="0dp"
+            <!-- Tiêu đề Địa Chỉ -->
+            <TextView
+                android:id="@+id/tvTitleAddress"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="Địa Chỉ Chi Tiết"
-                android:padding="12dp"
-                android:textSize="14sp"
-                android:layout_weight="1"
-                android:background="@drawable/rounded_border"
-                android:singleLine="true"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:scrollHorizontally="true"/>
+                android:text="Địa Chỉ"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#000000"
+                android:layout_marginBottom="16dp" />
 
+            <!-- Họ và Tên -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:hintTextColor="#000000"
+                app:boxStrokeColor="#000000"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp">
 
-            <ImageView
-                android:id="@+id/btnSelectFromMap"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/map"
-                android:layout_marginStart="8dp"
-                android:contentDescription="Chọn từ bản đồ"
-                android:tooltipText="Chọn từ bản đồ"
-                android:background="@color/grey"
-                />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Họ và Tên"
+                    android:textSize="16sp"
+                    android:textColor="#000000"
+                    android:padding="12dp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Số Điện Thoại -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:hintTextColor="#000000"
+                app:boxStrokeColor="#000000"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etPhoneNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Số Điện Thoại"
+                    android:inputType="phone"
+                    android:textSize="16sp"
+                    android:textColor="#000000"
+                    android:padding="12dp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Địa Chỉ Chi Tiết và Nút Bản Đồ -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="16dp">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:hintTextColor="#000000"
+                    app:boxStrokeColor="#000000"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusBottomEnd="12dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etAddress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Địa Chỉ Chi Tiết"
+                        android:textSize="16sp"
+                        android:textColor="#000000"
+                        android:padding="12dp"
+                        android:singleLine="true"
+                        android:ellipsize="end"
+                        android:maxLines="1" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <ImageView
+                    android:id="@+id/btnSelectFromMap"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/map"
+                    android:layout_marginStart="8dp"
+                    android:padding="12dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Chọn từ bản đồ"
+                    android:tooltipText="Chọn từ bản đồ" />
+            </LinearLayout>
+
+            <!-- Fragment Bản Đồ -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_marginBottom="16dp"
+                android:background="#FFFFFF"
+                app:cardElevation="2dp"
+                app:cardCornerRadius="8dp">
+
+                <fragment
+                    android:id="@+id/mapFragmentContainer"
+                    android:name="com.google.android.gms.maps.SupportMapFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </FrameLayout>
         </LinearLayout>
-    </LinearLayout>
+    </ScrollView>
 
-    <!-- Fragment Hiển Thị Bản Đồ -->
-    <fragment
-        android:id="@+id/mapFragmentContainer"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_margin="8dp"
-        android:background="@android:color/white"
-        android:elevation="4dp"
-        android:name="com.google.android.gms.maps.SupportMapFragment" />
     <!-- Nút Hoàn Thành -->
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnComplete"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="24dp"
         android:text="Hoàn Thành"
-        android:background="@drawable/rounded_border"
-        android:textColor="@android:color/white"
-        android:padding="12dp"
-        android:layout_margin="16dp" />
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:paddingVertical="12dp"
+        style="@style/Widget.Material3.Button"
+        app:backgroundTint="#000000" />
 </LinearLayout>

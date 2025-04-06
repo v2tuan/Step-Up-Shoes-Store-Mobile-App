@@ -67,10 +67,10 @@ public class LoginActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-//        SharedPreferences.Editor editor = getSharedPreferences("MyAppPrefs", MODE_PRIVATE).edit();
-//        editor.remove("token");
-//        editor.remove("remember");
-//        editor.apply();
+        SharedPreferences.Editor editor = getSharedPreferences("MyAppPrefs", MODE_PRIVATE).edit();
+        editor.remove("token");
+        editor.remove("remember");
+        editor.apply();
         checkLogin();
 
 
@@ -131,6 +131,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
     private void saveToken(String token, boolean rememberMe) {
+
         SharedPreferences.Editor editor = getSharedPreferences("MyAppPrefs", MODE_PRIVATE).edit();
         editor.putString("token", token);
         editor.putBoolean("rememberMe", rememberMe);

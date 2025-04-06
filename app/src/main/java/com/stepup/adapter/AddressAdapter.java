@@ -41,13 +41,19 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressV
         Address address = addressList.get(position);
 
         // Thiết lập dữ liệu
-        holder.binding.tvName.setText(address.getFullname());
-        holder.binding.tvPhone.setText(address.getPhone());
-        holder.binding.tvAddress.setText(address.getAddress());
+        holder.binding.tvName.setText("Tên người dùng: "+ address.getFullName());
+        holder.binding.tvPhone.setText("Số điện thoại: " + address.getPhone());
+        holder.binding.tvAddress.setText("Địa chỉ: "+ address.getAddr());
 
         // Xử lý sự kiện
         holder.binding.btnSetDefault.setOnClickListener(v -> {
             Toast.makeText(context, "Đã đặt địa chỉ mặc định", Toast.LENGTH_SHORT).show();
+        });
+        // Xử lý sự kiện click vào toàn bộ item để mở trang chỉnh sửa
+        holder.itemView.setOnClickListener(v -> {
+            if (actionListener != null) {
+                actionListener.onEditAddress(address);
+            }
         });
     }
 
