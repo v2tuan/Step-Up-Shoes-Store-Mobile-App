@@ -20,6 +20,15 @@
         android:theme="@style/Theme.StepUpShoesStoreMobileApp"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".activity.EditAddressActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.HouseNumberActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.SelectLocationActivity"
+            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

@@ -20,6 +20,7 @@ import com.stepup.retrofit2.RetrofitClient;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -34,6 +35,8 @@ public class AddressActivity extends AppCompatActivity {
     private TextView btnAddNewAddress;
     private ImageView btnBack;
     private RecyclerView recyclerViewAddress;
+    private Long defaultAddressId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,16 +44,11 @@ public class AddressActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_address);
         EdgeToEdge.enable(this);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
         binding = ActivityAddressBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         addressList = new ArrayList<>();
-        addressAdapter = new AddressAdapter(this, addressList);
+        addressAdapter = new AddressAdapter(this, addressList, defaultAddressId );
         binding.recyclerViewAddress.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerViewAddress.setAdapter(addressAdapter);
 
@@ -65,14 +63,33 @@ public class AddressActivity extends AppCompatActivity {
     }
     private void getUserAddresses() {
         APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
-        Call<List<Address>> call = apiService.getAddressesByUserId();
+        Call<Map<String, Object>> call = apiService.getAddressesByUserId();
 
-        call.enqueue(new Callback<List<Address>>() {
+        call.enqueue(new Callback<Map<String, Object>>() {
             @Override
-            public void onResponse(Call<List<Address>> call, Response<List<Address>> response) {
+            public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    addressList = response.body();
-                    addressAdapter = new AddressAdapter(AddressActivity.this, addressList);
+                    Map<String, Object> data = response.body();
+
+                    // Lấy danh sách địa chỉ
+                    List<Map<String, Object>> addressMaps = (List<Map<String, Object>>) data.get("addresses");
+                    addressList.clear();
+                    for (Map<String, Object> addressMap : addressMaps) {
+                        Address address = new Address();
+                        Object idValue = addressMap.get("id");
+                        address.setId(Long.valueOf(idValue.toString().split("\\.")[0]));
+                        address.setFullName(addressMap.get("fullName").toString());
+                        address.setPhone(addressMap.get("phone").toString());
+                        address.setAddr(addressMap.get("address").toString());
+                        addressList.add(address);
+                    }
+                    Object idValue = data.get("defaultAddressId");
+                    defaultAddressId = (idValue != null) ? Long.valueOf(idValue.toString().split("\\.")[0]) : null;
+
+
+
+                    // Cập nhật adapter
+                    addressAdapter = new AddressAdapter(AddressActivity.this, addressList, defaultAddressId);
                     binding.recyclerViewAddress.setAdapter(addressAdapter);
                 } else {
                     Toast.makeText(AddressActivity.this, "Không tìm thấy địa chỉ", Toast.LENGTH_SHORT).show();
@@ -80,10 +97,16 @@ public class AddressActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<List<Address>> call, Throwable t) {
+            public void onFailure(Call<Map<String, Object>> call, Throwable t) {
                 Toast.makeText(AddressActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getUserAddresses();
+    }
+
 
 }

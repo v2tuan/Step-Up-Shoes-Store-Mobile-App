@@ -9,6 +9,12 @@ public class Address {
     public Address() {
     }
 
+    public Address(String fullName, String phone, String address) {
+        this.fullName = fullName;
+        this.phone = phone;
+        this.address = address;
+    }
+
     public Long getId() {
         return id;
     }

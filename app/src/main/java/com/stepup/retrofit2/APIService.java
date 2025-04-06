@@ -5,18 +5,24 @@ import com.stepup.model.Address;
 import com.stepup.model.ApiResponse;
 import com.stepup.model.Banner;
 import com.stepup.model.CartItem;
+import com.stepup.model.UserDTO;
+import com.stepup.model.location.DistrictResponse;
 import com.stepup.model.Product;
 import com.stepup.model.ProductCard;
+import com.stepup.model.location.ProvinceResponse;
 import com.stepup.model.User;
 import com.stepup.model.VerifyOtpRequest;
+import com.stepup.model.location.WardResponse;
 
 import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
@@ -44,7 +50,7 @@ public interface APIService {
     Call<String> callbackBackend(@Query("code") String code);
 
     @POST("users/login")
-    Call<Map<String, String>> login(@Body User userLoginDTO);
+    Call<Map<String, String>> login(@Body UserDTO userLoginDTO);
 
     @GET("users/profile")
     Call<User> profile();
@@ -60,6 +66,44 @@ public interface APIService {
     @POST("cart/remove/{id}")
     Call<String> removeCartItem(@Path("id") long cartItemId);
 	
-	@GET("/api/v1/address/user/addresses")
-    Call<List<Address>> getAddressesByUserId();
+//	@GET("/api/v1/address/user/addresses")
+//  Call<List<Address>> getAddressesByUserId();
+
+    @GET("/api/v1/address/user/addresses")
+    Call<Map<String, Object>> getAddressesByUserId();
+
+    @POST("address")
+    Call<ApiResponse> createAddress(@Body Address address);
+
+    @PUT("address/{id}")
+    Call<ApiResponse> updateAddress(@Path("id") Long id, @Body Address address);
+
+    @DELETE ("address/{id}")
+    Call<ApiResponse> deleteAddress(@Path("id") Long id);
+
+    @PUT("address/set-default/{id}")
+    Call<ApiResponse> setDefaultAddress(@Path("id") Long id);
+
+    // Fetch all provinces
+    @GET("provinces/getAll")
+    Call<ProvinceResponse> getProvinces(
+            @Query("limit") int limit
+    );
+
+    // Fetch districts for a province
+    @GET("districts/getByProvince")
+    Call<DistrictResponse> getDistricts(
+            @Query("provinceCode") String provinceCode,
+            @Query("limit") int limit
+    );
+
+    // Fetch wards for a district
+    @GET("wards/getByDistrict")
+    Call<WardResponse> getWards(
+            @Query("districtCode") String districtCode,
+            @Query("limit") int limit
+    );
+
+
+
 }
