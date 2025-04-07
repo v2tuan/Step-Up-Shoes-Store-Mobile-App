@@ -101,7 +101,7 @@
                         tools:text="Võ Văn Tuấn" />
 
                     <TextView
-                        android:id="@+id/sender_title2"
+                        android:id="@+id/txtPhone"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"

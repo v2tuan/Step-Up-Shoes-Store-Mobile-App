@@ -3,16 +3,23 @@ package com.stepup.model;
 public class Address {
     private Long id;
     private String fullName;
-    private String address;
+    private String addr;
     private String phone;
 
     public Address() {
     }
 
+    public Address(Long id, String fullName, String addr, String phone) {
+        this.id = id;
+        this.fullName = fullName;
+        this.addr = addr;
+        this.phone = phone;
+    }
+
     public Address(String fullName, String phone, String address) {
         this.fullName = fullName;
         this.phone = phone;
-        this.address = address;
+        this.addr = address;
     }
 
     public Long getId() {
@@ -31,19 +38,19 @@ public class Address {
         this.fullName = fullName;
     }
 
+    public String getAddr() {
+        return addr;
+    }
+
+    public void setAddr(String addr) {
+        this.addr = addr;
+    }
+
     public String getPhone() {
         return phone;
     }
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    public String getAddr() {
-        return address;
-    }
-
-    public void setAddr(String addr) {
-        this.address = addr;
     }
 }
