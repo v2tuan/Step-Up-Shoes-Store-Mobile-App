@@ -7,7 +7,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -47,6 +51,12 @@ public class EditAddressActivity extends AppCompatActivity implements OnMapReady
         // Khởi tạo View Binding
         binding = ActivityAddAddressBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        EdgeToEdge.enable(this);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
         Intent intent = getIntent();
         addressId = intent.getLongExtra("addressId", -1);
         String name = intent.getStringExtra("name");
@@ -133,10 +143,10 @@ public class EditAddressActivity extends AppCompatActivity implements OnMapReady
         mapFragment.getMapAsync(this);
 
         // Chọn vị trí từ MapsActivity
-        binding.btnSelectFromMap.setOnClickListener(v -> {
-            Intent mapIntent = new Intent(EditAddressActivity.this, MapsActivity.class);
-            startActivityForResult(mapIntent, REQUEST_LOCATION);
-        });
+//        binding.btnSelectFromMap.setOnClickListener(v -> {
+//            Intent mapIntent = new Intent(EditAddressActivity.this, MapsActivity.class);
+//            startActivityForResult(mapIntent, REQUEST_LOCATION);
+//        });
 
         // Hoàn thành
         binding.btnComplete.setOnClickListener(v -> {

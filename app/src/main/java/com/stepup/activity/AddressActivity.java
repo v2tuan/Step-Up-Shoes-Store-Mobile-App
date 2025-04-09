@@ -8,6 +8,10 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,31 +30,33 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class AddressActivity extends AppCompatActivity {
-
+public class AddressActivity extends BaseActivity  {
     private ActivityAddressBinding binding;
     private AddressAdapter addressAdapter;
     private List<Address> addressList;
-
     private TextView btnAddNewAddress;
     private ImageView btnBack;
     private RecyclerView recyclerViewAddress;
     private Long defaultAddressId;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_address);
-        EdgeToEdge.enable(this);
-
         binding = ActivityAddressBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        EdgeToEdge.enable(this);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
         addressList = new ArrayList<>();
         addressAdapter = new AddressAdapter(this, addressList, defaultAddressId );
         binding.recyclerViewAddress.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerViewAddress.setAdapter(addressAdapter);
+
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+        dividerItemDecoration.setDrawable(getResources().getDrawable(R.drawable.divider_custom)); // drawable divider của bạn
+        binding.recyclerViewAddress.addItemDecoration(dividerItemDecoration);
 
         getUserAddresses();
 
@@ -86,8 +92,6 @@ public class AddressActivity extends AppCompatActivity {
                     Object idValue = data.get("defaultAddressId");
                     defaultAddressId = (idValue != null) ? Long.valueOf(idValue.toString().split("\\.")[0]) : null;
 
-
-
                     // Cập nhật adapter
                     addressAdapter = new AddressAdapter(AddressActivity.this, addressList, defaultAddressId);
                     binding.recyclerViewAddress.setAdapter(addressAdapter);
@@ -107,6 +111,4 @@ public class AddressActivity extends AppCompatActivity {
         super.onResume();
         getUserAddresses();
     }
-
-
 }
