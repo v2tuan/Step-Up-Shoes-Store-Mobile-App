@@ -43,6 +43,21 @@ import retrofit2.Response;
 
 public class MyBottomSheetFragment extends BottomSheetDialogFragment {
     private FragmentMyBottomSheetBinding binding;
+
+    public interface VoucherSelectedListener {
+        void onVoucherSelected(Coupon coupon);
+    }
+
+    private VoucherSelectedListener voucherSelectedListener;
+
+    public void setVoucherSelectedListener(VoucherSelectedListener listener) {
+        this.voucherSelectedListener = listener;
+    }
+
+    public MyBottomSheetFragment(VoucherSelectedListener voucherSelectedListener) {
+        this.voucherSelectedListener = voucherSelectedListener;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -95,7 +110,7 @@ public class MyBottomSheetFragment extends BottomSheetDialogFragment {
                             String json = gson.toJson(responseObject.getData());  // Chuyển đổi LinkedTreeMap thành chuỗi JSON
                             List<Coupon> couponList = gson.fromJson(json, new TypeToken<List<Coupon>>(){}.getType());
 
-                            binding.rvCoupon.setAdapter(new CouponAdapter(couponList));
+                            binding.rvCoupon.setAdapter(new CouponAdapter(couponList, voucherSelectedListener));
                             binding.rvCoupon.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
 
                             DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(requireActivity(), DividerItemDecoration.VERTICAL);

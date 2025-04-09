@@ -59,8 +59,8 @@
 
         <TextView
             android:id="@+id/plusCartBtn"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_margin="2dp"
             android:layout_marginEnd="36dp"
             android:background="@drawable/black_bg"
@@ -73,8 +73,8 @@
 
         <TextView
             android:id="@+id/minusCartBtn"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_margin="2dp"
             android:background="@drawable/white_bg"
             android:gravity="center"
@@ -92,7 +92,7 @@
             android:text="0"
             android:gravity="center"
             android:textColor="@color/black"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/plusCartBtn"

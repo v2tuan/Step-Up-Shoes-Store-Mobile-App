@@ -35,10 +35,12 @@ import retrofit2.Response;
 public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.ViewHolder>{
     private List<CartItem> listCartItem;
     private Context context;
+    private ChangeNumberItemsListener changeNumberItemsListener;
     ViewGroup viewGroupParent;
 
-    public OrderItemAdapter(List<CartItem> listCartItem) {
+    public OrderItemAdapter(List<CartItem> listCartItem, ChangeNumberItemsListener changeNumberItemsListener) {
         this.listCartItem = listCartItem;
+        this.changeNumberItemsListener = changeNumberItemsListener;
     }
 
     @NonNull
@@ -62,12 +64,35 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.View
         NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
         String priceText = format.format(variant.getPromotionPrice());
         holder.binding.totalEachItem.setText(priceText);
-        holder.binding.numberItemTxt.setText("x" + String.valueOf(item.getCount()));
+        holder.binding.numberItemTxt.setText(String.valueOf(item.getCount()));
 
         Glide.with(holder.itemView.getContext())
                 .load(item.getProductVariant().getColor().getColorImages().get(0).getImageUrl()) // Giả định có phương thức getPictureUrl()
                 .apply(new RequestOptions().centerCrop())
                 .into(holder.binding.pic);
+
+        holder.binding.plusCartBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                notifyDataSetChanged();
+                int count = holder.cartItem.getCount() + 1;
+                holder.cartItem.setCount(count);
+                changeNumberItemsListener.onChanged();
+            }
+        });
+
+        holder.binding.minusCartBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                notifyDataSetChanged();
+                int count = holder.cartItem.getCount() - 1;
+                if(count == 0){
+                    return;
+                }
+                holder.cartItem.setCount(count);
+                changeNumberItemsListener.onChanged();
+            }
+        });
     }
 
     @Override

@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide;
 import com.stepup.R;
 import com.stepup.databinding.ViewholderColorBinding;
 import com.stepup.databinding.ViewholderCouponBinding;
+import com.stepup.fragment.MyBottomSheetFragment;
 import com.stepup.model.Attribute;
 import com.stepup.model.Banner;
 import com.stepup.model.Color;
@@ -28,8 +29,13 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
     private List<Coupon> couponList;
     private int selectedPosition = -1; // -1 là mặc định chưa chọn item nào
 
-    public CouponAdapter(List<Coupon> couponList) {
+    private MyBottomSheetFragment.VoucherSelectedListener voucherSelectedListener;
+
+    private Coupon couponSelected;
+
+    public CouponAdapter(List<Coupon> couponList, MyBottomSheetFragment.VoucherSelectedListener listener) {
         this.couponList = couponList;
+        this.voucherSelectedListener = listener;
     }
 
     @NonNull
@@ -47,6 +53,7 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull CouponAdapter.ViewHolder holder, int position) {
         Coupon coupon = couponList.get(position);
+        holder.setCoupon(coupon);
         for(CouponCondition couponCondition: coupon.getCouponConditionList()){
             if(couponCondition.getAttribute().equals(Attribute.DISCOUNT)){
                 holder.binding.txtDiscount.setText((couponCondition.getValue()) + "% Discount");
@@ -76,6 +83,9 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
                 // Cập nhật lại item cũ và item mới (tạo hiệu ứng refresh)
                 notifyItemChanged(lastSelectedPosition);
                 notifyItemChanged(selectedPosition);
+
+                couponSelected = holder.getCoupon();
+                voucherSelectedListener.onVoucherSelected(couponSelected);
             }
         });
 
@@ -95,7 +105,7 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private Coupon color;
+        private Coupon coupon;
         ViewholderCouponBinding  binding;
 
         public ViewHolder(ViewholderCouponBinding binding) {
@@ -103,12 +113,12 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
             this.binding = binding;
         }
 
-        public Coupon getColor() {
-            return color;
+        public Coupon getCoupon() {
+            return coupon;
         }
 
-        public void setColor(Coupon color) {
-            this.color = color;
+        public void setCoupon(Coupon coupon) {
+            this.coupon = coupon;
         }
 
         public ViewholderCouponBinding getBinding() {

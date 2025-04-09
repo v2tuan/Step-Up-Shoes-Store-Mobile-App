@@ -70,7 +70,10 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.14.2")
     annotationProcessor("com.github.bumptech.glide:compiler:4.14.2")
 
-    implementation ("com.google.android.material:material:1.9.0")
+//    implementation ("com.google.android.material:material:1.9.0")
+
+    // https://mvnrepository.com/artifact/com.google.android.material/material
+    implementation("com.google.android.material:material:1.12.0")
 
     implementation("com.google.android.gms:play-services-auth:20.7.0") // dung de dang nhap google
 
@@ -82,6 +85,11 @@ dependencies {
 
     implementation ("de.hdodenhof:circleimageview:3.1.0")
     implementation ("androidx.recyclerview:recyclerview:1.2.1")
+
+    // https://mvnrepository.com/artifact/com.jakewharton.threetenabp/threetenabp
+    implementation("com.jakewharton.threetenabp:threetenabp:1.4.9")
+//    vi LocalDate chi ho tro API > 26 ma ung dung dang de minAPI 24 nen can su dung locale Date cua threetenabp
+
 
 //    implementation ("com.agrawalsuneet.androidlibs:dotsloader:1.4")
 

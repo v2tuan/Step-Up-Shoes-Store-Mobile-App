@@ -240,12 +240,14 @@ public class LoginActivity extends AppCompatActivity {
                     boolean rememberMe = activityLoginBinding.checkboxRemember.isChecked();
                     saveToken(token, rememberMe);
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    hideLoading();
                 }
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 Log.e("RetrofitError", "Error: " + t.getMessage());
+                hideLoading();
             }
         });
     }
