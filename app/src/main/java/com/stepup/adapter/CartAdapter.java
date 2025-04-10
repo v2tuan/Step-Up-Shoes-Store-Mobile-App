@@ -43,6 +43,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     ViewGroup viewGroupParent;
     private FragmentCartBinding binding;
 
+    public CartAdapter(List<CartItem> listCartItem, ChangeNumberItemsListener changeNumberItemsListener) {
+        this.listCartItem = listCartItem;
+        this.changeNumberItemsListener = changeNumberItemsListener;
+    }
+
     public CartAdapter(List<CartItem> listCartItem, ChangeNumberItemsListener changeNumberItemsListener, FragmentCartBinding binding) {
         this.listCartItem = listCartItem;
         this.changeNumberItemsListener = changeNumberItemsListener;

@@ -7,7 +7,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -29,27 +33,27 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class AddAddressActivity extends AppCompatActivity implements OnMapReadyCallback {
-
     private ActivityAddAddressBinding binding; // Khai báo View Binding
     private static final int REQUEST_LOCATION = 100;
     private static final int REQUEST_CODE_SELECT_LOCATION = 101;
     private static final int REQUEST_CODE_HOUSE_NUMBER = 102;
-
     private GoogleMap mMap;
     private LatLng selectedLatLng;
     private String firstAddress;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         // Khởi tạo View Binding
         binding = ActivityAddAddressBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        EdgeToEdge.enable(this);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
         // Sự kiện quay lại
         binding.btnBack.setOnClickListener(v -> finish());
-
         // Xử lý khi mất focus khỏi etHouseNumber
         binding.etHouseNumber.setOnFocusChangeListener((v, hasFocus) -> {
             if (!hasFocus) {
@@ -81,10 +85,10 @@ public class AddAddressActivity extends AppCompatActivity implements OnMapReadyC
         mapFragment.getMapAsync(this);
 
         // Chọn vị trí từ MapsActivity
-        binding.btnSelectFromMap.setOnClickListener(v -> {
-            Intent mapIntent = new Intent(AddAddressActivity.this, MapsActivity.class);
-            startActivityForResult(mapIntent, REQUEST_LOCATION);
-        });
+//        binding.btnSelectFromMap.setOnClickListener(v -> {
+//            Intent mapIntent = new Intent(AddAddressActivity.this, MapsActivity.class);
+//            startActivityForResult(mapIntent, REQUEST_LOCATION);
+//        });
 
         // Hoàn thành
         binding.btnComplete.setOnClickListener(v -> {
@@ -133,7 +137,6 @@ public class AddAddressActivity extends AppCompatActivity implements OnMapReadyC
             });
         });
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -162,7 +165,6 @@ public class AddAddressActivity extends AppCompatActivity implements OnMapReadyC
             }
         }
     }
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -171,7 +173,6 @@ public class AddAddressActivity extends AppCompatActivity implements OnMapReadyC
             showMapLocation(selectedLatLng, binding.etAddress.getText().toString());
         }
     }
-
     // Hàm lấy tọa độ từ địa chỉ
     private LatLng getLatLngFromAddress(String address) {
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
@@ -186,7 +187,6 @@ public class AddAddressActivity extends AppCompatActivity implements OnMapReadyC
         }
         return null;
     }
-
     // Hàm hiển thị vị trí trên bản đồ
     private void showMapLocation(LatLng latLng, String title) {
         if (mMap != null) {
@@ -195,7 +195,6 @@ public class AddAddressActivity extends AppCompatActivity implements OnMapReadyC
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
         }
     }
-
     public void onProvinceDistrictWardClick(View view) {
         Intent intent = new Intent(this, SelectLocationActivity.class);
         startActivityForResult(intent, REQUEST_CODE_SELECT_LOCATION);

@@ -5,6 +5,7 @@ import com.stepup.model.Address;
 import com.stepup.model.ApiResponse;
 import com.stepup.model.Banner;
 import com.stepup.model.CartItem;
+import com.stepup.model.ResponseObject;
 import com.stepup.model.FavoriteItem;
 import com.stepup.model.FavoriteItemDTO;
 import com.stepup.model.UserDTO;
@@ -99,6 +100,9 @@ public interface APIService {
     @PUT("address/set-default/{id}")
     Call<ApiResponse> setDefaultAddress(@Path("id") Long id);
 
+    @GET("address/get-default")
+    Call<ResponseObject> getDefaultAddress();
+
     // Fetch all provinces
     @GET("provinces/getAll")
     Call<ProvinceResponse> getProvinces(
@@ -120,5 +124,8 @@ public interface APIService {
     );
 
 
+    // Coupon
+    @GET("coupon")
+    Call<ResponseObject> getAllCoupons();
 
 }

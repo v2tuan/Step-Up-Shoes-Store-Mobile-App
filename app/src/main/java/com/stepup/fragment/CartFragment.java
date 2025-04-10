@@ -34,6 +34,7 @@ import com.stepup.retrofit2.APIService;
 import com.stepup.retrofit2.RetrofitClient;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -89,7 +90,7 @@ public class CartFragment extends Fragment {
         }
     }
 
-
+    List<CartItem> cartItems = new ArrayList<>();
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -105,7 +106,7 @@ public class CartFragment extends Fragment {
             public void onResponse(Call<List<CartItem>> call, Response<List<CartItem>> response) {
                 hideLoading();
                 if (response.isSuccessful() && response.body() != null) {
-                    List<CartItem> cartItems = response.body();
+                    cartItems = response.body();
                     binding.viewCart.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
                     // Thiết lập Adapter
                     CartAdapter cartAdapter = new CartAdapter(cartItems, new ChangeNumberItemsListener() {
@@ -142,6 +143,7 @@ public class CartFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), CheckOutActivity.class);
+                intent.putParcelableArrayListExtra ("orderItems", new ArrayList<>(cartItems));
                 startActivity(intent);
             }
         });

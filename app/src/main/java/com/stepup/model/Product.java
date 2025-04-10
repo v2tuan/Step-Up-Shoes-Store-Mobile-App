@@ -1,10 +1,15 @@
 package com.stepup.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Product {
+public class Product implements Parcelable {
     private long id;
     private String name;
     private String slug;
@@ -34,6 +39,44 @@ public class Product {
         this.productVariants = productVariants;
         this.rating = rating;
     }
+
+    protected Product(Parcel in) {
+        id = in.readLong();
+        name = in.readString();
+        slug = in.readString();
+        description = in.readString();
+        isActive = in.readByte() != 0;
+        if (in.readByte() == 0) {
+            price = null;
+        } else {
+            price = in.readDouble();
+        }
+        if (in.readByte() == 0) {
+            promotionPrice = null;
+        } else {
+            promotionPrice = in.readDouble();
+        }
+        colors = in.createTypedArrayList(Color.CREATOR);
+        sizes = in.createTypedArrayList(Size.CREATOR);
+        productVariants = in.createTypedArrayList(ProductVariant.CREATOR);
+        if (in.readByte() == 0) {
+            rating = null;
+        } else {
+            rating = in.readDouble();
+        }
+    }
+
+    public static final Creator<Product> CREATOR = new Creator<Product>() {
+        @Override
+        public Product createFromParcel(Parcel in) {
+            return new Product(in);
+        }
+
+        @Override
+        public Product[] newArray(int size) {
+            return new Product[size];
+        }
+    };
 
     public long getId() {
         return id;
@@ -121,5 +164,40 @@ public class Product {
 
     public void setRating(Double rating) {
         this.rating = rating;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel parcel, int i) {
+        parcel.writeLong(id);
+        parcel.writeString(name);
+        parcel.writeString(slug);
+        parcel.writeString(description);
+        parcel.writeByte((byte) (isActive ? 1 : 0));
+        if (price == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeDouble(price);
+        }
+        if (promotionPrice == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeDouble(promotionPrice);
+        }
+        parcel.writeTypedList(colors);
+        parcel.writeTypedList(sizes);
+        parcel.writeTypedList(productVariants);
+        if (rating == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeDouble(rating);
+        }
     }
 }

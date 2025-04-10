@@ -49,6 +49,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/feeEachItem" />
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="100dp"
         android:layout_height="wrap_content"
@@ -59,30 +60,43 @@
 
         <TextView
             android:id="@+id/plusCartBtn"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_margin="2dp"
-            android:layout_marginEnd="36dp"
-            android:background="@drawable/black_bg"
+            android:layout_width="28dp"
+            android:layout_height="0dp"
             android:gravity="center"
             android:text="+"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <View
+            android:id="@+id/view1"
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:background="@color/lightGrey"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/minusCartBtn"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:id="@+id/minusCartBtn"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_margin="2dp"
-            android:background="@drawable/white_bg"
+            android:layout_width="28dp"
+            android:layout_height="0dp"
             android:gravity="center"
             android:text="-"
             android:textColor="@color/black"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/view2"
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:background="@color/lightGrey"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/plusCartBtn"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -93,7 +107,6 @@
             android:gravity="center"
             android:textColor="@color/black"
             android:textSize="14sp"
-            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/plusCartBtn"
             app:layout_constraintStart_toEndOf="@+id/minusCartBtn"

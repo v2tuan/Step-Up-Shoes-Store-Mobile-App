@@ -68,11 +68,11 @@ public class LoginActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        SharedPreferences.Editor editor = getSharedPreferences("MyAppPrefs", MODE_PRIVATE).edit();
-        editor.remove("token");
-        editor.remove("remember");
-        editor.apply();
-        checkLogin();
+//        SharedPreferences.Editor editor = getSharedPreferences("MyAppPrefs", MODE_PRIVATE).edit();
+//        editor.remove("token");
+//        editor.remove("remember");
+//        editor.apply();
+//        checkLogin();
 
 
         // Đăng nhập mặc định
@@ -240,12 +240,14 @@ public class LoginActivity extends AppCompatActivity {
                     boolean rememberMe = activityLoginBinding.checkboxRemember.isChecked();
                     saveToken(token, rememberMe);
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    hideLoading();
                 }
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 Log.e("RetrofitError", "Error: " + t.getMessage());
+                hideLoading();
             }
         });
     }

@@ -1,237 +1,255 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
-    android:padding="0dp">
+    android:background="@color/white"
+    android:orientation="vertical">
 
     <!-- Thanh tiêu đề (Toolbar) -->
-    <androidx.appcompat.widget.Toolbar
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:background="@color/white"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        app:contentInsetStart="0dp">
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/btnBack"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/back"
-            android:layout_gravity="start" />
-
-        <TextView
-            android:id="@+id/tvTitle"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Thêm Địa Chỉ Mới"
-            android:textSize="20sp"
-            android:textColor="@android:color/black"
-            android:layout_gravity="center" />
-    </androidx.appcompat.widget.Toolbar>
+            android:background="?android:attr/selectableItemBackground"
+            android:padding="16dp">
 
-    <!-- ScrollView để hỗ trợ cuộn khi nội dung dài -->
+            <ImageView
+                android:id="@+id/btnBack"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="start"
+                android:src="@drawable/back" />
+
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="New Address"
+                android:textColor="@android:color/black"
+                android:textSize="20sp" />
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:fillViewport="true">
-
+        android:background="@color/lightGrey2"
+        app:layout_constraintBottom_toTopOf="@+id/cardView5"
+        app:layout_constraintTop_toBottomOf="@+id/cardView">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
-
-            <!-- Tiêu đề Địa Chỉ -->
-            <TextView
-                android:id="@+id/tvTitleAddress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Địa Chỉ"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#000000"
-                android:layout_marginBottom="16dp" />
-
-            <!-- Họ và Tên -->
-            <com.google.android.material.textfield.TextInputLayout
+            android:padding="10dp">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/materialCardView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:hintTextColor="#000000"
-                app:boxStrokeColor="#000000"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                app:boxCornerRadiusTopStart="12dp"
-                app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
-                app:boxCornerRadiusBottomEnd="12dp">
+                android:background="@color/white"
+                app:cardCornerRadius="10dp">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etName"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Họ và Tên"
-                    android:textSize="16sp"
-                    android:textColor="#000000"
-                    android:padding="12dp" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-            <!-- Số Điện Thoại -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:hintTextColor="#000000"
-                app:boxStrokeColor="#000000"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                app:boxCornerRadiusTopStart="12dp"
-                app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
-                app:boxCornerRadiusBottomEnd="12dp">
+                    <!-- Tiêu đề Địa Chỉ -->
+                    <TextView
+                        android:id="@+id/tvTitleAddress"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:text="Address"
+                        android:textColor="#000000"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etPhoneNumber"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Số Điện Thoại"
-                    android:inputType="phone"
-                    android:textSize="16sp"
-                    android:textColor="#000000"
-                    android:padding="12dp" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:hintTextColor="#000000"
-                app:boxStrokeColor="#000000"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                app:boxCornerRadiusTopStart="12dp"
-                app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
-                app:boxCornerRadiusBottomEnd="12dp"
-                app:endIconMode="custom"
-                app:endIconTint="@android:color/black">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etProvinceDistrictWard"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Tỉnh/Thành phố, Quận/Huyện, Phường/Xã"
-                    android:textSize="16sp"
-                    android:textColor="#000000"
-                    android:padding="12dp"
-                    android:focusable="false"
-                    android:cursorVisible="false"
-                    android:background="@null"
-                    android:onClick="onProvinceDistrictWardClick" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:hintTextColor="#000000"
-                app:boxStrokeColor="#000000"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                app:boxCornerRadiusTopStart="12dp"
-                app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
-                app:boxCornerRadiusBottomEnd="12dp">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etHouseNumber"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Số Nhà"
-                    android:textSize="16sp"
-                    android:textColor="#000000"
-                    android:padding="12dp" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- Địa Chỉ Chi Tiết và Nút Bản Đồ -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="16dp">
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    app:hintTextColor="#000000"
-                    app:boxStrokeColor="#000000"
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                    app:boxCornerRadiusTopStart="12dp"
-                    app:boxCornerRadiusTopEnd="12dp"
-                    app:boxCornerRadiusBottomStart="12dp"
-                    app:boxCornerRadiusBottomEnd="12dp">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etAddress"
+                    <!-- Họ và Tên -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Địa Chỉ Chi Tiết"
-                        android:textSize="16sp"
-                        android:textColor="#000000"
-                        android:padding="12dp"
-                        android:singleLine="true"
-                        android:focusable="false"
-                        android:cursorVisible="false"
-                        android:ellipsize="end"
-                        />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:layout_marginBottom="16dp"
+                        android:hint="Name"
+                        app:hintTextColor="#000000">
 
-                <ImageView
-                    android:id="@+id/btnSelectFromMap"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@drawable/map"
-                    android:layout_marginStart="8dp"
-                    android:padding="12dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Chọn từ bản đồ"
-                    android:tooltipText="Chọn từ bản đồ" />
-            </LinearLayout>
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="@color/white"
+                            android:textColor="#000000"
+                            android:textSize="16sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Fragment Bản Đồ -->
-            <FrameLayout
+                    <!-- Số Điện Thoại -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        app:boxStrokeColor="#000000"
+                        app:hintTextColor="#000000">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etPhoneNumber"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/white"
+                            android:hint="Phone"
+                            android:inputType="phone"
+                            android:textColor="#000000"
+                            android:textSize="16sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        app:endIconDrawable="@drawable/next"
+                        app:endIconMinSize="5dp"
+                        android:hint="City/Province, District, Ward/Commune"
+                        app:endIconMode="custom"
+                        app:hintTextColor="#000000">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etProvinceDistrictWard"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="?attr/selectableItemBackground"
+                            android:focusable="false"
+                            android:clickable="true"
+                            android:cursorVisible="false"
+                            android:drawableEnd="@drawable/next"
+                            android:onClick="onProvinceDistrictWardClick"
+                            android:textColor="#000000"
+                            android:textSize="16sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="House number"
+                        android:layout_marginBottom="16dp"
+                        app:hintTextColor="#000000">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etHouseNumber"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/white"
+                            android:textColor="#000000"
+                            android:textSize="16sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:boxCornerRadiusBottomEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp"
+                        app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusTopStart="12dp"
+                        app:boxStrokeColor="#000000"
+                        app:hintTextColor="#000000">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etAddress"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/white"
+                            android:hint="Địa Chỉ Chi Tiết"
+                            android:textColor="#000000"
+                            android:textSize="16sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Fragment Bản Đồ -->
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="#FFFFFF"
+                        android:visibility="visible"
+                        app:cardCornerRadius="8dp"
+                        app:cardElevation="2dp">
+
+                        <fragment
+                            android:id="@+id/mapFragmentContainer"
+                            android:name="com.google.android.gms.maps.SupportMapFragment"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+                    </FrameLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
-                android:layout_marginBottom="16dp"
-                android:background="#FFFFFF"
-                app:cardElevation="2dp"
-                app:cardCornerRadius="8dp">
-
-                <fragment
-                    android:id="@+id/mapFragmentContainer"
-                    android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@color/white"
+                app:cardCornerRadius="10dp">
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-            </FrameLayout>
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textSize="16dp"
+                        android:text="Set default address"/>
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:elevation="0dp"
+                        app:thumbTint="@color/white"
+                        app:trackTint="@color/switch_track_color"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
         </LinearLayout>
     </ScrollView>
 
 
     <!-- Nút Hoàn Thành -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnComplete"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="24dp"
-        android:text="Hoàn Thành"
-        android:textSize="16sp"
-        android:textColor="#FFFFFF"
-        android:paddingVertical="12dp"
-        style="@style/Widget.Material3.Button"
-        app:backgroundTint="#000000" />
-</LinearLayout>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnComplete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:background="@drawable/black_bg"
+            android:paddingVertical="12dp"
+            android:text="Hoàn Thành"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            app:backgroundTint="#000000" />
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>
