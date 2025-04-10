@@ -99,7 +99,7 @@ public class CartFragment extends Fragment {
         showLoading();
 
         APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
-        Call<List<CartItem>> callCart = apiService.getAllCartItem();
+            Call<List<CartItem>> callCart = apiService.getAllCartItem();
         callCart.enqueue(new Callback<List<CartItem>>() {
             @Override
             public void onResponse(Call<List<CartItem>> call, Response<List<CartItem>> response) {

@@ -5,6 +5,8 @@ import com.stepup.model.Address;
 import com.stepup.model.ApiResponse;
 import com.stepup.model.Banner;
 import com.stepup.model.CartItem;
+import com.stepup.model.FavoriteItem;
+import com.stepup.model.FavoriteItemDTO;
 import com.stepup.model.UserDTO;
 import com.stepup.model.location.DistrictResponse;
 import com.stepup.model.Product;
@@ -57,6 +59,17 @@ public interface APIService {
 
 	@GET("/api/check-token")
     Call<String> checkToken(@Header("Authorization") String token);
+
+
+    @GET("favorite")
+    Call<List<FavoriteItem>> getAllFavoriteItem();
+
+    @POST("favorite/remove/{id}")
+    Call<String> removeFavoriteItem(@Path("id") long favoriteItemId);
+
+    @POST("favorite/add")
+    Call<String> addToFavorite(@Body FavoriteItemDTO favoriteItemDTO);
+
     @POST("cart/add")
     Call<String> addCart(@Body AddToCartDTO addToCartDTO);
 
@@ -65,7 +78,9 @@ public interface APIService {
 
     @POST("cart/remove/{id}")
     Call<String> removeCartItem(@Path("id") long cartItemId);
-	
+
+
+
 //	@GET("/api/v1/address/user/addresses")
 //  Call<List<Address>> getAddressesByUserId();
 
