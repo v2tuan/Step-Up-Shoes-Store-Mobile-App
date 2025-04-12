@@ -71,7 +71,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressV
             intent.putExtra("name", address.getFullName());
             intent.putExtra("phoneNumber", address.getPhone());
             intent.putExtra("address", address.getAddr());
-            ((AppCompatActivity) holder.itemView.getContext()).startActivityForResult(intent, REQUEST_CODE_EDIT_ADDRESS);
+            ((AppCompatActivity) holder.itemView.getContext()).startActivityForResult(intent,0);
         });
 
         // Xử lý sự kiện mac dinh

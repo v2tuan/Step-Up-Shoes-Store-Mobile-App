@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -18,6 +19,8 @@ import com.stepup.R;
 import com.stepup.databinding.FragmentFavoriteBinding;
 import com.stepup.databinding.ViewHolderFavoriteBinding;
 import com.stepup.databinding.ViewholderCartBinding;
+import com.stepup.databinding.ViewholderRecommendedBinding;
+import com.stepup.fragment.MyBottomFavoriteFragment;
 import com.stepup.model.AddToCartDTO;
 import com.stepup.model.CartItem;
 import com.stepup.model.FavoriteItem;
@@ -50,7 +53,7 @@ public class FavoriteAdapter  extends RecyclerView.Adapter<FavoriteAdapter.ViewH
     public FavoriteAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         context = parent.getContext();
         viewGroupParent = parent;
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_holder_favorite, parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.viewholder_recommended, parent,false);
         return new ViewHolder(view);
     }
 
@@ -60,84 +63,68 @@ public class FavoriteAdapter  extends RecyclerView.Adapter<FavoriteAdapter.ViewH
         holder.setFavoriteItem(item);
         ProductVariant variant = item.getProductVariant();
         holder.binding.titleTxt.setText(item.getTitle());
-        holder.binding.feeEachItem.setText(variant.getColor().getName() + "/" +variant.getSize().getName());
         NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-        String priceText = format.format(variant.getPromotionPrice());
-        holder.binding.totalEachItem.setText(priceText);
+        String priceText = format.format(variant.getPrice());
+        holder.binding.priceTxt.setText((priceText));
         Glide.with(holder.itemView.getContext())
                 .load(item.getProductVariant().getColor().getColorImages().get(0).getImageUrl()) // Giả định có phương thức getPictureUrl()
                 .apply(new RequestOptions().centerCrop())
                 .into(holder.binding.pic);
-        holder.binding.addToCart.setOnClickListener(new View.OnClickListener() {
+        holder.binding.favBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                notifyDataSetChanged();
-                AddToCartDTO addToCartDTO = new AddToCartDTO(item.getProductVariant().getId(), 1);
                 APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
-                Call<String> callAddFavoriteItemToCart = apiService.addCart(addToCartDTO);
-                callAddFavoriteItemToCart.enqueue(new Callback<String>() {
+                Call<String> callRemoveCartItem = apiService.removeFavoriteItem(item.getId());
+                callRemoveCartItem.enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
-                        if(response.isSuccessful()&&response.body()!= null)
-                        {
+                        if (response.isSuccessful() && response.body() != null) {
                             Toast.makeText(context, response.body(), Toast.LENGTH_SHORT).show();
-                            Log.d("Send Item To Cart", "Message: : " + response.body());
-                            Call<String> removeCall = apiService.removeFavoriteItem(item.getId());
-                            removeCall.enqueue(new Callback<String>() {
-                                @Override
-                                public void onResponse(Call<String> call, Response<String> response) {
-                                    if (response.isSuccessful() && response.body() != null) {
-                                        listFavoriteItem.remove(position);
-                                        notifyDataSetChanged();
-                                        Log.d("Remove Favorite", "Success: " + response.body());
-                                    }
-                                    hideLoading(holder.itemView);
-                                }
-
-                                @Override
-                                public void onFailure(Call<String> call, Throwable t) {
-                                    hideLoading(holder.itemView);
-                                    Log.e("Remove Favorite Error", "Error: " + t.getMessage());
-                                }
-                            });
+                            Log.d("Remove From Favorite", "Message: : " + response.body());
                             listFavoriteItem.remove(position);
                             notifyDataSetChanged();
                             hideLoading(holder.itemView);
                         }
                     }
-
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
-                        hideLoading(holder.itemView);
-                        Log.e("RetrofitError", "Error: " + t.getMessage());
+
                     }
                 });
-
             }
+        });
+
+        holder.itemView.setOnClickListener(v -> {
+            MyBottomFavoriteFragment bottomSheet = MyBottomFavoriteFragment.newInstance(
+                    item.getTitle(),
+                    String.valueOf(variant.getPrice()),
+                    item.getProductVariant().getColor().getColorImages().get(0).getImageUrl()
+            );
+            bottomSheet.show(((FragmentActivity) holder.itemView.getContext()).getSupportFragmentManager(), bottomSheet.getTag());
         });
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return listFavoriteItem.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder
     {
-        ViewHolderFavoriteBinding binding;
+        ViewholderRecommendedBinding binding;
         private FavoriteItem favoriteItem;
 
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            binding = ViewHolderFavoriteBinding.bind(itemView);
+            binding = ViewholderRecommendedBinding.bind(itemView);
         }
 
-        public ViewHolderFavoriteBinding getBinding()
-        {
+        public ViewholderRecommendedBinding getBinding() {
             return binding;
         }
-        public void setBinding(ViewHolderFavoriteBinding binding) {
+
+        public void setBinding(ViewholderRecommendedBinding binding) {
             this.binding = binding;
         }
 
@@ -149,67 +136,16 @@ public class FavoriteAdapter  extends RecyclerView.Adapter<FavoriteAdapter.ViewH
             this.favoriteItem = favoriteItem;
         }
     }
-    private void ShowCustomDeleteDialog (int position, View itemView)
-    {
 
-        // Tạo một Dialog Builder
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
-        // Inflate layout tùy chỉnh
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View customView = inflater.inflate(R.layout.dialog_confirm_remove_cart_item, null);
-
-        // Gán layout vào Dialog
-        builder.setView(customView);
-
-        // Lấy các thành phần trong dialog
-//        TextView dialogTitle = customView.findViewById(R.id.dialogTitle);
-//        TextView dialogMessage = customView.findViewById(R.id.dialogMessage);
-        Button btnCancel = customView.findViewById(R.id.btnCancel);
-        Button btnConfirm = customView.findViewById(R.id.btnConfirm);
-
-        // Tạo Dialog
-        AlertDialog dialog = builder.create();
-
-        // Xử lý hành động của các nút
-        btnCancel.setOnClickListener(v -> {
-            dialog.dismiss(); // Đóng dialog khi hủy
-        });
-
-        btnConfirm.setOnClickListener(v -> {
-            removeItemFromFavorite(position, itemView); // Xóa sản phẩm khi xác nhận
-            dialog.dismiss(); // Đóng dialog sau khi xóa
-            showLoading(itemView);
-        });
-
-//        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT)); // Làm nền trong suốt
-//        dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        dialog.show();
+    private void updateEmptyView() {
+        if (listFavoriteItem.isEmpty()) {
+            binding.emptyTxt.setVisibility(View.VISIBLE);
+            binding.scrollView2.setVisibility(View.GONE);
+        } else {
+            binding.emptyTxt.setVisibility(View.GONE);
+            binding.scrollView2.setVisibility(View.VISIBLE);
+        }
     }
-    private void removeItemFromFavorite(int position, View itemView)
-    {
-        FavoriteItem item = listFavoriteItem.get(position);
-        APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
-        Call<String> removeCall = apiService.removeFavoriteItem(item.getId());
-        removeCall.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    listFavoriteItem.remove(position);
-                    notifyDataSetChanged();
-                    Log.d("Remove Favorite", "Success: " + response.body());
-                }
-                hideLoading(itemView);
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                hideLoading(itemView);
-                Log.e("Remove Favorite Error", "Error: " + t.getMessage());
-            }
-        });
-    }
-
     private void showLoading(View itemView) {
         binding.overlay.setVisibility(View.VISIBLE);
         binding.overlay.setClickable(true); // Chặn tương tác với các view bên dưới

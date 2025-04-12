@@ -26,6 +26,7 @@ import com.stepup.model.AddToCartDTO;
 import com.stepup.model.Banner;
 import com.stepup.model.Color;
 import com.stepup.model.ColorImage;
+import com.stepup.model.FavoriteItemDTO;
 import com.stepup.model.Product;
 import com.stepup.model.ProductCard;
 import com.stepup.model.ProductImage;
@@ -109,6 +110,39 @@ public class DetailActivity extends AppCompatActivity {
                 });
             }
         });
+        binding.favBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(ColorAdapter.colorSelected == null){
+                    Toast.makeText(DetailActivity.this, "Vui lòng chọn color", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Long productVariant_id = null;
+                for(ProductVariant variant: product.getProductVariants()){
+                    if(variant.getColor().equals(ColorAdapter.colorSelected) && variant.getSize().equals(SizeAdapter.sizeSelected)){
+                        productVariant_id = variant.getId();
+                        break;
+                    }
+                }
+                FavoriteItemDTO favoriteItemDTO = new FavoriteItemDTO(productVariant_id);
+                APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
+                Call<String> callAddToFavorite = apiService.addToFavorite(favoriteItemDTO);
+                callAddToFavorite.enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            Toast.makeText(DetailActivity.this, response.body(), Toast.LENGTH_SHORT).show();
+                            Log.d("Add To Favorite", "Message: : " + response.body());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+                        Log.e("RetrofitError", "Error: " + t.getMessage());
+                    }
+                });
+            }
+        });
     }
 
     private void getBanner(){
@@ -127,7 +161,7 @@ public class DetailActivity extends AppCompatActivity {
                     String priceText = format.format(product.getPrice());
                     binding.priceTxt.setText(priceText);
                     binding.descriptionTxt.setText(product.getDescription());
-                    binding.ratingTxt.setText(product.getRating().toString());
+                    //binding.ratingTxt.setText(product.getRating().toString());
 
                     // Tạo danh sách sliderItems chứa các hình ảnh để hiển thị
                     ArrayList<Banner> sliderItems = new ArrayList<>();

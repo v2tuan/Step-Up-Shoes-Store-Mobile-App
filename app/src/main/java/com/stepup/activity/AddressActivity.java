@@ -34,9 +34,6 @@ public class AddressActivity extends BaseActivity  {
     private ActivityAddressBinding binding;
     private AddressAdapter addressAdapter;
     private List<Address> addressList;
-    private TextView btnAddNewAddress;
-    private ImageView btnBack;
-    private RecyclerView recyclerViewAddress;
     private Long defaultAddressId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +83,7 @@ public class AddressActivity extends BaseActivity  {
                         address.setId(Long.valueOf(idValue.toString().split("\\.")[0]));
                         address.setFullName(addressMap.get("fullName").toString());
                         address.setPhone(addressMap.get("phone").toString());
-                        address.setAddr(addressMap.get("address").toString());
+                        address.setAddr(addressMap.get("addr").toString());
                         addressList.add(address);
                     }
                     Object idValue = data.get("defaultAddressId");
@@ -109,6 +106,6 @@ public class AddressActivity extends BaseActivity  {
     @Override
     protected void onResume() {
         super.onResume();
-        getUserAddresses();
+       // getUserAddresses();
     }
 }

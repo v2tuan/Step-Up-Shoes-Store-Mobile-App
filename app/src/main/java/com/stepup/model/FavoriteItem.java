@@ -5,6 +5,9 @@ public class FavoriteItem {
     private String title;
     private ProductVariant productVariant;
 
+    public FavoriteItem() {
+    }
+
     public FavoriteItem(String title, ProductVariant productVariant) {
         this.title = title;
         this.productVariant = productVariant;

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.os.Looper;
 import android.view.View;
 import android.widget.Toast;
 
@@ -21,35 +22,72 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.stepup.R;
 import com.stepup.databinding.ActivityAddAddressBinding;
+import com.stepup.databinding.ActivityEditAddressBinding;
 import com.stepup.model.ApiResponse;
 import com.stepup.retrofit2.APIService;
 import com.stepup.retrofit2.RetrofitClient;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import android.os.Handler;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class EditAddressActivity extends AppCompatActivity implements OnMapReadyCallback {
 
-    private ActivityAddAddressBinding binding; // Khai báo View Binding
-    private static final int REQUEST_LOCATION = 100;
-    private static final int REQUEST_CODE_SELECT_LOCATION = 101;
-    private static final int REQUEST_CODE_HOUSE_NUMBER = 102;
-
+    private ActivityEditAddressBinding binding; // Khai báo View Binding
     private GoogleMap mMap;
     private LatLng selectedLatLng;
     private String firstAddress;
     Long addressId;
+    private Runnable pendingUpdateTask;
+    private final long DEBOUNCE_DELAY = 500; // 500ms trì hoãn
+    private boolean isMapReady = false;
+    private String pendingAddress = null;
+    private final Map<String, LatLng> addressCache = new HashMap<>();
+
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+
+    // chạy map dưới background thread
+    private void getLatLngFromAddressAsync(String address, OnLatLngReceived callback) {
+        if (addressCache.containsKey(address)) {
+            mainHandler.post(() -> callback.onReceived(addressCache.get(address)));
+            return;
+        }
+        executorService.execute(() -> {
+            Geocoder geocoder = new Geocoder(EditAddressActivity.this, Locale.getDefault());
+            try {
+                List<Address> addressList = geocoder.getFromLocationName(address, 1);
+                if (addressList != null && !addressList.isEmpty()) {
+                    Address location = addressList.get(0);
+                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                    mainHandler.post(() -> callback.onReceived(latLng));
+                } else {
+                    mainHandler.post(() -> callback.onReceived(null));
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                mainHandler.post(() -> callback.onReceived(null));
+            }
+        });
+    }
+
+    interface OnLatLngReceived {
+        void onReceived(LatLng latLng);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // Khởi tạo View Binding
-        binding = ActivityAddAddressBinding.inflate(getLayoutInflater());
+        binding = ActivityEditAddressBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         EdgeToEdge.enable(this);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -66,163 +104,141 @@ public class EditAddressActivity extends AppCompatActivity implements OnMapReady
         binding.etPhoneNumber.setText(phoneNumber);
         binding.etAddress.setText(address);
 
-        // Tách firstAddress và houseNumber từ address
-        if (address != null && !address.isEmpty()) {
-            String houseNumber = "";
-            firstAddress = "";
-
-            // Các từ khóa để tách: "Phường", "Xã", "Thôn"
-            String[] keywords = {"Phường", "Xã"};
-            int splitIndex = -1;
-
-            // Tìm vị trí của từ khóa đầu tiên xuất hiện
-            for (String keyword : keywords) {
-                splitIndex = address.indexOf(keyword);
-                if (splitIndex != -1) {
-                    break; // Thoát vòng lặp khi tìm thấy từ khóa
-                }
-            }
-
-            if (splitIndex != -1) {
-                houseNumber = address.substring(0, splitIndex).trim(); // Phần trước từ khóa
-                firstAddress = address.substring(splitIndex).trim(); // Phần từ từ khóa trở đi
-            } else {
-                // Nếu không tìm thấy từ khóa, mặc định tách theo dấu phẩy đầu tiên
-                if (address.contains(",")) {
-                    String[] parts = address.split(", ", 2);
-                    if (parts.length == 2) {
-                        houseNumber = parts[0].trim();
-                        firstAddress = parts[1].trim();
-                    }
-                } else {
-                    // Nếu không có từ khóa và dấu phẩy, gán toàn bộ cho houseNumber
-                    houseNumber = address.trim();
-                }
-            }
-
-            // Ánh xạ dữ liệu lên giao diện
-            binding.etHouseNumber.setText(houseNumber);
-            binding.etProvinceDistrictWard.setText(firstAddress);
-        }
-        selectedLatLng = getLatLngFromAddress(address);
-        if (selectedLatLng != null) {
-            showMapLocation(selectedLatLng, address);
-        }
-
-        // Sự kiện quay lại
-        binding.btnBack.setOnClickListener(v -> finish());
-
-        // Xử lý khi mất focus khỏi etHouseNumber
-        binding.etHouseNumber.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) {
-                String houseNumber = binding.etHouseNumber.getText().toString().trim();
-                if (!houseNumber.isEmpty() && firstAddress != null && !firstAddress.isEmpty()) {
-                    // Kết hợp houseNumber và firstAddress để tạo địa chỉ đầy đủ
-                    String fullAddress = houseNumber + ", " + firstAddress;
-                    binding.etAddress.setText(fullAddress); // Hiển thị địa chỉ đầy đủ trong etAddress
-
-                    // Lấy tọa độ từ địa chỉ đầy đủ và hiển thị trên bản đồ
-                    selectedLatLng = getLatLngFromAddress(fullAddress);
-                    if (selectedLatLng != null) {
-                        showMapLocation(selectedLatLng, fullAddress);
-                    } else {
-                        Toast.makeText(EditAddressActivity.this, "Không tìm thấy tọa độ cho địa chỉ này", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    if (houseNumber.isEmpty()) {
-                        Toast.makeText(EditAddressActivity.this, "Vui lòng nhập số nhà", Toast.LENGTH_SHORT).show();
-                    } else if (firstAddress == null || firstAddress.isEmpty()) {
-                        Toast.makeText(EditAddressActivity.this, "Vui lòng chọn tỉnh, huyện, xã", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-        });
-
-        // Khởi tạo Map Fragment
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragmentContainer);
         mapFragment.getMapAsync(this);
+        // Tách địa chỉ
+        if(address != null )
+        {
+            splitAddress(address);
+            pendingAddress = address;
+        }
 
-        // Chọn vị trí từ MapsActivity
-//        binding.btnSelectFromMap.setOnClickListener(v -> {
-//            Intent mapIntent = new Intent(EditAddressActivity.this, MapsActivity.class);
-//            startActivityForResult(mapIntent, REQUEST_LOCATION);
-//        });
+        // Quay lại
+        binding.btnBack.setOnClickListener(v -> finish());
 
-        // Hoàn thành
-        binding.btnComplete.setOnClickListener(v -> {
-            String address1 = binding.etAddress.getText().toString();
-            if (address1.isEmpty()) {
-                Toast.makeText(this, "Vui lòng nhập địa chỉ", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Địa chỉ đã được lưu!", Toast.LENGTH_SHORT).show();
+        // Lắng nghe khi mất focus ở ô số nhà
+        binding.etHouseNumber.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                // Hủy các cập nhật đang chờ
+                if (pendingUpdateTask != null) {
+                    mainHandler.removeCallbacks(pendingUpdateTask);
+                }
+                // Lên lịch cập nhật mới với giảm tần suất
+                pendingUpdateTask = () -> updateFullAddress();
+                mainHandler.postDelayed(pendingUpdateTask, DEBOUNCE_DELAY);
             }
         });
 
-        binding.btnComplete.setOnClickListener(v -> {
-            String nameUpdate = binding.etName.getText().toString().trim();
-            String phoneNumberUpdate = binding.etPhoneNumber.getText().toString().trim();
-            String addressUpdate = binding.etAddress.getText().toString().trim();
 
-            if (nameUpdate.isEmpty() || phoneNumberUpdate.isEmpty() || addressUpdate.isEmpty()) {
-                Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
-                return;
+
+        // Gửi cập nhật
+        binding.btnComplete.setOnClickListener(v -> updateAddressAPI());
+    }
+
+    private void splitAddress(String address) {
+        if (address == null || address.isEmpty()) return;
+
+        String[] keywords = {"Phường", "Xã"};
+        int splitIndex = -1;
+
+        for (String keyword : keywords) {
+            splitIndex = address.indexOf(keyword);
+            if (splitIndex != -1) break;
+        }
+
+        String houseNumber = "";
+        firstAddress = "";
+
+        if (splitIndex != -1) {
+            houseNumber = address.substring(0, splitIndex).trim();
+            firstAddress = address.substring(splitIndex).trim();
+        } else if (address.contains(",")) {
+            String[] parts = address.split(", ", 2);
+            if (parts.length == 2) {
+                houseNumber = parts[0].trim();
+                firstAddress = parts[1].trim();
+            } else {
+                houseNumber = address.trim();
             }
+        } else {
+            houseNumber = address.trim();
+        }
 
-            // Tạo Address để gửi lên API
-            com.stepup.model.Address addressDTO = new com.stepup.model.Address(nameUpdate, phoneNumberUpdate, addressUpdate);
-            APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
+        binding.etHouseNumber.setText(houseNumber);
+        binding.etProvinceDistrictWard.setText(firstAddress);
+    }
 
-            // Gửi yêu cầu PUT đến API
-            apiService.updateAddress(addressId, addressDTO).enqueue(new Callback<ApiResponse>() {
-                @Override
-                public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
-                    if (response.isSuccessful() && response.body() != null) {
-                        ApiResponse responseObject = response.body();
-                        if (responseObject.getMessage().equals("Cập nhật địa chỉ thành công")) {
-                            Toast.makeText(EditAddressActivity.this, responseObject.getMessage(), Toast.LENGTH_SHORT).show();
-                            setResult(RESULT_OK); // Thông báo cho AddressActivity rằng đã cập nhật thành công
-                            finish();
-                        } else {
-                            Toast.makeText(EditAddressActivity.this, responseObject.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    } else {
-                        Toast.makeText(EditAddressActivity.this, "Lỗi: " + response.message(), Toast.LENGTH_SHORT).show();
-                    }
-                }
+    private void updateFullAddress() {
+        String houseNumber = binding.etHouseNumber.getText().toString().trim();
 
-                @Override
-                public void onFailure(Call<ApiResponse> call, Throwable t) {
-                    Toast.makeText(EditAddressActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
+        if (houseNumber.isEmpty()) {
+            Toast.makeText(this, "Vui lòng nhập số nhà", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (firstAddress == null || firstAddress.isEmpty()) {
+            Toast.makeText(this, "Vui lòng chọn tỉnh, huyện, xã", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String fullAddress = houseNumber + ", " + firstAddress;
+        binding.etAddress.setText(fullAddress);
+
+        getLatLngFromAddressAsync(fullAddress, latLng -> {
+            if (latLng != null) {
+                selectedLatLng = latLng;
+                showMapLocation(selectedLatLng, fullAddress);
+            } else {
+                Toast.makeText(this, "Không tìm thấy tọa độ cho địa chỉ này", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
+    private void updateAddressAPI() {
+        String name = binding.etName.getText().toString().trim();
+        String phone = binding.etPhoneNumber.getText().toString().trim();
+        String fullAddress = binding.etAddress.getText().toString().trim();
+
+        if (name.isEmpty() || phone.isEmpty() || fullAddress.isEmpty()) {
+            Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        com.stepup.model.Address addressDTO = new com.stepup.model.Address(name, phone, fullAddress);
+        APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
+
+        apiService.updateAddress(addressId, addressDTO).enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Toast.makeText(EditAddressActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    if ("Cập nhật địa chỉ thành công".equals(response.body().getMessage())) {
+                        setResult(RESULT_OK);
+                        finish();
+                    }
+                } else {
+                    Toast.makeText(EditAddressActivity.this, "Lỗi: " + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                Toast.makeText(EditAddressActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == REQUEST_LOCATION) {
-                String address = data.getStringExtra("address");
-                binding.etAddress.setText(address);
-
-                // Hiển thị địa chỉ trên bản đồ
-                selectedLatLng = getLatLngFromAddress(address);
-                if (mMap != null && selectedLatLng != null) {
-                    showMapLocation(selectedLatLng, address);
-                }
-            } else if (requestCode == REQUEST_CODE_SELECT_LOCATION) {
+        if (resultCode == RESULT_OK && data != null) {
+            String source = data.getStringExtra("source");
+            if ("SelectLocation".equals(source)) {
                 String province = data.getStringExtra("province");
                 String district = data.getStringExtra("district");
                 String ward = data.getStringExtra("ward");
-                firstAddress = ward + ", " + district + ", " + province;
-                // Hiển thị lên EditText
+
                 String fullAddress = province + ", " + district + ", " + ward;
                 binding.etProvinceDistrictWard.setText(fullAddress);
-            } else if (requestCode == REQUEST_CODE_HOUSE_NUMBER) {
-                // Nhận kết quả từ HouseNumberActivity
-                String houseNumber = data.getStringExtra("houseNumber");
-                binding.etHouseNumber.setText(houseNumber);
             }
         }
     }
@@ -231,25 +247,18 @@ public class EditAddressActivity extends AppCompatActivity implements OnMapReady
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        if (selectedLatLng != null) {
-            showMapLocation(selectedLatLng, binding.etAddress.getText().toString());
+        if (pendingAddress != null) {
+            getLatLngFromAddressAsync(pendingAddress, latLng -> {
+                if (latLng != null) {
+                    selectedLatLng = latLng;
+                    showMapLocation(selectedLatLng, pendingAddress);
+                } else {
+                    Toast.makeText(this, "Không tìm thấy tọa độ cho địa chỉ này", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 
-    // Hàm lấy tọa độ từ địa chỉ
-    private LatLng getLatLngFromAddress(String address) {
-        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-        try {
-            List<Address> addressList = geocoder.getFromLocationName(address, 1);
-            if (addressList != null && !addressList.isEmpty()) {
-                Address location = addressList.get(0);
-                return new LatLng(location.getLatitude(), location.getLongitude());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     // Hàm hiển thị vị trí trên bản đồ
     private void showMapLocation(LatLng latLng, String title) {
@@ -262,6 +271,7 @@ public class EditAddressActivity extends AppCompatActivity implements OnMapReady
 
     public void onProvinceDistrictWardClick(View view) {
         Intent intent = new Intent(this, SelectLocationActivity.class);
-        startActivityForResult(intent, REQUEST_CODE_SELECT_LOCATION);
+        intent.putExtra("source", "SelectLocation");
+        startActivityForResult(intent, 0);
     }
 }

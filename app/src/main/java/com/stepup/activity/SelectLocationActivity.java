@@ -101,6 +101,7 @@ public class SelectLocationActivity extends AppCompatActivity {
                     break;
                 case "ward":
                     Intent result = new Intent();
+                    result.putExtra("source", "SelectLocation");
                     result.putExtra("province", selectedProvince.getName_with_type());
                     result.putExtra("district", selectedDistrict.getName_with_type());
                     result.putExtra("ward", location);

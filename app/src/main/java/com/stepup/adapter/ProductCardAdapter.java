@@ -2,9 +2,11 @@ package com.stepup.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,11 +16,20 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.stepup.activity.DetailActivity;
 import com.stepup.databinding.ViewholderRecommendedBinding;
+import com.stepup.model.FavoriteItem;
+import com.stepup.model.FavoriteItemDTO;
+import com.stepup.model.Product;
 import com.stepup.model.ProductCard;
+import com.stepup.retrofit2.APIService;
+import com.stepup.retrofit2.RetrofitClient;
 
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.ViewHolder>{
     private List<ProductCard> items;
@@ -72,6 +83,52 @@ public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.
                     intent.putExtra("object", items.get(currentPosition));
                     holder.itemView.getContext().startActivity(intent);
                 }
+            }
+        });
+
+        holder.binding.favBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                FavoriteItemDTO favoriteItem = new FavoriteItemDTO();
+                APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
+                Call<Product> callProduct = apiService.getProductById(items.get(position).getId());
+                callProduct.enqueue(new Callback<Product>() {
+                    @Override
+                    public void onResponse(Call<Product> call, Response<Product> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                           Product product = response.body();
+                            Log.e("Product", "id " + product);
+                           favoriteItem.setProductVariantId(product.getProductVariants().get(0).getId());
+                           Log.e("favoriteid", "id " + favoriteItem.getProductVariantId());
+                            Call<String> callAddToFavorite = apiService.addToFavorite(favoriteItem);
+                            callAddToFavorite.enqueue(new Callback<String>() {
+                                @Override
+                                public void onResponse(Call<String> call, Response<String> response) {
+                                    if (response.isSuccessful() && response.body() != null) {
+                                        Toast.makeText(context, "Added to favorites", Toast.LENGTH_SHORT).show();
+                                    }
+                                    else
+                                    {
+                                        Toast.makeText(context, response.message(), Toast.LENGTH_SHORT).show();
+
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<String> call, Throwable t) {
+                                    Log.e("API_ERROR", "Error fetching product", t);
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Product> call, Throwable t) {
+                        Log.e("RetrofitError", "Error: " + t.getMessage());
+                    }
+                });
+              //  Log.e("API_ERROR", "id " + favoriteItem.getProductVariantId());
             }
         });
 

@@ -3,6 +3,9 @@ package com.stepup.model;
 public class FavoriteItemDTO {
     private long productVariantId;
 
+    public FavoriteItemDTO() {
+    }
+
     public FavoriteItemDTO(long productVariantId) {
         this.productVariantId = productVariantId;
     }
