@@ -124,7 +124,7 @@ public class DetailActivity extends AppCompatActivity {
 
                     binding.titleTxt.setText(product.getName());
                     NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-                    String priceText = format.format(product.getPrice());
+                    String priceText = format.format(product.getProductVariants().get(0).getPrice());
                     binding.priceTxt.setText(priceText);
                     binding.descriptionTxt.setText(product.getDescription());
                     binding.ratingTxt.setText(product.getRating().toString());

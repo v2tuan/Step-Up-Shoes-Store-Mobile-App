@@ -15,8 +15,6 @@ public class Product implements Parcelable {
     private String slug;
     private String description;
     private boolean isActive;
-    private Double price;
-    private Double promotionPrice;
 
     private List<Color> colors = new ArrayList<>();
 
@@ -32,8 +30,6 @@ public class Product implements Parcelable {
         this.slug = slug;
         this.description = description;
         this.isActive = isActive;
-        this.price = price;
-        this.promotionPrice = promotionPrice;
         this.colors = colors;
         this.sizes = sizes;
         this.productVariants = productVariants;
@@ -46,16 +42,6 @@ public class Product implements Parcelable {
         slug = in.readString();
         description = in.readString();
         isActive = in.readByte() != 0;
-        if (in.readByte() == 0) {
-            price = null;
-        } else {
-            price = in.readDouble();
-        }
-        if (in.readByte() == 0) {
-            promotionPrice = null;
-        } else {
-            promotionPrice = in.readDouble();
-        }
         colors = in.createTypedArrayList(Color.CREATOR);
         sizes = in.createTypedArrayList(Size.CREATOR);
         productVariants = in.createTypedArrayList(ProductVariant.CREATOR);
@@ -118,22 +104,6 @@ public class Product implements Parcelable {
         isActive = active;
     }
 
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
-    public Double getPromotionPrice() {
-        return promotionPrice;
-    }
-
-    public void setPromotionPrice(Double promotionPrice) {
-        this.promotionPrice = promotionPrice;
-    }
-
     public List<Color> getColors() {
         return colors;
     }
@@ -178,18 +148,6 @@ public class Product implements Parcelable {
         parcel.writeString(slug);
         parcel.writeString(description);
         parcel.writeByte((byte) (isActive ? 1 : 0));
-        if (price == null) {
-            parcel.writeByte((byte) 0);
-        } else {
-            parcel.writeByte((byte) 1);
-            parcel.writeDouble(price);
-        }
-        if (promotionPrice == null) {
-            parcel.writeByte((byte) 0);
-        } else {
-            parcel.writeByte((byte) 1);
-            parcel.writeDouble(promotionPrice);
-        }
         parcel.writeTypedList(colors);
         parcel.writeTypedList(sizes);
         parcel.writeTypedList(productVariants);
