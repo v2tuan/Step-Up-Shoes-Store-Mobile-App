@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.stepup.AppUtils;
 import com.stepup.R;
 import com.stepup.activity.AddAddressActivity;
 import com.stepup.activity.CheckOutActivity;
@@ -142,6 +143,10 @@ public class CartFragment extends Fragment {
         binding.btnCheckOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (cartItems == null || cartItems.isEmpty()){
+                    AppUtils.showDialogNotify(requireActivity(), R.drawable.error, "You haven't selected any product to buy yet.");
+                    return;
+                }
                 Intent intent = new Intent(getActivity(), CheckOutActivity.class);
                 intent.putParcelableArrayListExtra ("orderItems", new ArrayList<>(cartItems));
                 startActivity(intent);

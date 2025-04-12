@@ -44,7 +44,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     private FragmentCartBinding binding;
 
     public CartAdapter(List<CartItem> listCartItem, ChangeNumberItemsListener changeNumberItemsListener) {
-        this.listCartItem = listCartItem;
+        this.listCartItem = listCartItem; // Ta đang gán tham chiếu (reference) của đối tượng từ tham số vào biến thành viên của lớp. Điều đó nghĩa là chung cung tro toi 1 dia chi bo nho
         this.changeNumberItemsListener = changeNumberItemsListener;
     }
 
