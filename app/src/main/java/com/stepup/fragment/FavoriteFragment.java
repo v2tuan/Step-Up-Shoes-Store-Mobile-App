@@ -3,6 +3,7 @@ package com.stepup.fragment;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.util.Log;
@@ -10,12 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.stepup.R;
-import com.stepup.adapter.CartAdapter;
 import com.stepup.adapter.FavoriteAdapter;
 import com.stepup.databinding.FragmentFavoriteBinding;
-import com.stepup.listener.ChangeNumberItemsListener;
-import com.stepup.model.FavoriteItem;
+import com.stepup.model.Favorite;
 import com.stepup.retrofit2.APIService;
 import com.stepup.retrofit2.RetrofitClient;
 
@@ -52,15 +50,17 @@ public class FavoriteFragment extends Fragment {
         showLoading();
 
         APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
-        Call<List<FavoriteItem>> callFavorite =apiService.getAllFavoriteItem();
-        callFavorite.enqueue(new Callback<List<FavoriteItem>>() {
+        Call<List<Favorite>> callFavorite =apiService.getAllFavoriteItem();
+        callFavorite.enqueue(new Callback<List<Favorite>>() {
             @Override
-            public void onResponse(Call<List<FavoriteItem>> call, Response<List<FavoriteItem>> response) {
+            public void onResponse(Call<List<Favorite>> call, Response<List<Favorite>> response) {
+                if (!isAdded() || getContext() == null) return; // 🔒 Ngăn lỗi fragment bị detach
                 hideLoading();
                 if(response.isSuccessful()&& response.body()!= null )
                 {
-                    List<FavoriteItem> favoriteItems = response.body();
-                    binding.viewFavorite.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL,false));
+                    List<Favorite> favoriteItems = response.body();
+                    System.out.println("Favorite Items: " + favoriteItems);
+                    binding.viewFavorite.setLayoutManager(new GridLayoutManager(requireContext(), 2));
                     FavoriteAdapter favoriteAdapter = new FavoriteAdapter(favoriteItems, binding);
                     binding.viewFavorite.setAdapter(favoriteAdapter);
 
@@ -75,7 +75,7 @@ public class FavoriteFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<List<FavoriteItem>> call, Throwable t) {
+            public void onFailure(Call<List<Favorite>> call, Throwable t) {
                 hideLoading();
                 Log.e("RetrofitError", "Error: " + t.getMessage());
             }

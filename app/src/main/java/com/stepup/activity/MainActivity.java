@@ -28,6 +28,7 @@ import com.stepup.fragment.PersonFragment;
 import com.stepup.fragment.SearchFragment;
 import com.stepup.model.Banner;
 import com.stepup.model.CartItem;
+import com.stepup.model.Favorite;
 import com.stepup.model.ProductCard;
 import com.stepup.model.ZoomOutPageTransformer;
 import com.stepup.retrofit2.APIService;
@@ -57,7 +58,7 @@ public class MainActivity extends BaseActivity {
         });
 
         setCartItemCount();
-
+        setFavoriteItemCount();
         // Hiển thị Fragment mặc định
         if (savedInstanceState == null) {
             switchFragment(HomeFragment.class);
@@ -162,6 +163,27 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onFailure(Call<List<CartItem>> call, Throwable t) {
                 Log.e("RetrofitError", "Error: " + t.getMessage());
+            }
+        });
+    }
+    private void setFavoriteItemCount(){
+        APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
+        Call<List<Favorite>> callFavorite = apiService.getAllFavoriteItem();
+        callFavorite.enqueue(new Callback<List<Favorite>>() {
+            @Override
+            public void onResponse(Call<List<Favorite>> call, Response<List<Favorite>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<Favorite> favoriteItems = response.body();
+                    // Badge cho giỏ hàng
+                    BadgeDrawable badgeCart = binding.bottomNav.getOrCreateBadge(R.id.nav_favorite);
+                    badgeCart.setNumber(favoriteItems.size());
+                    badgeCart.setBackgroundColor(getResources().getColor(R.color.green));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Favorite>> call, Throwable t) {
+
             }
         });
     }

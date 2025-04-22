@@ -20,8 +20,8 @@
 
     <ImageView
         android:id="@+id/favBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_marginStart="16sp"
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="@+id/pic"
@@ -29,7 +29,7 @@
         app:srcCompat="@drawable/btn_3"
         app:tint="@color/grey" />
 
-<!--    <TextView-->
+    <!--    <TextView-->
 <!--        android:id="@+id/ratingTxt"-->
 <!--        android:layout_width="wrap_content"-->
 <!--        android:layout_height="wrap_content"-->
@@ -49,6 +49,17 @@
 <!--        app:layout_constraintEnd_toStartOf="@+id/ratingTxt"-->
 <!--        app:layout_constraintTop_toTopOf="@+id/ratingTxt"-->
 <!--        app:srcCompat="@drawable/star" />-->
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/pic"
+        app:layout_constraintEnd_toEndOf="@+id/pic"
+        app:layout_constraintStart_toStartOf="@+id/pic"
+        app:layout_constraintTop_toTopOf="@+id/pic" />
 
     <TextView
         android:id="@+id/titleTxt"
@@ -73,4 +84,6 @@
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="@+id/pic"
         app:layout_constraintTop_toBottomOf="@+id/titleTxt" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -72,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
 //        editor.remove("token");
 //        editor.remove("remember");
 //        editor.apply();
-//        checkLogin();
+          checkLogin();
 
 
         // Đăng nhập mặc định

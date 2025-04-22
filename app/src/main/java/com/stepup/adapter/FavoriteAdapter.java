@@ -1,12 +1,10 @@
 package com.stepup.adapter;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -17,13 +15,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.stepup.R;
 import com.stepup.databinding.FragmentFavoriteBinding;
-import com.stepup.databinding.ViewHolderFavoriteBinding;
-import com.stepup.databinding.ViewholderCartBinding;
 import com.stepup.databinding.ViewholderRecommendedBinding;
 import com.stepup.fragment.MyBottomFavoriteFragment;
-import com.stepup.model.AddToCartDTO;
-import com.stepup.model.CartItem;
-import com.stepup.model.FavoriteItem;
+import com.stepup.model.Color;
+import com.stepup.model.Favorite;
 import com.stepup.model.ProductVariant;
 import com.stepup.retrofit2.APIService;
 import com.stepup.retrofit2.RetrofitClient;
@@ -38,12 +33,12 @@ import retrofit2.Response;
 
 public class FavoriteAdapter  extends RecyclerView.Adapter<FavoriteAdapter.ViewHolder>{
 
-    private List<FavoriteItem> listFavoriteItem;
+    private List<Favorite> listFavoriteItem;
     private Context context;
     ViewGroup viewGroupParent;
     private FragmentFavoriteBinding binding;
 
-    public FavoriteAdapter(List<FavoriteItem> listFavoriteItem, FragmentFavoriteBinding binding) {
+    public FavoriteAdapter(List<Favorite> listFavoriteItem, FragmentFavoriteBinding binding) {
         this.listFavoriteItem = listFavoriteItem;
         this.binding = binding;
     }
@@ -59,17 +54,18 @@ public class FavoriteAdapter  extends RecyclerView.Adapter<FavoriteAdapter.ViewH
 
     @Override
     public void onBindViewHolder(@NonNull FavoriteAdapter.ViewHolder holder, int position) {
-        FavoriteItem item = listFavoriteItem.get(position);
+        Favorite item = listFavoriteItem.get(position);
         holder.setFavoriteItem(item);
-        ProductVariant variant = item.getProductVariant();
+        Color color = item.getColor();
         holder.binding.titleTxt.setText(item.getTitle());
         NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-        String priceText = format.format(variant.getPrice());
+        String priceText = format.format(item.getPrice());
         holder.binding.priceTxt.setText((priceText));
         Glide.with(holder.itemView.getContext())
-                .load(item.getProductVariant().getColor().getColorImages().get(0).getImageUrl()) // Giả định có phương thức getPictureUrl()
+                .load(item.getColor().getColorImages().get(0).getImageUrl()) // Giả định có phương thức getPictureUrl()
                 .apply(new RequestOptions().centerCrop())
                 .into(holder.binding.pic);
+        holder.binding.favBtn.setImageResource(R.drawable.ic_favorite_fill);
         holder.binding.favBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -96,11 +92,12 @@ public class FavoriteAdapter  extends RecyclerView.Adapter<FavoriteAdapter.ViewH
 
         holder.itemView.setOnClickListener(v -> {
             MyBottomFavoriteFragment bottomSheet = MyBottomFavoriteFragment.newInstance(
-                    item.getTitle(),
-                    String.valueOf(variant.getPrice()),
-                    item.getProductVariant().getColor().getColorImages().get(0).getImageUrl()
+                    item.getTitle(),item.getColor().getName(),
+                    String.valueOf(item.getPrice()),
+                    item.getColor().getColorImages().get(0).getImageUrl(),item.getColor().getId()
             );
             bottomSheet.show(((FragmentActivity) holder.itemView.getContext()).getSupportFragmentManager(), bottomSheet.getTag());
+
         });
     }
 
@@ -112,7 +109,7 @@ public class FavoriteAdapter  extends RecyclerView.Adapter<FavoriteAdapter.ViewH
     public static class ViewHolder extends RecyclerView.ViewHolder
     {
         ViewholderRecommendedBinding binding;
-        private FavoriteItem favoriteItem;
+        private Favorite favoriteItem;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -128,11 +125,11 @@ public class FavoriteAdapter  extends RecyclerView.Adapter<FavoriteAdapter.ViewH
             this.binding = binding;
         }
 
-        public FavoriteItem getFavoriteItem() {
+        public Favorite getFavoriteItem() {
             return favoriteItem;
         }
 
-        public void setFavoriteItem(FavoriteItem favoriteItem) {
+        public void setFavoriteItem(Favorite favoriteItem) {
             this.favoriteItem = favoriteItem;
         }
     }

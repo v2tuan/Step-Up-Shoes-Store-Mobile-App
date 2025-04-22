@@ -5,8 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:background="@color/white"
+    android:orientation="vertical"
     android:padding="16dp">
 
     <!-- Header with Close Button -->
@@ -30,9 +30,9 @@
                 app:icon="@drawable/close"
                 app:iconSize="25dp"
                 app:iconTint="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
@@ -49,8 +49,8 @@
             android:layout_height="150dp"
             android:background="@drawable/grey_bg"
             android:clipToOutline="true"
-            android:scaleType="fitCenter"
             android:contentDescription="Product image"
+            android:scaleType="fitCenter"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:srcCompat="@drawable/shoes" />
@@ -61,14 +61,14 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="8dp"
-            android:maxLines="2"
             android:ellipsize="end"
+            android:maxLines="2"
             android:text="Product Title"
             android:textColor="@color/black"
             android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@id/pic"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/pic"
             app:layout_constraintTop_toTopOf="@id/pic" />
 
         <TextView
@@ -80,18 +80,44 @@
             android:text="$-"
             android:textColor="@color/grey"
             android:textSize="16sp"
-            app:layout_constraintStart_toEndOf="@id/pic"
-            app:layout_constraintBottom_toBottomOf="@id/pic" />
+            app:layout_constraintBottom_toBottomOf="@id/pic"
+            app:layout_constraintStart_toEndOf="@id/pic" />
+
+        <TextView
+            android:id="@+id/colorTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
+            android:text="Color"
+            android:textSize="16sp"
+            app:layout_constraintStart_toEndOf="@+id/pic"
+            app:layout_constraintTop_toBottomOf="@+id/titleTxt" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <FrameLayout
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#80ffffff"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2">
 
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:indeterminateTint="@android:color/black" />
+    </FrameLayout>
     <!-- Size Selection -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="16dp">
+        android:layout_marginTop="16dp"
+        android:orientation="vertical">
 
 
         <View
@@ -116,8 +142,8 @@
             android:layout_marginTop="8dp"
             android:clipToPadding="false"
             android:orientation="horizontal"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:overScrollMode="never" />
+            android:overScrollMode="never"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
     </LinearLayout>
 
@@ -130,10 +156,10 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="8dp"
         android:background="@drawable/black_bg"
+        android:contentDescription="Add product to cart"
         android:text="Add to Cart"
-        android:textColor="@color/white"
-        android:textSize="16sp"
         android:textAllCaps="false"
-        android:contentDescription="Add product to cart" />
+        android:textColor="@color/white"
+        android:textSize="16sp" />
 
 </LinearLayout>

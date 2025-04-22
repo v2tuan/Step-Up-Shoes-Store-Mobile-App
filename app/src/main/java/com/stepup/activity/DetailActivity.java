@@ -1,6 +1,5 @@
 package com.stepup.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,11 +11,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager2.widget.CompositePageTransformer;
-import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.stepup.AppUtils;
 import com.stepup.R;
 import com.stepup.adapter.BannerAdapter;
 import com.stepup.adapter.ColorAdapter;
@@ -24,22 +21,18 @@ import com.stepup.adapter.SizeAdapter;
 import com.stepup.databinding.ActivityDetailBinding;
 import com.stepup.model.AddToCartDTO;
 import com.stepup.model.Banner;
-import com.stepup.model.Color;
 import com.stepup.model.ColorImage;
-import com.stepup.model.FavoriteItemDTO;
+import com.stepup.model.FavoriteDTO;
 import com.stepup.model.Product;
 import com.stepup.model.ProductCard;
-import com.stepup.model.ProductImage;
 import com.stepup.model.ProductVariant;
 import com.stepup.model.Size;
-import com.stepup.model.ZoomOutPageTransformer;
 import com.stepup.retrofit2.APIService;
 import com.stepup.retrofit2.RetrofitClient;
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import retrofit2.Call;
@@ -114,28 +107,21 @@ public class DetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(ColorAdapter.colorSelected == null){
-                    Toast.makeText(DetailActivity.this, "Vui lòng chọn color", Toast.LENGTH_SHORT).show();
+                    AppUtils.showDialogNotify(DetailActivity.this, R.drawable.error, "Please Slect Shoes Color! ");
                     return;
                 }
-                Long productVariant_id = null;
-                for(ProductVariant variant: product.getProductVariants()){
-                    if(variant.getColor().equals(ColorAdapter.colorSelected) && variant.getSize().equals(SizeAdapter.sizeSelected)){
-                        productVariant_id = variant.getId();
-                        break;
-                    }
-                }
-                FavoriteItemDTO favoriteItemDTO = new FavoriteItemDTO(productVariant_id);
+                FavoriteDTO favoriteItemDTO = new FavoriteDTO(ColorAdapter.colorSelected.getId(),item.getPrice());
                 APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
                 Call<String> callAddToFavorite = apiService.addToFavorite(favoriteItemDTO);
                 callAddToFavorite.enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
                         if (response.isSuccessful() && response.body() != null) {
+                           // binding.favBtn.setI(R.drawable.ic_favorite_fill);
                             Toast.makeText(DetailActivity.this, response.body(), Toast.LENGTH_SHORT).show();
                             Log.d("Add To Favorite", "Message: : " + response.body());
                         }
                     }
-
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
                         Log.e("RetrofitError", "Error: " + t.getMessage());

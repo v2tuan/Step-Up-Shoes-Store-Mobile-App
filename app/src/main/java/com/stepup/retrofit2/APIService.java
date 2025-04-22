@@ -5,9 +5,10 @@ import com.stepup.model.Address;
 import com.stepup.model.ApiResponse;
 import com.stepup.model.Banner;
 import com.stepup.model.CartItem;
+import com.stepup.model.ProductVariant;
 import com.stepup.model.ResponseObject;
-import com.stepup.model.FavoriteItem;
-import com.stepup.model.FavoriteItemDTO;
+import com.stepup.model.Favorite;
+import com.stepup.model.FavoriteDTO;
 import com.stepup.model.UserDTO;
 import com.stepup.model.location.DistrictResponse;
 import com.stepup.model.Product;
@@ -63,13 +64,25 @@ public interface APIService {
 
 
     @GET("favorite")
-    Call<List<FavoriteItem>> getAllFavoriteItem();
+    Call<List<Favorite>> getAllFavoriteItem();
 
-    @POST("favorite/remove/{id}")
+    @DELETE("favorite/remove/{id}")
     Call<String> removeFavoriteItem(@Path("id") long favoriteItemId);
 
     @POST("favorite/add")
-    Call<String> addToFavorite(@Body FavoriteItemDTO favoriteItemDTO);
+    Call<String> addToFavorite(@Body FavoriteDTO favoriteItemDTO);
+
+    @POST("favorite/add1")
+    Call<String> addToFavorite1(@Query("ProductId") long productId);
+
+    @DELETE("favorite/remove")
+    Call<String> removeToFavorite1(@Query("ProductId") long productId);
+
+    @GET("favorite/productVarient/{id}")
+    Call<List<ProductVariant>> getProductVarientByColorId(@Path("id") long colorId);
+
+    @GET("favorite/productByColor/{id}")
+    Call<Product> getProductByColorId(@Path("id") long colorId );
 
     @POST("cart/add")
     Call<String> addCart(@Body AddToCartDTO addToCartDTO);
