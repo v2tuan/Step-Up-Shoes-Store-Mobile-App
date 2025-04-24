@@ -179,7 +179,14 @@ public class CartFragment extends Fragment {
             if (holder instanceof CartAdapter.ViewHolder) {
                 CartAdapter.ViewHolder holderCartItem = (CartAdapter.ViewHolder) holder;
                 ProductVariant variant = holderCartItem.getCartItem().getProductVariant();
-                total += variant.getPromotionPrice() * holderCartItem.getCartItem().getCount();
+                Double promotionPrice = variant.getPromotionPrice();
+
+                if (promotionPrice == null) {
+                    Log.w("PromotionPrice", "Promotion price is null for variant: " + variant.getId());
+                    promotionPrice = 0.0;
+                }
+
+                total += promotionPrice * holderCartItem.getCartItem().getCount();
             }
         }
 
