@@ -1,5 +1,6 @@
 package com.stepup.activity;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -107,7 +108,7 @@ public class DetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(ColorAdapter.colorSelected == null){
-                    AppUtils.showDialogNotify(DetailActivity.this, R.drawable.error, "Please Slect Shoes Color! ");
+                    AppUtils.showDialogNotify(DetailActivity.this, R.drawable.ic_tick, "Please Slect Shoes Color! ");
                     return;
                 }
                 FavoriteDTO favoriteItemDTO = new FavoriteDTO(ColorAdapter.colorSelected.getId(),item.getPrice());
@@ -118,8 +119,8 @@ public class DetailActivity extends AppCompatActivity {
                     public void onResponse(Call<String> call, Response<String> response) {
                         if (response.isSuccessful() && response.body() != null) {
                            // binding.favBtn.setI(R.drawable.ic_favorite_fill);
-                            Toast.makeText(DetailActivity.this, response.body(), Toast.LENGTH_SHORT).show();
-                            Log.d("Add To Favorite", "Message: : " + response.body());
+                            binding.favBtn.setIconResource(R.drawable.ic_favorite_fill);
+                            AppUtils.showDialogNotify(DetailActivity.this,R.drawable.ic_tick, "Add Favorite Successfull");
                         }
                     }
                     @Override
@@ -195,8 +196,15 @@ public class DetailActivity extends AppCompatActivity {
                     ViewPager2 viewPager2 = binding.slider;
 
                     DotsIndicator dotsIndicator = binding.dotIndicator;
-                    binding.colorList.setAdapter(new ColorAdapter(product.getColors(), viewPager2, dotsIndicator, product, sliderItems, bannerAdapter, binding.sizeList));
-
+                    binding.colorList.setAdapter(new ColorAdapter(product.getColors(), viewPager2, dotsIndicator, product, sliderItems, bannerAdapter, binding.sizeList, new ColorAdapter.OnColorSelectedListener() {
+                        @Override
+                        public void checkFavoriteStatus(Long colorId) {
+                            DetailActivity.this.checkFavoriteStatus(colorId);
+                        }
+                    }));
+                    if (!product.getColors().isEmpty()) {
+                        checkFavoriteStatus(product.getColors().get(0).getId());
+                    }
                     // Gán layoutManager cho RecyclerView màu, cũng theo chiều ngang
                     binding.colorList.setLayoutManager(
                             new LinearLayoutManager(DetailActivity.this, LinearLayoutManager.HORIZONTAL, false)
@@ -212,7 +220,28 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
     }
+    private void checkFavoriteStatus(Long colorId) {
+        APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
+        Call<Boolean> call = apiService.checkFavorite(colorId);
+        call.enqueue(new Callback<Boolean>() {
+            @Override
+            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    boolean isFavorite = response.body();
+                    if (isFavorite) {
+                        binding.favBtn.setIconResource(R.drawable.ic_favorite_fill);
+                    } else {
+                        binding.favBtn.setIconResource(R.drawable.favorite);
+                    }
+                }
+            }
 
+            @Override
+            public void onFailure(Call<Boolean> call, Throwable t) {
+                Log.e("CheckFavoriteError", "Lỗi kiểm tra favorite: " + t.getMessage());
+            }
+        });
+    }
     public void getSize(){
         // Tạo danh sách sizeList để lưu các kích thước sản phẩm
         ArrayList<String> sizeList = new ArrayList<>();

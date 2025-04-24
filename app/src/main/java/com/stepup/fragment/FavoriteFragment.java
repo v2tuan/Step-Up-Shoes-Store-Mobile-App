@@ -80,14 +80,14 @@ public class FavoriteFragment extends Fragment {
                 Log.e("RetrofitError", "Error: " + t.getMessage());
             }
         });
-        binding.btnSendAllToCart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                APIService apiService1 = RetrofitClient.getRetrofit().create(APIService.class);
-                showLoading();
-
-            }
-        });
+//        binding.btnSendAllToCart.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                APIService apiService1 = RetrofitClient.getRetrofit().create(APIService.class);
+//                showLoading();
+//
+//            }
+//        });
         return binding.getRoot();
     }
 

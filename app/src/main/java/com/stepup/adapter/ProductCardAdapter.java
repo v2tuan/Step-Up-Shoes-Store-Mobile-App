@@ -1,5 +1,6 @@
 package com.stepup.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.request.RequestOptions;
+import com.stepup.AppUtils;
 import com.stepup.R;
 import com.stepup.activity.DetailActivity;
 import com.stepup.databinding.ViewholderRecommendedBinding;
@@ -101,7 +103,7 @@ public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.
                         public void onResponse(Call<String> call, Response<String> response) {
                             holder.binding.progressBar.setVisibility(View.GONE);
                             if (response.isSuccessful() && response.body() != null) {
-                                Toast.makeText(context, "Remove Favorite Successfull", Toast.LENGTH_SHORT).show();
+                                AppUtils.showDialogNotify((Activity) context,R.drawable.ic_tick, "Remove Favorite Successfull");
                                 holder.binding.favBtn.setImageResource(R.drawable.btn_3);
                             }
                             else
@@ -125,7 +127,7 @@ public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.
                         public void onResponse(Call<String> call, Response<String> response) {
                             holder.binding.progressBar.setVisibility(View.GONE);
                             if (response.isSuccessful() && response.body() != null) {
-                                Toast.makeText(context, "Added to favorites", Toast.LENGTH_SHORT).show();
+                                AppUtils.showDialogNotify((Activity) context,R.drawable.ic_tick, "Add Favorite Successfull");
                                 holder.binding.favBtn.setImageResource(R.drawable.ic_favorite_fill);
                             }
                             else

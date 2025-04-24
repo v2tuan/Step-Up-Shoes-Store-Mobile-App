@@ -43,8 +43,8 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ViewHolder> 
 
     private RecyclerView recyclerViewSize;
     public static Color colorSelected = null;
-
-    public ColorAdapter(List<Color> items, ViewPager2 viewPager2, DotsIndicator dotsIndicator, Product product, ArrayList<Banner> sliderItems, BannerAdapter bannerAdapter, RecyclerView recyclerViewSize) {
+    private OnColorSelectedListener listener;
+    public ColorAdapter(List<Color> items, ViewPager2 viewPager2, DotsIndicator dotsIndicator, Product product, ArrayList<Banner> sliderItems, BannerAdapter bannerAdapter, RecyclerView recyclerViewSize, OnColorSelectedListener listener) {
         this.colors = items;
         this.viewPager2 = viewPager2;
         this.dotsIndicator = dotsIndicator;
@@ -52,6 +52,7 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ViewHolder> 
         this.sliderItems = sliderItems;
         this.bannerAdapter = bannerAdapter;
         this.recyclerViewSize = recyclerViewSize;
+        this.listener = listener;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -101,7 +102,10 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ViewHolder> 
 
                 // Gán vị trí được chọn hiện tại
                 selectedPosition = position;
-
+                // check fav
+                if (listener != null) {
+                    listener.checkFavoriteStatus(holder.getColor().getId());
+                }
                 // Cập nhật lại item cũ và item mới (tạo hiệu ứng refresh)
                 // khi gọi hàm này thì onBindViewHolder sẽ đợc gọi lại và set background
                 notifyItemChanged(lastSelectedPosition);
@@ -199,6 +203,9 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ViewHolder> 
 
     }
 
+    public interface OnColorSelectedListener {
+        void checkFavoriteStatus(Long colorId);
+    }
     @Override
     public int getItemCount() {
         return colors.size();

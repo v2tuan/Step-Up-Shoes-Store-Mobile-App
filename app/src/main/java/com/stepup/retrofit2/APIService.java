@@ -84,6 +84,9 @@ public interface APIService {
     @GET("favorite/productByColor/{id}")
     Call<Product> getProductByColorId(@Path("id") long colorId );
 
+    @GET("favorite/check")
+    Call<Boolean> checkFavorite(@Query("colorId") long colorId);
+
     @POST("cart/add")
     Call<String> addCart(@Body AddToCartDTO addToCartDTO);
 

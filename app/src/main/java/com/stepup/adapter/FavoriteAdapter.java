@@ -1,5 +1,6 @@
 package com.stepup.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.stepup.AppUtils;
 import com.stepup.R;
 import com.stepup.databinding.FragmentFavoriteBinding;
 import com.stepup.databinding.ViewholderRecommendedBinding;
@@ -75,8 +77,7 @@ public class FavoriteAdapter  extends RecyclerView.Adapter<FavoriteAdapter.ViewH
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
                         if (response.isSuccessful() && response.body() != null) {
-                            Toast.makeText(context, response.body(), Toast.LENGTH_SHORT).show();
-                            Log.d("Remove From Favorite", "Message: : " + response.body());
+                            AppUtils.showDialogNotify((Activity) context,R.drawable.ic_tick, "Remove Favorite Successfull");
                             listFavoriteItem.remove(position);
                             notifyDataSetChanged();
                             hideLoading(holder.itemView);
