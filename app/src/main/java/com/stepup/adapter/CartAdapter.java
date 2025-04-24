@@ -27,6 +27,7 @@ import com.stepup.model.ProductVariant;
 import com.stepup.retrofit2.APIService;
 import com.stepup.retrofit2.RetrofitClient;
 
+import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +74,17 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         holder.binding.titleTxt.setText(item.getTitle());
         holder.binding.feeEachItem.setText(variant.getColor().getName() + "/" + variant.getSize().getName());
         NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-        String priceText = format.format(variant.getPromotionPrice());
+
+//        String priceText = format.format(variant.getPromotionPrice());
+        Double promotionPrice = variant.getPromotionPrice();
+        String priceText;
+
+        if (promotionPrice == null) {
+            Log.w("PromotionPrice", "Promotion price is null for variant: " + variant.getId());
+            priceText = format.format(0.0); // hoặc "0" nếu bạn không cần format số
+        } else {
+            priceText = format.format(promotionPrice);
+        }
         holder.binding.totalEachItem.setText(priceText);
         holder.binding.numberItemTxt.setText(String.valueOf(item.getCount()));
 

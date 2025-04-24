@@ -81,6 +81,7 @@ public class LoginActivity extends AppCompatActivity {
             String email = activityLoginBinding.emailTxt.getText().toString();
             String password = activityLoginBinding.passwordTxt.getText().toString();
             loginUser(email, password);
+            finish();
         });
 
         // Đăng nhập với gogle
@@ -98,7 +99,6 @@ public class LoginActivity extends AppCompatActivity {
                     Intent signInIntent = googleSignInClient.getSignInIntent();
                     startActivityForResult(signInIntent, RC_SIGN_IN);
                 });
-
             }
         });
     }
@@ -241,6 +241,7 @@ public class LoginActivity extends AppCompatActivity {
                     saveToken(token, rememberMe);
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     hideLoading();
+                    finish();
                 }
             }
 

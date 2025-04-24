@@ -269,7 +269,10 @@ public class CheckOutActivity extends BaseActivity {
             if (holder instanceof OrderItemAdapter.ViewHolder) {
                 OrderItemAdapter.ViewHolder holderCartItem = (OrderItemAdapter.ViewHolder) holder;
                 ProductVariant variant = holderCartItem.getCartItem().getProductVariant();
-                totalFee += variant.getPromotionPrice() * holderCartItem.getCartItem().getCount();
+
+                if (variant != null && variant.getPromotionPrice() != null) {
+                    totalFee += variant.getPromotionPrice() * holderCartItem.getCartItem().getCount();
+                }
             }
         }
 

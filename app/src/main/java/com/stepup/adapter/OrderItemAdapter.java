@@ -62,7 +62,9 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.View
         holder.binding.titleTxt.setText(item.getTitle());
         holder.binding.feeEachItem.setText(variant.getColor().getName() + "/" + variant.getSize().getName());
         NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-        String priceText = format.format(variant.getPromotionPrice());
+        String priceText = variant.getPromotionPrice() != null
+                ? format.format(variant.getPromotionPrice())
+                : "0";
         holder.binding.totalEachItem.setText(priceText);
         holder.binding.numberItemTxt.setText(String.valueOf(item.getCount()));
 
