@@ -21,12 +21,32 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".activity.OrderOverviewActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.OrderResultActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="payment"
+                    android:scheme="yourapp" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.PaymentActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.CouponActivity"
             android:exported="false" />
         <activity
             android:name=".activity.CheckOutActivity"
             android:exported="false" />
- 		<activity
+        <activity
             android:name=".activity.EditAddressActivity"
             android:exported="false" />
         <activity
@@ -35,6 +55,7 @@
         <activity
             android:name=".activity.SelectLocationActivity"
             android:exported="false" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyB4hfY11JIyUF-6b-hQM2zu0oPowjq7l6Q" />

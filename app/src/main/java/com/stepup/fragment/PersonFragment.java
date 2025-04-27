@@ -16,11 +16,13 @@ import android.widget.FrameLayout;
 import com.bumptech.glide.Glide;
 import com.stepup.R;
 import com.stepup.activity.AddressActivity;
+import com.stepup.activity.OrderOverviewActivity;
 import com.stepup.adapter.CartAdapter;
 import com.stepup.databinding.FragmentHomeBinding;
 import com.stepup.databinding.FragmentPersonBinding;
 import com.stepup.listener.ChangeNumberItemsListener;
 import com.stepup.model.CartItem;
+import com.stepup.model.OrderShippingStatus;
 import com.stepup.model.User;
 import com.stepup.retrofit2.APIService;
 import com.stepup.retrofit2.RetrofitClient;
@@ -97,6 +99,25 @@ public class PersonFragment extends Fragment {
                 startActivity(new Intent(getActivity(), AddressActivity.class));
             }
         });
+
+        binding.bottomNav.setOnItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.pending) {
+                Intent intent = new Intent(requireContext(), OrderOverviewActivity.class);
+                startActivity(intent);
+            } else if (item.getItemId() == R.id.goods) {
+                Intent intent = new Intent(requireContext(), OrderOverviewActivity.class);
+                intent.putExtra("tab_position", OrderShippingStatus.PREPARING.ordinal());
+                startActivity(intent);
+            } else if (item.getItemId() == R.id.delivery) {
+                Intent intent = new Intent(requireContext(), OrderOverviewActivity.class);
+                intent.putExtra("tab_position", OrderShippingStatus.DELIVERING.ordinal());
+                startActivity(intent);
+            } else if (item.getItemId() == R.id.settings) {
+                // Activity Settings
+            }
+            return true;
+        });
+
     }
 
     private void getUser(){
