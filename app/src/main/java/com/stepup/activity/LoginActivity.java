@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -81,7 +83,6 @@ public class LoginActivity extends AppCompatActivity {
             String email = activityLoginBinding.emailTxt.getText().toString();
             String password = activityLoginBinding.passwordTxt.getText().toString();
             loginUser(email, password);
-            finish();
         });
 
         // Đăng nhập với gogle

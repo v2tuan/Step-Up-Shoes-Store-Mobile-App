@@ -1,9 +1,12 @@
 package com.stepup.activity;
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.RadioButton;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
@@ -32,10 +35,13 @@ import com.stepup.model.OrderItemDTO;
 import com.stepup.model.PaymentMethod;
 import com.stepup.model.ProductVariant;
 import com.stepup.model.ResponseObject;
+import com.stepup.model.payment.PaymentDTO;
 import com.stepup.retrofit2.APIService;
 import com.stepup.retrofit2.RetrofitClient;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.format.DateTimeFormatter;
+
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -93,6 +99,10 @@ public class CheckOutActivity extends BaseActivity {
 
                 OrderDTO orderDTO = new OrderDTO();
                 orderDTO.setOrderItems(orderItemDTOS);
+                if(addressSelected == null){
+                    AppUtils.showDialogNotify(CheckOutActivity.this, R.drawable.error, "Chưa chọn địa chỉ nhận hàng");
+                    return;
+                }
                 orderDTO.setAddressId(addressSelected.getId());
 
                 if(couponSelected != null) {
@@ -106,6 +116,81 @@ public class CheckOutActivity extends BaseActivity {
                     AppUtils.showDialogNotify(CheckOutActivity.this, R.drawable.error, "Please select a payment method");
                     return;
                 }
+
+                APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
+                Call<ResponseObject> callCreateOrder = apiService.createOrder(orderDTO);
+
+                showLoading();
+                callCreateOrder.enqueue(new Callback<ResponseObject>() {
+                    @Override
+                    public void onResponse(Call<ResponseObject> call, Response<ResponseObject> response) {
+                        ResponseObject responseObject = response.body(); // Lấy JSON từ server trả về
+                        if(response.isSuccessful()){
+                            // ✅ Thành công (status code 200-299)
+//                            AppUtils.showDialogNotify(CheckOutActivity.this, R.drawable.ic_tick, responseObject.getMessage());
+                            Log.i(TAG, "Đặt hàng thành công");
+                            if(orderDTO.getPaymentMethod() == PaymentMethod.VNPAY){
+                                redirectPaymentActivity(((Double) responseObject.getData()).longValue());
+                            }
+                            else{
+                                Intent intent = new Intent(CheckOutActivity.this, OrderResultActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        } else {
+                            // ❌ Không thành công (ví dụ 400 hoặc 500)
+                            try {
+                                hideLoading();
+                                // Có thể parse bằng Gson nếu server vẫn trả JSON
+                                AppUtils.showDialogNotify(CheckOutActivity.this, R.drawable.error, responseObject.getMessage());
+                            } catch (Exception e) {
+                                hideLoading();
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseObject> call, Throwable t) {
+                        // ❌ Lỗi kết nối đến server (mất mạng, timeout,...)
+                        showLoading();
+                        Log.e(TAG, t.getMessage());
+                        AppUtils.showDialogNotify(CheckOutActivity.this, R.drawable.error, "Có lỗi xảy ra vui lòng thử lại sau!");
+                    }
+                });
+            }
+        });
+    }
+
+    private void redirectPaymentActivity(Long orderId){
+        PaymentDTO paymentDTO = new PaymentDTO();
+        paymentDTO.setOrderId(orderId);
+        paymentDTO.setLanguage("vn");
+
+        APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
+        Call<ResponseObject> callCreatePayment = apiService.createPayment(paymentDTO);
+        callCreatePayment.enqueue(new Callback<ResponseObject>() {
+            @Override
+            public void onResponse(Call<ResponseObject> call, Response<ResponseObject> response) {
+                ResponseObject responseObject = response.body();
+                if(response.isSuccessful()){
+                    Intent intent = new Intent(CheckOutActivity.this, PaymentActivity.class);
+                    intent.putExtra("paymentURL", responseObject.getData().toString());
+                    startActivity(intent);
+                    finish();
+                }
+                else {
+                    hideLoading();
+                    // ❌ Không thành công (ví dụ 400 hoặc 500)
+                    AppUtils.showDialogNotify(CheckOutActivity.this, R.drawable.error, "Có lỗi xáy ra vui lòng thử lại sau");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseObject> call, Throwable t) {
+                hideLoading();
+                // ❌ Lỗi kết nối đến server (mất mạng, timeout,...)
+                AppUtils.showDialogNotify(CheckOutActivity.this, R.drawable.error, t.getMessage());
             }
         });
     }
@@ -205,10 +290,9 @@ public class CheckOutActivity extends BaseActivity {
 
     private void setupPaymentMethodSelection() {
         final RadioButton radioButtonCOD = findViewById(R.id.radioButtonCOD);
-        final RadioButton radioButtonMoMo = findViewById(R.id.radioButtonMomo);
-        final RadioButton radioButtonZalopay = findViewById(R.id.radioButtonZalopay);
+        final RadioButton radioButtonZalopay = findViewById(R.id.radioButtonVnpay);
 
-        final RadioButton[] radioButtons = {radioButtonCOD, radioButtonMoMo, radioButtonZalopay};
+        final RadioButton[] radioButtons = {radioButtonCOD, radioButtonZalopay};
 
         View.OnClickListener radioClickListener = new View.OnClickListener() {
             @Override
@@ -235,14 +319,10 @@ public class CheckOutActivity extends BaseActivity {
                     // Xử lý khi "Pay when receiving goods" được chọn
                     Log.d("PaymentSelection", "Selected: Pay when receiving goods");
                     paymentMethod = PaymentMethod.COD;
-                } else if (clickedRadioButton.getId() == R.id.radioButtonMomo) {
-                    // Xử lý khi "Payment by bank" được chọn
-                    Log.d("PaymentSelection", "Selected: Payment by momo");
-                    paymentMethod = PaymentMethod.MOMO;
-                } else if (clickedRadioButton.getId() == R.id.radioButtonZalopay) {
+                } else if (clickedRadioButton.getId() == R.id.radioButtonVnpay) {
                     // Xử lý khi "Payment by bank" được chọn
                     Log.d("PaymentSelection", "Selected: Payment by zalopay");
-                    paymentMethod = PaymentMethod.ZALOPAY;
+                    paymentMethod = PaymentMethod.VNPAY;
                 }
             }
         };
@@ -294,5 +374,19 @@ public class CheckOutActivity extends BaseActivity {
         binding.totalTxt.setText(totalPriceText);
         binding.txtTotalPrice.setText(totalPriceText);
         return total;
+    }
+
+    // Hiển thị process bar
+    private void showLoading() {
+        FrameLayout overlay = findViewById(R.id.overlay);
+        overlay.setVisibility(View.VISIBLE);
+        overlay.setClickable(true); // Chặn tương tác với các view bên dưới
+    }
+
+    // Ẩn process bar
+    private void hideLoading() {
+        FrameLayout overlay = findViewById(R.id.overlay);
+        overlay.setVisibility(View.GONE);
+        overlay.setClickable(false);
     }
 }

@@ -6,6 +6,7 @@ import com.stepup.model.ApiResponse;
 import com.stepup.model.Banner;
 import com.stepup.model.CartItem;
 import com.stepup.model.Color;
+import com.stepup.model.OrderDTO;
 import com.stepup.model.ProductVariant;
 import com.stepup.model.ResponseObject;
 import com.stepup.model.Favorite;
@@ -18,6 +19,7 @@ import com.stepup.model.location.ProvinceResponse;
 import com.stepup.model.User;
 import com.stepup.model.VerifyOtpRequest;
 import com.stepup.model.location.WardResponse;
+import com.stepup.model.payment.PaymentDTO;
 
 import java.util.List;
 import java.util.Map;
@@ -146,11 +148,18 @@ public interface APIService {
     @GET("coupon")
     Call<ResponseObject> getAllCoupons();
 
-    //search
+//search
     @GET("search")
     Call<List<ProductCard>> searchProducts(@Query("query") String query);
     @GET("search/suggestions")
     Call<List<String>> getSearchSuggestions();
     @GET("search/colors")
     Call<List<String>> getColor();
+    // Order
+    @POST("orders")
+    Call<ResponseObject> createOrder(@Body OrderDTO orderDTO);
+
+    // Payment
+    @POST("payments/create_payment_url")
+    Call<ResponseObject> createPayment(@Body PaymentDTO paymentDTO);
 }
