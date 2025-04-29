@@ -25,6 +25,7 @@ import com.stepup.model.ProductCard;
 import com.stepup.model.ZoomOutPageTransformer;
 import com.stepup.retrofit2.APIService;
 import com.stepup.retrofit2.RetrofitClient;
+import com.stepup.viewModel.FavoriteViewModel;
 import com.stepup.viewModel.HomeViewModel;
 
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ import retrofit2.Response;
  * create an instance of this fragment.
  */
 public class HomeFragment extends Fragment {
-
+  //  private FavoriteViewModel viewModel;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -71,11 +72,12 @@ public class HomeFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
-
+    private ProductCardAdapter productCardAdapter;
 
     private FragmentHomeBinding binding;
     private HomeViewModel homeViewModel;
-
+ //   private FavoriteViewModel favoriteViewModel;
+ //   private List<ProductCard> productList = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -86,10 +88,10 @@ public class HomeFragment extends Fragment {
         }
 
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+       // favoriteViewModel = new ViewModelProvider(requireActivity()).get(FavoriteViewModel.class);
         if (homeViewModel.getBannerList().getValue() == null) {
             homeViewModel.fetchBanners();
         }
-
         if (homeViewModel.getProductList().getValue() == null) {
             homeViewModel.fetchProducts();
         }
@@ -100,7 +102,12 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentHomeBinding.inflate(inflater, container, false);
-
+//        productCardAdapter = new ProductCardAdapter(productList, this);
+//        binding.viewPopular.setLayoutManager(new GridLayoutManager(requireContext(), 2));
+//        binding.viewPopular.setAdapter(productCardAdapter);
+//        favoriteViewModel.getFavoriteItems().observe(getViewLifecycleOwner(), favoriteItems -> {
+//            productCardAdapter.updateFavoriteStatus(); // Cập nhật giao diện
+//        });
         // Lắng nghe sự kiện kéo để làm mới
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
             // Xóa dữ liệu cũ
@@ -164,7 +171,6 @@ public class HomeFragment extends Fragment {
 
         return binding.getRoot();
     }
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();

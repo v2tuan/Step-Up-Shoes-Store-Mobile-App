@@ -24,6 +24,12 @@ public class Favorite {
         this.id = id;
     }
 
+    public Favorite(String title, Color color, Double price) {
+        this.title = title;
+        this.color = color;
+        this.price = price;
+    }
+
     public long getId() {
         return id;
     }

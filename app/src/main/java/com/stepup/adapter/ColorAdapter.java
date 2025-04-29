@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.stepup.R;
 import com.stepup.databinding.ViewholderColorBinding;
 import com.stepup.model.Banner;
@@ -25,7 +26,9 @@ import com.stepup.model.ProductVariant;
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ViewHolder> {
     private List<Color> colors;
@@ -44,6 +47,7 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ViewHolder> 
     private RecyclerView recyclerViewSize;
     public static Color colorSelected = null;
     private OnColorSelectedListener listener;
+    private Map<String, Map<String, ProductVariant>> variantMap;
     public ColorAdapter(List<Color> items, ViewPager2 viewPager2, DotsIndicator dotsIndicator, Product product, ArrayList<Banner> sliderItems, BannerAdapter bannerAdapter, RecyclerView recyclerViewSize, OnColorSelectedListener listener) {
         this.colors = items;
         this.viewPager2 = viewPager2;
@@ -55,6 +59,15 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ViewHolder> 
         this.listener = listener;
     }
 
+    private Map<String, Map<String, ProductVariant>> buildVariantMap(List<ProductVariant> variants) {
+        Map<String, Map<String, ProductVariant>> map = new HashMap<>();
+        for (ProductVariant variant : variants) {
+            String colorName = variant.getColor().getName();
+            String sizeName = variant.getSize().getName();
+            map.computeIfAbsent(colorName, k -> new HashMap<>()).put(sizeName, variant);
+        }
+        return map;
+    }
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private Color color;
         ViewholderColorBinding binding;
@@ -89,6 +102,7 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ViewHolder> 
         // Sử dụng Glide để tải ảnh vào ImageView
         Glide.with(holder.itemView.getContext()) // Lấy context từ itemView
                 .load(colors.get(position).getColorImages().get(0).getImageUrl()) // Load ảnh từ item (có thể là URL hoặc resource)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(holder.binding.pic);         // Hiển thị ảnh trong ImageView pic
 
         holder.setColor(colors.get(position));
@@ -99,7 +113,9 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ViewHolder> 
             public void onClick(View v) {
                 // Lưu lại vị trí trước đó
                 int lastSelectedPosition = selectedPosition;
-
+                if (selectedPosition == position) {
+                    return;
+                }
                 // Gán vị trí được chọn hiện tại
                 selectedPosition = position;
                 // check fav

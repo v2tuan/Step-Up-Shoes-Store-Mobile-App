@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -30,11 +31,14 @@ import com.stepup.model.ProductVariant;
 import com.stepup.model.Size;
 import com.stepup.retrofit2.APIService;
 import com.stepup.retrofit2.RetrofitClient;
+import com.stepup.viewModel.FavoriteViewModel;
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -44,8 +48,9 @@ public class DetailActivity extends AppCompatActivity {
     private ActivityDetailBinding binding;
     private ProductCard item;
     private int numberOrder = 1;
-
+    private FavoriteViewModel viewModel;
     private Product product;
+    private Map<Long, Boolean> favoriteStatusCache = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +63,7 @@ public class DetailActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        viewModel = new ViewModelProvider(this).get(FavoriteViewModel.class);
 
         getBundle();
         getBanner();
@@ -111,21 +117,41 @@ public class DetailActivity extends AppCompatActivity {
                     AppUtils.showDialogNotify(DetailActivity.this, R.drawable.ic_tick, "Please Slect Shoes Color! ");
                     return;
                 }
+                Long colorId = ColorAdapter.colorSelected.getId();
+                boolean isCurrentlyFavorite = favoriteStatusCache.getOrDefault(colorId, false);
+                binding.favBtn.setIconResource(isCurrentlyFavorite ? R.drawable.favorite : R.drawable.ic_favorite_fill);
+                favoriteStatusCache.put(colorId, !isCurrentlyFavorite);
                 FavoriteDTO favoriteItemDTO = new FavoriteDTO(ColorAdapter.colorSelected.getId(),item.getPrice());
                 APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
-                Call<String> callAddToFavorite = apiService.addToFavorite(favoriteItemDTO);
-                callAddToFavorite.enqueue(new Callback<String>() {
+                Call<String> call;
+                if (isCurrentlyFavorite) {
+                    // Giả định có API xóa yêu thích dựa trên colorId
+                    call = apiService.removeToFavorite2(colorId);
+                } else {
+                    FavoriteDTO favoriteDTO = new FavoriteDTO(colorId, item.getPrice());
+                    call = apiService.addToFavorite(favoriteDTO);
+                }
+
+                call.enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
                         if (response.isSuccessful() && response.body() != null) {
-                           // binding.favBtn.setI(R.drawable.ic_favorite_fill);
-                            binding.favBtn.setIconResource(R.drawable.ic_favorite_fill);
-                            AppUtils.showDialogNotify(DetailActivity.this,R.drawable.ic_tick, "Add Favorite Successfull");
+                            AppUtils.showDialogNotify(DetailActivity.this, R.drawable.ic_tick,
+                                    isCurrentlyFavorite ? "Xóa yêu thích thành công" : "Thêm yêu thích thành công");
+                        } else {
+                            // Hoàn tác nếu API thất bại
+                            favoriteStatusCache.put(colorId, isCurrentlyFavorite);
+                            binding.favBtn.setIconResource(isCurrentlyFavorite ? R.drawable.ic_favorite_fill : R.drawable.favorite);
+                            Toast.makeText(DetailActivity.this, "Lỗi: " + response.message(), Toast.LENGTH_SHORT).show();
                         }
                     }
+
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
-                        Log.e("RetrofitError", "Error: " + t.getMessage());
+                        // Hoàn tác nếu API thất bại
+                        favoriteStatusCache.put(colorId, isCurrentlyFavorite);
+                        binding.favBtn.setIconResource(isCurrentlyFavorite ? R.drawable.ic_favorite_fill : R.drawable.favorite);
+                        Toast.makeText(DetailActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -221,6 +247,10 @@ public class DetailActivity extends AppCompatActivity {
         });
     }
     private void checkFavoriteStatus(Long colorId) {
+        if (favoriteStatusCache.containsKey(colorId)) {
+            binding.favBtn.setIconResource(favoriteStatusCache.get(colorId) ? R.drawable.ic_favorite_fill : R.drawable.favorite);
+            return;
+        }
         APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
         Call<Boolean> call = apiService.checkFavorite(colorId);
         call.enqueue(new Callback<Boolean>() {
@@ -228,6 +258,7 @@ public class DetailActivity extends AppCompatActivity {
             public void onResponse(Call<Boolean> call, Response<Boolean> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     boolean isFavorite = response.body();
+                    favoriteStatusCache.put(colorId, isFavorite);
                     if (isFavorite) {
                         binding.favBtn.setIconResource(R.drawable.ic_favorite_fill);
                     } else {

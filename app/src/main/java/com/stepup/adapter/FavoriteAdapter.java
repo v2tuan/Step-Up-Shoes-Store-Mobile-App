@@ -10,9 +10,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.stepup.AppUtils;
 import com.stepup.R;
@@ -24,8 +26,10 @@ import com.stepup.model.Favorite;
 import com.stepup.model.ProductVariant;
 import com.stepup.retrofit2.APIService;
 import com.stepup.retrofit2.RetrofitClient;
+import com.stepup.viewModel.FavoriteDiffCallback;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -44,7 +48,13 @@ public class FavoriteAdapter  extends RecyclerView.Adapter<FavoriteAdapter.ViewH
         this.listFavoriteItem = listFavoriteItem;
         this.binding = binding;
     }
-
+    public void updateList(List<Favorite> newList) {
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new FavoriteDiffCallback(listFavoriteItem, newList));
+        listFavoriteItem.clear();
+        listFavoriteItem.addAll(newList);
+        diffResult.dispatchUpdatesTo(this);
+        updateEmptyView();
+    }
     @NonNull
     @Override
     public FavoriteAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -61,44 +71,55 @@ public class FavoriteAdapter  extends RecyclerView.Adapter<FavoriteAdapter.ViewH
         Color color = item.getColor();
         holder.binding.titleTxt.setText(item.getTitle());
         NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-        String priceText = format.format(item.getPrice());
-        holder.binding.priceTxt.setText((priceText));
+        holder.binding.priceTxt.setText(format.format(item.getPrice()));
         Glide.with(holder.itemView.getContext())
-                .load(item.getColor().getColorImages().get(0).getImageUrl()) // Giả định có phương thức getPictureUrl()
-                .apply(new RequestOptions().centerCrop())
+                .load(item.getColor().getColorImages().get(0).getImageUrl())
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(holder.binding.pic);
         holder.binding.favBtn.setImageResource(R.drawable.ic_favorite_fill);
-        holder.binding.favBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
-                Call<String> callRemoveCartItem = apiService.removeFavoriteItem(item.getId());
-                callRemoveCartItem.enqueue(new Callback<String>() {
-                    @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
-                        if (response.isSuccessful() && response.body() != null) {
-                            AppUtils.showDialogNotify((Activity) context,R.drawable.ic_tick, "Remove Favorite Successfull");
-                            listFavoriteItem.remove(position);
-                            notifyDataSetChanged();
-                            hideLoading(holder.itemView);
+
+        holder.binding.favBtn.setOnClickListener(view -> {
+            Long id = item.getId();
+            APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
+            Call<String> callRemoveCartItem = apiService.removeFavoriteItem(item.getId());
+            callRemoveCartItem.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        AppUtils.showDialogNotify((Activity) context, R.drawable.ic_tick, "Xóa yêu thích thành công");
+                        int indexToRemove = -1;
+                        for (int i = 0; i < listFavoriteItem.size(); i++) {
+                            if (listFavoriteItem.get(i).getId()==id) {
+                                indexToRemove = i;
+                                break;
+                            }
+                        }
+
+                        if (indexToRemove >= 0 && indexToRemove < listFavoriteItem.size()) {
+                            List<Favorite> newList = new ArrayList<>(listFavoriteItem);
+                            newList.remove(indexToRemove);
+                            updateList(newList);
+                            Log.d("FavoriteAdapter", "Removed item with id: " + id + " at index: " + indexToRemove);
+                        } else {
+                            Log.e("FavoriteAdapter", "Invalid index: " + indexToRemove + ", size: " + listFavoriteItem.size());
                         }
                     }
-                    @Override
-                    public void onFailure(Call<String> call, Throwable t) {
+                }
 
-                    }
-                });
-            }
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    Toast.makeText(context, "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
         });
 
         holder.itemView.setOnClickListener(v -> {
             MyBottomFavoriteFragment bottomSheet = MyBottomFavoriteFragment.newInstance(
-                    item.getTitle(),item.getColor().getName(),
+                    item.getTitle(), item.getColor().getName(),
                     String.valueOf(item.getPrice()),
-                    item.getColor().getColorImages().get(0).getImageUrl(),item.getColor().getId()
+                    item.getColor().getColorImages().get(0).getImageUrl(), item.getColor().getId()
             );
             bottomSheet.show(((FragmentActivity) holder.itemView.getContext()).getSupportFragmentManager(), bottomSheet.getTag());
-
         });
     }
 

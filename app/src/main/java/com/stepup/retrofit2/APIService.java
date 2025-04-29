@@ -5,6 +5,7 @@ import com.stepup.model.Address;
 import com.stepup.model.ApiResponse;
 import com.stepup.model.Banner;
 import com.stepup.model.CartItem;
+import com.stepup.model.Color;
 import com.stepup.model.ProductVariant;
 import com.stepup.model.ResponseObject;
 import com.stepup.model.Favorite;
@@ -74,7 +75,8 @@ public interface APIService {
 
     @POST("favorite/add1")
     Call<String> addToFavorite1(@Query("ProductId") long productId);
-
+    @DELETE("favorite/remove1")
+    Call<String> removeToFavorite2(@Query("colorId") Long colorId);
     @DELETE("favorite/remove")
     Call<String> removeToFavorite1(@Query("ProductId") long productId);
 
@@ -144,4 +146,11 @@ public interface APIService {
     @GET("coupon")
     Call<ResponseObject> getAllCoupons();
 
+    //search
+    @GET("search")
+    Call<List<ProductCard>> searchProducts(@Query("query") String query);
+    @GET("search/suggestions")
+    Call<List<String>> getSearchSuggestions();
+    @GET("search/colors")
+    Call<List<String>> getColor();
 }

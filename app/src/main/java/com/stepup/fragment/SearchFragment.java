@@ -28,6 +28,12 @@ public class SearchFragment extends Fragment {
             // Thay thế Fragment hiện tại bằng SearchInputFragment
             FragmentManager fragmentManager = getParentFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.setCustomAnimations(
+                    R.anim.enter_from_right,  // hiệu ứng fragment mới xuất hiện
+                    R.anim.exit_to_left,      // hiệu ứng fragment hiện tại biến mất
+                    R.anim.enter_from_left,   // hiệu ứng khi nhấn back (fragment cũ quay lại)
+                    R.anim.exit_to_right      // hiệu ứng fragment hiện tại biến mất khi nhấn back
+            );
             transaction.replace(R.id.fragment_container, searchInputFragment, SearchInputFragment.class.getSimpleName());
             transaction.addToBackStack(null); // Thêm vào Back Stack để quay lại
             transaction.commit();
