@@ -5,6 +5,7 @@ import com.stepup.model.Address;
 import com.stepup.model.ApiResponse;
 import com.stepup.model.Banner;
 import com.stepup.model.CartItem;
+import com.stepup.model.Color;
 import com.stepup.model.OrderDTO;
 import com.stepup.model.ProductVariant;
 import com.stepup.model.ResponseObject;
@@ -76,7 +77,8 @@ public interface APIService {
 
     @POST("favorite/add1")
     Call<String> addToFavorite1(@Query("ProductId") long productId);
-
+    @DELETE("favorite/remove1")
+    Call<String> removeToFavorite2(@Query("colorId") Long colorId);
     @DELETE("favorite/remove")
     Call<String> removeToFavorite1(@Query("ProductId") long productId);
 
@@ -85,6 +87,9 @@ public interface APIService {
 
     @GET("favorite/productByColor/{id}")
     Call<Product> getProductByColorId(@Path("id") long colorId );
+
+    @GET("favorite/check")
+    Call<Boolean> checkFavorite(@Query("colorId") long colorId);
 
     @POST("cart/add")
     Call<String> addCart(@Body AddToCartDTO addToCartDTO);
@@ -143,6 +148,13 @@ public interface APIService {
     @GET("coupon")
     Call<ResponseObject> getAllCoupons();
 
+//search
+    @GET("search")
+    Call<List<ProductCard>> searchProducts(@Query("query") String query);
+    @GET("search/suggestions")
+    Call<List<String>> getSearchSuggestions();
+    @GET("search/colors")
+    Call<List<String>> getColor();
     // Order
     @POST("orders")
     Call<ResponseObject> createOrder(@Body OrderDTO orderDTO);

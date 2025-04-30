@@ -9,9 +9,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.stepup.AppUtils;
 import com.stepup.R;
@@ -26,11 +28,14 @@ import com.stepup.model.ProductVariant;
 import com.stepup.model.Size;
 import com.stepup.retrofit2.APIService;
 import com.stepup.retrofit2.RetrofitClient;
+import com.stepup.viewModel.FavoriteViewModel;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -46,6 +51,7 @@ public class MyBottomFavoriteFragment extends BottomSheetDialogFragment {
     private static final String ARG_COLOR_ID   = "arg_color_id";
     private   List<ProductVariant> variants;
     private FragmentMyBottomFavoriteBinding binding;
+    private FavoriteViewModel viewModel;
 
     public MyBottomFavoriteFragment() {
         // Required empty public constructor
@@ -66,6 +72,7 @@ public class MyBottomFavoriteFragment extends BottomSheetDialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        viewModel = new ViewModelProvider(this).get(FavoriteViewModel.class);
     }
 
     @Nullable
@@ -90,8 +97,15 @@ public class MyBottomFavoriteFragment extends BottomSheetDialogFragment {
 
             Glide.with(this)
                     .load(imageUrl)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(binding.pic);
-            fetchVariants(colorId);
+            Product cachedProduct = viewModel.getProductByColorId(colorId);
+            if (cachedProduct != null) {
+                List<Size> sizes = extractSizes(cachedProduct);
+                displaySizes(sizes,cachedProduct);
+            } else {
+                fetchVariants(colorId);
+            }
         }
         binding.btnAddToCart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,6 +142,21 @@ public class MyBottomFavoriteFragment extends BottomSheetDialogFragment {
         });
         return binding.getRoot();
     }
+    private List<Size> extractSizes(Product product) {
+        if (product == null) {
+            Log.e("extractSizes", "Product is null");
+            return new ArrayList<>();
+        }
+        variants = product.getProductVariants();
+        Set<Size> sizes = new HashSet<>(); // Sử dụng Set để loại bỏ trùng lặp
+        for (ProductVariant v : variants) {
+            Size s = v.getSize();
+            if (s != null) {
+                sizes.add(s);
+            }
+        }
+        return new ArrayList<>(sizes);
+    }
     private void fetchVariants(long colorId) {
         APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
         apiService.getProductByColorId(colorId).enqueue(new Callback<Product>() {
@@ -146,14 +175,8 @@ public class MyBottomFavoriteFragment extends BottomSheetDialogFragment {
                 if(response.isSuccessful() && response.body() != null)
                 {
                     Product product = response.body();
-                    variants = product.getProductVariants();
-                    List<Size> sizes = new ArrayList<>();
-                            for (ProductVariant v : variants) {
-                                Size s = v.getSize();
-                                if (s != null && !sizes.contains(s)) {
-                                    sizes.add(s);
-                                }
-                            }
+                    viewModel.cacheProduct(colorId, product); // Lưu vào ViewModel
+                    List<Size> sizes = extractSizes(product);
                     displaySizes(sizes,product);
 
                 }
