@@ -27,16 +27,14 @@ public class OrderPagerAdapter extends FragmentStateAdapter {
             case DELIVERING: return new DeliveringOrdersFragment();
             case DELIVERED: return new DeliveredOrdersFragment();
             case CANCELLED: return new CancelledOrdersFragment();
-            case RETURN_REQUESTED:
             case RETURNED:
                 return new ReturnOrdersFragment();
             default: throw new IllegalArgumentException("Invalid position");
         }
-
     }
 
     @Override
     public int getItemCount() {
-        return OrderShippingStatus.values().length - 1;
+        return OrderShippingStatus.values().length;
     }
 }

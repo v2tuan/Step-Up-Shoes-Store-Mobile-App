@@ -1,5 +1,10 @@
 package com.stepup.retrofit2;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import org.threeten.bp.LocalDateTime;
+
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -14,6 +19,7 @@ public class RetrofitClient {
         if(retrofit==null){
             HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
             retrofit = new Retrofit.Builder()
                     // duong dan API
                     .baseUrl("http://10.0.2.2:8089/api/v1/")

@@ -1,14 +1,36 @@
 package com.stepup.fragment;
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.stepup.AppUtils;
 import com.stepup.R;
+import com.stepup.adapter.OrderAdapter;
+import com.stepup.databinding.FragmentPendingOrdersBinding;
+import com.stepup.model.Order;
+import com.stepup.model.OrderResponse;
+import com.stepup.model.OrderShippingStatus;
+import com.stepup.model.ResponseObject;
+import com.stepup.retrofit2.APIService;
+import com.stepup.retrofit2.RetrofitClient;
+
+import java.lang.reflect.Type;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -57,10 +79,50 @@ public class PendingOrdersFragment extends Fragment {
         }
     }
 
+    FragmentPendingOrdersBinding binding;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        getOrderPending();
+        binding = FragmentPendingOrdersBinding.inflate(inflater, container, false);
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_pending_orders, container, false);
+        return binding.getRoot();
+    }
+
+    private void getOrderPending(){
+        APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
+        Call<ResponseObject> callOrderByStatus = apiService.getOrdersByStatus(OrderShippingStatus.PENDING.toString());
+
+        callOrderByStatus.enqueue(new Callback<ResponseObject>() {
+            @Override
+            public void onResponse(Call<ResponseObject> call, Response<ResponseObject> response) {
+                if (response.isSuccessful()){
+                    // ✅ Thành công (status code 200-299)
+                    Gson gson = new Gson();
+                    String json = gson.toJson(response.body().getData()); // convert data thành JSON string
+
+                    Type type = new TypeToken<List<OrderResponse>>() {}.getType();
+                    List<OrderResponse> orderList = gson.fromJson(json, type); // parse lại JSON thành List<Order>
+
+                    OrderAdapter orderAdapter = new OrderAdapter(orderList);
+                    binding.rvOrderPending.setAdapter(orderAdapter);
+                    binding.rvOrderPending.setLayoutManager(
+                            new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+                    );
+
+                }
+                else {
+                    // ❌ Không thành công (ví dụ 400 hoặc 500)
+                    AppUtils.showDialogNotify(requireActivity(), R.drawable.error, "Có lỗi xảy ra, Vui lòng thử lại sau!");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseObject> call, Throwable t) {
+                // ❌ Lỗi kết nối đến server (mất mạng, timeout,...)
+                Log.e(TAG, t.getMessage());
+                AppUtils.showDialogNotify(requireActivity(), R.drawable.error, "Có lỗi xảy ra, Vui lòng thử lại sau!");
+            }
+        });
     }
 }

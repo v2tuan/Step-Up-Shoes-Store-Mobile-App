@@ -346,8 +346,8 @@ public class CheckOutActivity extends BaseActivity {
             View child = binding.rvOrderItems.getChildAt(i);
             RecyclerView.ViewHolder holder = binding.rvOrderItems.getChildViewHolder(child);
 
-            if (holder instanceof OrderItemAdapter.ViewHolder) {
-                OrderItemAdapter.ViewHolder holderCartItem = (OrderItemAdapter.ViewHolder) holder;
+            if (holder instanceof OrderItemAdapter.ViewHolderOrderItem1) {
+                OrderItemAdapter.ViewHolderOrderItem1 holderCartItem = (OrderItemAdapter.ViewHolderOrderItem1) holder;
                 ProductVariant variant = holderCartItem.getCartItem().getProductVariant();
 
                 if (variant != null && variant.getPromotionPrice() != null) {

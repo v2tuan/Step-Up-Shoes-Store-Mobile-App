@@ -56,7 +56,6 @@ public class OrderOverviewActivity extends AppCompatActivity {
                     tab.setText("Cancelled");
                     break;
                 case RETURNED:
-                case RETURN_REQUESTED:
                     tab.setText("Return");
                     break;
             }

@@ -144,7 +144,7 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ViewHolder> 
                     for (ProductVariant variant : product.getProductVariants()) {
                         if (variant.getColor().getName().equals(holder.getColor().getName()) && variant.getSize().getName().equals(sizeHolder.getSize().getName())) {
                             if(variant.getQuantity() == 0){
-                                // xử lý: ví dụ gạch ngang chữ size
+                                // xử lý gạch ngang chữ size
                                 sizeHolder.binding.sizeTxt.setPaintFlags(
                                         sizeHolder.binding.sizeTxt.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG
                                 );

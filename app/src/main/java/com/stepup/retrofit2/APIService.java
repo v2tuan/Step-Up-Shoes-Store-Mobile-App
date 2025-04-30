@@ -143,10 +143,12 @@ public interface APIService {
     @GET("coupon")
     Call<ResponseObject> getAllCoupons();
 
-
     // Order
     @POST("orders")
     Call<ResponseObject> createOrder(@Body OrderDTO orderDTO);
+
+    @GET("orders/{orderStatus}")
+    Call<ResponseObject> getOrdersByStatus(@Path("orderStatus") String orderStatus);
 
     // Payment
     @POST("payments/create_payment_url")
