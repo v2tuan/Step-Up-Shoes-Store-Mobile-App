@@ -48,16 +48,24 @@ public class ColorFilterAdapter extends RecyclerView.Adapter<ColorFilterAdapter.
         drawable.setColor(color);
 
         if (position == selectedPosition) {
-            drawable.setStroke(5, Color.WHITE);
+            drawable.setStroke(5, Color.BLACK);
         } else {
             drawable.setStroke(0, Color.TRANSPARENT);
         }
 
         holder.binding.textColorName.setText(colorName); // Gán tên màu vào TextView
         holder.binding.getRoot().setOnClickListener(v -> {
-            selectedPosition = position;
-            notifyDataSetChanged();
-            listener.onColorClick(colorName);
+            if (selectedPosition == position) {
+                // Nếu chọn lại màu đã chọn, bỏ chọn nó
+                selectedPosition = -1;
+                listener.onColorClick(null);  // Trả về null khi bỏ chọn
+            } else {
+                // Nếu chọn màu khác, cập nhật vị trí và thông báo cho listener
+                selectedPosition = position;
+                selectedColor = colorName;
+                listener.onColorClick(colorName);
+            }
+            notifyDataSetChanged();  // Cập nhật giao diện
         });
     }
 

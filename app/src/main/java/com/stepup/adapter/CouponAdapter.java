@@ -129,4 +129,20 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.ViewHolder
             this.binding = binding;
         }
     }
+    public void updateList(List<Coupon> newList) {
+        this.couponList = newList;
+        if (couponSelected != null) {
+            selectedPosition = -1; // Reset trước khi tìm
+            for (int i = 0; i < newList.size(); i++) {
+                if (newList.get(i).getId().equals(couponSelected.getId())) {
+                    selectedPosition = i;
+                    break;
+                }
+            }
+        }
+        notifyDataSetChanged(); // Cập nhật lại RecyclerView
+    }
+    public Coupon getSelectedCoupon() {
+        return couponSelected;
+    }
 }

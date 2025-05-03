@@ -10,6 +10,7 @@ import android.widget.FrameLayout;
 import android.widget.RadioButton;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.Nullable;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -74,10 +75,35 @@ public class CheckOutActivity extends BaseActivity {
         setupPaymentMethodSelection();
         setupCouponButton();
         setupCheckOutButton();
-
+        setupAddress();
         // Đảm bảo tính toán tổng sau khi Adapter hoàn tất quá trình binding dữ liệu
         // Bởi vì khi dùng post(), hành động calculateCart() sẽ được đưa vào queueMessage
         binding.rvOrderItems.post(() -> calculate());
+
+
+    }
+    private void setupAddress()
+    {
+        binding.addressBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(CheckOutActivity.this, AddressSelectActivity.class);
+            if (addressSelected != null) {
+                intent.putExtra("selectedAddressId", addressSelected.getId());
+            }
+            startActivityForResult(intent,0);
+        });
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 0 && resultCode == RESULT_OK && data != null) {
+            Address selectedAddress = (Address) data.getSerializableExtra("selectedAddress");
+            if (selectedAddress != null) {
+                addressSelected = selectedAddress;
+                binding.txtName.setText(selectedAddress.getFullName());
+                binding.txtPhone.setText(selectedAddress.getPhone());
+                binding.txtAddress.setText(selectedAddress.getAddr());
+            }
+        }
     }
 
     private void setupCheckOutButton() {

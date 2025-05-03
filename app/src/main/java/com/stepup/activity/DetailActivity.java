@@ -119,7 +119,7 @@ public class DetailActivity extends AppCompatActivity {
                 }
                 Long colorId = ColorAdapter.colorSelected.getId();
                 boolean isCurrentlyFavorite = favoriteStatusCache.getOrDefault(colorId, false);
-                binding.favBtn.setIconResource(isCurrentlyFavorite ? R.drawable.favorite : R.drawable.ic_favorite_fill);
+                binding.favBtn.setIconResource(isCurrentlyFavorite ? R.drawable.favorite : R.drawable.favorite_fill);
                 favoriteStatusCache.put(colorId, !isCurrentlyFavorite);
                 FavoriteDTO favoriteItemDTO = new FavoriteDTO(ColorAdapter.colorSelected.getId(),item.getPrice());
                 APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
@@ -141,7 +141,7 @@ public class DetailActivity extends AppCompatActivity {
                         } else {
                             // Hoàn tác nếu API thất bại
                             favoriteStatusCache.put(colorId, isCurrentlyFavorite);
-                            binding.favBtn.setIconResource(isCurrentlyFavorite ? R.drawable.ic_favorite_fill : R.drawable.favorite);
+                            binding.favBtn.setIconResource(isCurrentlyFavorite ? R.drawable.favorite_fill : R.drawable.favorite);
                             Toast.makeText(DetailActivity.this, "Lỗi: " + response.message(), Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -150,7 +150,7 @@ public class DetailActivity extends AppCompatActivity {
                     public void onFailure(Call<String> call, Throwable t) {
                         // Hoàn tác nếu API thất bại
                         favoriteStatusCache.put(colorId, isCurrentlyFavorite);
-                        binding.favBtn.setIconResource(isCurrentlyFavorite ? R.drawable.ic_favorite_fill : R.drawable.favorite);
+                        binding.favBtn.setIconResource(isCurrentlyFavorite ? R.drawable.favorite_fill : R.drawable.favorite);
                         Toast.makeText(DetailActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -248,7 +248,7 @@ public class DetailActivity extends AppCompatActivity {
     }
     private void checkFavoriteStatus(Long colorId) {
         if (favoriteStatusCache.containsKey(colorId)) {
-            binding.favBtn.setIconResource(favoriteStatusCache.get(colorId) ? R.drawable.ic_favorite_fill : R.drawable.favorite);
+            binding.favBtn.setIconResource(favoriteStatusCache.get(colorId) ? R.drawable.favorite_fill : R.drawable.favorite);
             return;
         }
         APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
@@ -260,7 +260,7 @@ public class DetailActivity extends AppCompatActivity {
                     boolean isFavorite = response.body();
                     favoriteStatusCache.put(colorId, isFavorite);
                     if (isFavorite) {
-                        binding.favBtn.setIconResource(R.drawable.ic_favorite_fill);
+                        binding.favBtn.setIconResource(R.drawable.favorite_fill);
                     } else {
                         binding.favBtn.setIconResource(R.drawable.favorite);
                     }

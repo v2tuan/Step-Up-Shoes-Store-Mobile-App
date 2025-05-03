@@ -64,7 +64,7 @@
                 android:layout_height="40dp">
 
                 <EditText
-                    android:id="@+id/emailTxt"
+                    android:id="@+id/searchTxt"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:gravity="center_vertical"
@@ -76,12 +76,12 @@
                     android:singleLine="true"
                     android:textColor="@color/black"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/btnCheckOut1"
+                    app:layout_constraintEnd_toStartOf="@+id/btnApply"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnCheckOut1"
+                    android:id="@+id/btnApply"
                     style="@android:style/Widget.Button"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"

@@ -2,6 +2,8 @@ package com.stepup.fragment;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +23,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
+import com.stepup.AppUtils;
 import com.stepup.R;
 import com.stepup.activity.CheckOutActivity;
 import com.stepup.adapter.CartAdapter;
@@ -35,6 +38,7 @@ import com.stepup.model.ResponseObject;
 import com.stepup.retrofit2.APIService;
 import com.stepup.retrofit2.RetrofitClient;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -43,7 +47,7 @@ import retrofit2.Response;
 
 public class MyBottomSheetFragment extends BottomSheetDialogFragment {
     private FragmentMyBottomSheetBinding binding;
-
+    private List<Coupon> allCoupons = new ArrayList<>();
     public interface VoucherSelectedListener {
         void onVoucherSelected(Coupon coupon);
     }
@@ -65,10 +69,64 @@ public class MyBottomSheetFragment extends BottomSheetDialogFragment {
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentMyBottomSheetBinding.inflate(inflater);
         getAllCoupons();
+        searchCoupons();
+        applyDiscount();
         // Inflate layout của BottomSheet
         return binding.getRoot();
     }
+    private void applyDiscount() {
+        binding.btnApply.setOnClickListener(view -> {
+            // Lấy adapter hiện tại
+            CouponAdapter adapter = (CouponAdapter) binding.rvCoupon.getAdapter();
+            if (adapter != null) {
+                Coupon selectedCoupon = adapter.getSelectedCoupon();
+                if (selectedCoupon != null) {
+                    // Gửi dữ liệu selectedCoupon về qua listener
+                    if (voucherSelectedListener != null) {
+                        voucherSelectedListener.onVoucherSelected(selectedCoupon);
+                    }
+                    // Đóng BottomSheet sau khi chọn
+                    dismiss();
+                } else {
+                    // Nếu chưa chọn coupon nào
+                    AppUtils.showDialogNotify(requireActivity(), R.drawable.error, "Please Choose Coupon !");
+                }
+            }
+        });
+    }
 
+    private void searchCoupons(){
+        binding.searchTxt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
+                // Không cần thực hiện gì ở đây
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                // Lọc danh sách khi văn bản thay đổi
+                filterVoucherList(charSequence.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+    }
+
+    private void filterVoucherList(String query) {
+        List<Coupon> filteredList = new ArrayList<>();
+        for (Coupon voucher : allCoupons) { // Sử dụng allCoupons đã lưu trữ từ API
+            if (voucher.getCode().toLowerCase().contains(query.toLowerCase())) {
+                filteredList.add(voucher);
+            }
+        }
+        // Cập nhật danh sách trong adapter
+        CouponAdapter couponAdapter = (CouponAdapter) binding.rvCoupon.getAdapter();
+        if (couponAdapter != null) {
+            couponAdapter.updateList(filteredList);
+        }
+    }
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         BottomSheetDialog dialog = (BottomSheetDialog) super.onCreateDialog(savedInstanceState);
@@ -109,7 +167,7 @@ public class MyBottomSheetFragment extends BottomSheetDialogFragment {
                             Gson gson = new Gson();
                             String json = gson.toJson(responseObject.getData());  // Chuyển đổi LinkedTreeMap thành chuỗi JSON
                             List<Coupon> couponList = gson.fromJson(json, new TypeToken<List<Coupon>>(){}.getType());
-
+                            allCoupons = couponList;
                             binding.rvCoupon.setAdapter(new CouponAdapter(couponList, voucherSelectedListener));
                             binding.rvCoupon.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
 

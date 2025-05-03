@@ -76,7 +76,7 @@ public class FavoriteAdapter  extends RecyclerView.Adapter<FavoriteAdapter.ViewH
                 .load(item.getColor().getColorImages().get(0).getImageUrl())
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(holder.binding.pic);
-        holder.binding.favBtn.setImageResource(R.drawable.ic_favorite_fill);
+        holder.binding.favBtn.setImageResource(R.drawable.favorite_fill);
 
         holder.binding.favBtn.setOnClickListener(view -> {
             Long id = item.getId();

@@ -69,6 +69,7 @@
                 app:checkedIcon="@null"
                 app:strokeWidth="0dp">
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/addressBtn"
                     android:layout_width="match_parent"
                     android:paddingTop="16dp"
                     android:paddingBottom="16dp"
@@ -126,13 +127,13 @@
                         android:textAppearance="?attr/textAppearanceBodySmall"
                         android:textSize="14dp"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/cancelBtn1"
+                        app:layout_constraintEnd_toStartOf="@+id/addressBtn1"
                         app:layout_constraintStart_toEndOf="@id/sender_icon"
                         app:layout_constraintTop_toBottomOf="@+id/txtName"
                         tools:text="157 P. Đội Cấn, Đội Cấn, Ba Đình, Hà Nội, Vietnam" />
 
                     <Button
-                        android:id="@+id/cancelBtn1"
+                        android:id="@+id/addressBtn1"
                         style="?attr/materialIconButtonStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

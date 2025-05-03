@@ -93,7 +93,8 @@ public class FilterFragment extends Fragment {
 
                     colorAdapter = new ColorFilterAdapter(getContext(), colorList, colorName -> {
                         selectedColor = colorName;
-                        // Bạn có thể lưu colorName vào ViewModel, hoặc xử lý filter
+                        Log.d("FILTER", "Color: " + selectedColor );
+
                     });
 
                     binding.recyclerViewColors.setAdapter(colorAdapter);

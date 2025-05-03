@@ -23,14 +23,17 @@ public class ProductCard implements Parcelable {
 
     private boolean fav;
 
-    public ProductCard(long id, String name, String imageUrl, Double rating, Double price, Double promotionPrice, boolean fav) {
+    private List<Color> colors;
+
+    public ProductCard(long id, String name, String imageUrl, Double rating, Double price, Double promotionPrice, boolean fav, List<Color> colors) {
         this.id = id;
         this.name = name;
         ImageUrl = imageUrl;
         this.rating = rating;
         this.price = price;
         this.promotionPrice = promotionPrice;
-        this.fav =fav;
+        this.fav = fav;
+        this.colors = colors;
     }
 
     public ProductCard() {
@@ -153,5 +156,13 @@ public class ProductCard implements Parcelable {
 
     public void setFav(boolean fav) {
         this.fav = fav;
+    }
+
+    public List<Color> getColor() {
+        return colors;
+    }
+
+    public void setColor(List<Color> color) {
+        this.colors = color;
     }
 }

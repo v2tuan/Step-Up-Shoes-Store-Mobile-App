@@ -1,6 +1,8 @@
 package com.stepup.model;
 
-public class Address {
+import java.io.Serializable;
+
+public class Address implements Serializable {
     private Long id;
     private String fullName;
     private String addr;

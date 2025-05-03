@@ -19,6 +19,7 @@ import com.stepup.databinding.FragmentSearchResultBinding;
 import com.stepup.model.ProductCard;
 import com.stepup.retrofit2.APIService;
 import com.stepup.retrofit2.RetrofitClient;
+import com.stepup.viewModel.FavoriteViewModel;
 import com.stepup.viewModel.ProductViewModel;
 
 
@@ -36,6 +37,7 @@ public class SearchResultFragment extends Fragment {
     private String query;
     private ProductViewModel viewModel;
     private List<ProductCard> originalProductList;
+   // private FavoriteViewModel viewModel1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -84,6 +86,7 @@ public class SearchResultFragment extends Fragment {
 
     private void setupRecyclerView() {
         binding.itemView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+
         // Chỉ gọi API nếu danh sách sản phẩm chưa được tải
         if (viewModel.getProductList().getValue() == null || viewModel.getProductList().getValue().isEmpty()) {
             showLoading();
@@ -115,12 +118,14 @@ public class SearchResultFragment extends Fragment {
             String selectedRating = args.getString("selectedRating", "All");
             String selectedPrice = args.getString("selectedPrice", "All");
 
-//            // Lọc theo màu sắc
-//            if (selectedColor != null && !selectedColor.isEmpty()) {
-//                filteredList = filteredList.stream()
-//                        .filter(product -> selectedColor.equalsIgnoreCase(product.getColor()))
-//                        .collect(Collectors.toList());
-//            }
+            // Lọc theo màu sắc
+            if (selectedColor != null && !selectedColor.isEmpty() && !"All".equalsIgnoreCase(selectedColor)) {
+                filteredList = filteredList.stream()
+                        .filter(product -> product.getColor() != null &&
+                                product.getColor().stream()
+                                        .anyMatch(color -> selectedColor.equalsIgnoreCase(color.getName())))
+                        .collect(Collectors.toList());
+            }
 
             // Lọc theo đánh giá
             if (!"All".equalsIgnoreCase(selectedRating)) {

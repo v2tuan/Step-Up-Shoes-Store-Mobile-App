@@ -41,7 +41,7 @@ import retrofit2.Response;
  * create an instance of this fragment.
  */
 public class HomeFragment extends Fragment {
-  //  private FavoriteViewModel viewModel;
+    //  private FavoriteViewModel viewModel;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -76,8 +76,8 @@ public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
     private HomeViewModel homeViewModel;
- //   private FavoriteViewModel favoriteViewModel;
- //   private List<ProductCard> productList = new ArrayList<>();
+    //   private FavoriteViewModel favoriteViewModel;
+    //   private List<ProductCard> productList = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -88,7 +88,7 @@ public class HomeFragment extends Fragment {
         }
 
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
-       // favoriteViewModel = new ViewModelProvider(requireActivity()).get(FavoriteViewModel.class);
+        // favoriteViewModel = new ViewModelProvider(requireActivity()).get(FavoriteViewModel.class);
         if (homeViewModel.getBannerList().getValue() == null) {
             homeViewModel.fetchBanners();
         }

@@ -40,7 +40,7 @@ import retrofit2.Response;
 public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.ViewHolder> {
     private List<ProductCard> items;
     private Context context;
-  //  private FavoriteViewModel viewModel;
+    private FavoriteViewModel viewModel;
 
     public ProductCardAdapter(List<ProductCard> items) {
         this.items = items;
@@ -82,7 +82,7 @@ public class ProductCardAdapter extends RecyclerView.Adapter<ProductCardAdapter.
 //            item.setFav(isFavorite); // Update local state
 //        });
         if(items.get(position).isFav()) {
-            holder.binding.favBtn.setImageResource(R.drawable.ic_favorite_fill);
+            holder.binding.favBtn.setImageResource(R.drawable.favorite_fill);
         }
         RequestOptions requestOptions = new RequestOptions().transform(new CenterCrop());
 
