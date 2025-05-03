@@ -76,17 +76,17 @@
                     android:singleLine="true"
                     android:textColor="@color/black"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/btnApply"
+                    app:layout_constraintEnd_toStartOf="@+id/btnSearch"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnApply"
+                    android:id="@+id/btnSearch"
                     style="@android:style/Widget.Button"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:background="@drawable/black_bg"
-                    android:text="Apply"
+                    android:text="Search"
                     android:textColor="@color/white"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -117,7 +117,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
-                app:layout_constraintBottom_toTopOf="@+id/btnCheckOut"
+                app:layout_constraintBottom_toTopOf="@+id/btnApply"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -159,11 +159,11 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnCheckOut"
+                android:id="@+id/btnApply"
                 style="@android:style/Widget.Button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Check Out"
+                android:text="Apply"
                 android:background="@drawable/black_bg"
                 android:textSize="16sp"
                 android:textColor="@color/white"
