@@ -96,20 +96,11 @@ public class MyBottomSheetFragment extends BottomSheetDialogFragment {
     }
 
     private void searchCoupons(){
-        binding.searchTxt.addTextChangedListener(new TextWatcher() {
+        binding.btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
-                // Không cần thực hiện gì ở đây
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-                // Lọc danh sách khi văn bản thay đổi
-                filterVoucherList(charSequence.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
+            public void onClick(View v) {
+                String query = binding.searchTxt.getText().toString();
+                filterVoucherList(query);
             }
         });
     }
