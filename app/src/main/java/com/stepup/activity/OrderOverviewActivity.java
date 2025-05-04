@@ -1,6 +1,11 @@
 package com.stepup.activity;
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.FrameLayout;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,6 +26,7 @@ public class OrderOverviewActivity extends AppCompatActivity {
     private ViewPager2 viewPager;
     private OrderPagerAdapter orderPagerAdapter;
     ActivityOrderOverviewBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

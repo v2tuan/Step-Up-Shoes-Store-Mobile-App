@@ -96,6 +96,7 @@ public class LoginActivity extends AppCompatActivity {
         activityLoginBinding.googleSignInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                showLoading(); // Hiển thị process bar
                 googleSignInClient.signOut().addOnCompleteListener(LoginActivity.this, task -> {
                     Intent signInIntent = googleSignInClient.getSignInIntent();
                     startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -208,7 +209,6 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        showLoading(); // Hiển thị process bar
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RC_SIGN_IN) {
@@ -241,7 +241,6 @@ public class LoginActivity extends AppCompatActivity {
                     boolean rememberMe = activityLoginBinding.checkboxRemember.isChecked();
                     saveToken(token, rememberMe);
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                    hideLoading();
                     finish();
                 }
             }

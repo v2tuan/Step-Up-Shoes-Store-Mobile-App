@@ -3,16 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp"
-    tools:context=".fragment.PendingOrdersFragment">
-
-    <!-- TODO: Update blank fragment layout -->
+    tools:context=".fragment.PreparingOrdersFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvOrderPending"
+        android:id="@+id/rvOrderContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-
     <LinearLayout
         android:id="@+id/layoutEmpty"
         android:layout_width="wrap_content"
@@ -32,7 +28,6 @@
             android:textStyle="bold"
             android:layout_marginTop="10dp"/>
     </LinearLayout>
-
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"

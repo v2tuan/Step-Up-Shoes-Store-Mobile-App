@@ -11,11 +11,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.stepup.AppUtils;
 import com.stepup.R;
+import com.stepup.activity.OrderOverviewActivity;
 import com.stepup.adapter.OrderAdapter;
 import com.stepup.databinding.FragmentPendingOrdersBinding;
 import com.stepup.model.Order;
@@ -80,22 +82,25 @@ public class PendingOrdersFragment extends Fragment {
     }
 
     FragmentPendingOrdersBinding binding;
+    Call<ResponseObject> callOrderByStatus;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        getOrderPending();
         binding = FragmentPendingOrdersBinding.inflate(inflater, container, false);
+        getOrderPending();
         // Inflate the layout for this fragment
         return binding.getRoot();
     }
 
     private void getOrderPending(){
         APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
-        Call<ResponseObject> callOrderByStatus = apiService.getOrdersByStatus(OrderShippingStatus.PENDING.toString());
+        callOrderByStatus = apiService.getOrdersByStatus(OrderShippingStatus.PENDING.toString());
 
         callOrderByStatus.enqueue(new Callback<ResponseObject>() {
             @Override
             public void onResponse(Call<ResponseObject> call, Response<ResponseObject> response) {
+                if (!isAdded() || getContext() == null) return; // Kiểm tra fragment còn sống
+
                 if (response.isSuccessful()){
                     // ✅ Thành công (status code 200-299)
                     Gson gson = new Gson();
@@ -110,8 +115,17 @@ public class PendingOrdersFragment extends Fragment {
                             new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
                     );
 
+                    if(!orderList.isEmpty()) {
+                        binding.layoutEmpty.setVisibility(View.GONE);
+                    }
+                    else {
+                        binding.layoutEmpty.setVisibility(View.VISIBLE);
+                    }
+                    binding.progressBar.setVisibility(View.GONE);
                 }
                 else {
+                    if (!isAdded() || getContext() == null) return; // Kiểm tra fragment còn sống
+
                     // ❌ Không thành công (ví dụ 400 hoặc 500)
                     AppUtils.showDialogNotify(requireActivity(), R.drawable.error, "Có lỗi xảy ra, Vui lòng thử lại sau!");
                 }
@@ -120,9 +134,19 @@ public class PendingOrdersFragment extends Fragment {
             @Override
             public void onFailure(Call<ResponseObject> call, Throwable t) {
                 // ❌ Lỗi kết nối đến server (mất mạng, timeout,...)
+                if (!isAdded() || getContext() == null) return; // Kiểm tra fragment còn sống
+
                 Log.e(TAG, t.getMessage());
                 AppUtils.showDialogNotify(requireActivity(), R.drawable.error, "Có lỗi xảy ra, Vui lòng thử lại sau!");
             }
         });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (callOrderByStatus != null && !callOrderByStatus.isCanceled()) {
+            callOrderByStatus.cancel();
+        }
     }
 }

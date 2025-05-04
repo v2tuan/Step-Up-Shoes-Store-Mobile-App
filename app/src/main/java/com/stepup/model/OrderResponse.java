@@ -6,6 +6,7 @@ import java.util.List;
 public class OrderResponse {
     private long id;
     private String orderCode;
+    private Address address;
     private double subTotal;
     private Double totalPrice; // = subTotal - discountPrice
     private Double discountPrice;
@@ -48,6 +49,14 @@ public class OrderResponse {
 
     public void setOrderCode(String orderCode) {
         this.orderCode = orderCode;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
     public double getSubTotal() {

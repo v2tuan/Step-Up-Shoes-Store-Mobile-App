@@ -162,6 +162,12 @@ public interface APIService {
     @GET("orders/{orderStatus}")
     Call<ResponseObject> getOrdersByStatus(@Path("orderStatus") String orderStatus);
 
+    @GET("orders")
+    Call<ResponseObject> getOrder(@Query("orderId") Long orderId);
+
+    @POST("orders/cancelOrder")
+    Call<ResponseObject> cancelOrder(@Query("orderId") Long orderId);
+
     // Payment
     @POST("payments/create_payment_url")
     Call<ResponseObject> createPayment(@Body PaymentDTO paymentDTO);
