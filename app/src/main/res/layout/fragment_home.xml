@@ -60,9 +60,9 @@
                     app:srcCompat="@drawable/bell_icon" />
 
                 <ImageView
-                    android:id="@+id/imageView3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:id="@+id/search_btn"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
                     app:srcCompat="@drawable/search_icon" />
 
             </LinearLayout>

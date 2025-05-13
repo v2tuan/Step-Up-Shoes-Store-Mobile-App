@@ -2,6 +2,9 @@ package com.stepup.activity;
 
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.gson.Gson;
@@ -24,6 +28,8 @@ import com.stepup.R;
 import com.stepup.adapter.OrderAdapter;
 import com.stepup.adapter.OrderItemAdapter;
 import com.stepup.databinding.ActivityOrderDetailBinding;
+import com.stepup.fragment.CartFragment;
+import com.stepup.model.AddToCartDTO;
 import com.stepup.model.Address;
 import com.stepup.model.Order;
 import com.stepup.model.OrderItem;
@@ -36,6 +42,9 @@ import com.stepup.retrofit2.RetrofitClient;
 
 import java.lang.reflect.Type;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -44,9 +53,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class OrderDetailActivity extends AppCompatActivity {
-    private TextView tvOrderStatus;
+    private TextView tvOrderStatus,tvOderTittle;
     private LinearLayout layoutProcessingRefund;
-    private LinearLayout layoutCompleted;
+    private LinearLayout layoutCompleted, layoutRefurn, layoutChat, layoutAddress, layoutCancelDetail;
     private LinearLayout layoutRefundCompleted;
     private LinearLayout layoutCancelled;
 
@@ -72,23 +81,24 @@ public class OrderDetailActivity extends AppCompatActivity {
         });
         // Initialize views
         initViews();
-
         showLoading();
         getOrder();
-
-
+        binding.btnBack.setOnClickListener(v -> finish());
     }
 
     private void initViews() {
         tvOrderStatus = binding.tvOrderStatus;
-
+        tvOderTittle = binding.titleOrder;
 //        layoutProcessingRefund = findViewById(R.id.layout_processing_refund);
-        layoutCompleted = binding.layoutCompleted;
+        layoutCompleted = binding.orderCompleteHelp;
+        layoutRefurn =binding.returnOrder;
+        layoutChat =binding.chat;
+        layoutAddress =binding.layoutAddress;
         layoutRefundCompleted = binding.layoutRefundCompleted;
         layoutCancelled = binding.layoutCancelled;
-
-        btnSeeDetails = binding.btnSeeDetails;
-        btnRate = binding.btnRate;
+        layoutCancelDetail= binding.cancleDetail;
+      //  btnSeeDetails = binding.btnSeeDetails;
+        btnBuyAgain =binding.btnBuyAgain;
 //        btnBuyAgain = findViewById(R.id.btn_buy_again);
 //        btnContact = findViewById(R.id.btn_contact);
 //        btnRefund = findViewById(R.id.btn_refund);
@@ -97,6 +107,14 @@ public class OrderDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 finish();
+            }
+        });
+        binding.btnRefundDetail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(OrderDetailActivity.this , RefundDetail.class);
+                intent.putExtra("order", currentOrder);
+                startActivity(intent);
             }
         });
     }
@@ -154,12 +172,26 @@ public class OrderDetailActivity extends AppCompatActivity {
 //                setupProcessingRefundView(order);
 //                break;
 //
-//            case OrderStatus.COMPLETED:
-//                tvOrderStatus.setText("Đơn hàng đã hoàn thành");
-//                layoutCompleted.setVisibility(View.VISIBLE);
-//                // Setup specific information for this status
-//                setupCompletedView(order);
-//                break;
+            case PREPARING:
+                tvOrderStatus.setText("Đơn hàng được nhà bán hàng chuẩn bị");
+                tvOrderStatus.setBackgroundColor(Color.parseColor("#FFEB3B"));
+                layoutCompleted.setVisibility(View.VISIBLE);
+                layoutRefurn.setVisibility(View.GONE);
+                // layoutCompleted.setVisibility(View.VISIBLE);
+                // Setup specific information for this status
+                break;
+            case DELIVERING:
+                tvOrderStatus.setText("Đơn hàng đang được giao đến bạn");
+               // layoutCompleted.setVisibility(View.VISIBLE);
+                // Setup specific information for this status
+                break;
+            case DELIVERED:
+                tvOrderStatus.setText("Đơn hàng đã hoàn thành");
+                layoutCompleted.setVisibility(View.VISIBLE);
+               // layoutCompleted.setVisibility(View.VISIBLE);
+                // Setup specific information for this status
+                setupCompletedView(order);
+                break;
 //
 //            case OrderStatus.REFUND_COMPLETED:
 //                tvOrderStatus.setText("Hoàn tiền thành công");
@@ -168,18 +200,162 @@ public class OrderDetailActivity extends AppCompatActivity {
 //                setupRefundCompletedView(order);
 //                break;
 //
-//            case OrderStatus.CANCELLED:
-//                tvOrderStatus.setText("Đã hủy đơn hàng");
-//                layoutCancelled.setVisibility(View.VISIBLE);
-//                // Setup specific information for this status
-//                setupCancelledView(order);
-//                break;
+            case CANCELLED:
+                tvOderTittle.setText("Cancelled Order Detail");
+                tvOrderStatus.setVisibility(View.GONE);
+                layoutCancelled.setVisibility(View.VISIBLE);
+                layoutAddress.setVisibility(View.GONE);
+                layoutCancelDetail.setVisibility(View.VISIBLE);
+                binding.username.setText(order.getAddress().getFullName());
+                String updatedAt = order.getUpdatedAt(); // Chuỗi ngày giờ
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
+                try {
+                    Date date = dateFormat.parse(updatedAt); // Chuyển đổi thành đối tượng Date
+                    SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                    String formattedDate = outputFormat.format(date); // Định dạng lại ngày giờ
+                    binding.ngayyeucau.setText(formattedDate);
+                    binding.datetimeCancle.setText("vào lúc: "+formattedDate);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                binding.paymentmethod.setText((order.getPaymentMethod().toString()));
+                // Setup specific information for this status
+                setupCancelledView(order);
+                break;
+            case RETURNED:
+                tvOderTittle.setText("Return/Refund Order Detail");
+                tvOrderStatus.setText("Đơn hàng đã được hoàn trả");
+                tvOrderStatus.setVisibility(View.GONE);
+                // layoutCompleted.setVisibility(View.VISIBLE);
+                // Setup specific information for this status
+
+                break;
         }
+
 
         // Setup common information for all statuses
         setupCommonInformation(order);
     }
 
+    private void setupCompletedView(OrderResponse order)
+    {
+
+        binding.btnBuyAgain.setVisibility(View.VISIBLE);
+        binding.btnRefund.setVisibility(View.VISIBLE);
+        binding.btnRefund.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showLoading();
+                APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
+                Call<ResponseObject> returnOrder = apiService.returnOrder(order.getId());
+                returnOrder.enqueue(new Callback<ResponseObject>() {
+                    @Override
+                    public void onResponse(Call<ResponseObject> call, Response<ResponseObject> response) {
+                        ResponseObject responseObject = (ResponseObject) response.body();
+                        hideLoading();
+                        if(response.isSuccessful()){
+                            binding.btnRefund.setVisibility(View.GONE);
+                            AppUtils.showDialogNotify(OrderDetailActivity.this, R.drawable.error, responseObject.getMessage());
+                        }
+                        else {
+                            AppUtils.showDialogNotify(OrderDetailActivity.this, R.drawable.ic_check, "Return the order failed");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseObject> call, Throwable t) {
+                        Log.e(TAG, t.getMessage());
+                        hideLoading();
+                        AppUtils.showDialogNotify(OrderDetailActivity.this, R.drawable.error, "Error");
+                    }
+                });
+            }
+        });
+        binding.btnBuyAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                List<AddToCartDTO> addToCartDTOList = new ArrayList<>();
+
+                for (OrderItemResponse item : order.getOrderItems()) {
+                    AddToCartDTO dto = new AddToCartDTO();
+                    dto.setProductVariantId(item.getProductVariant().getId());
+                    dto.setQuantity(item.getCount());
+                    addToCartDTOList.add(dto);
+                }
+                BuyAgain(addToCartDTOList);
+            }
+        });
+    }
+    private void setupCancelledView(OrderResponse order){
+        binding.btnBuyAgain.setVisibility(View.VISIBLE);
+        binding.btnBuyAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                List<AddToCartDTO> addToCartDTOList = new ArrayList<>();
+
+                for (OrderItemResponse item : order.getOrderItems()) {
+                    AddToCartDTO dto = new AddToCartDTO();
+                    dto.setProductVariantId(item.getProductVariant().getId());
+                    dto.setQuantity(item.getCount());
+                    addToCartDTOList.add(dto);
+                }
+                BuyAgain(addToCartDTOList);
+            }
+        });
+    }
+    private void BuyAgain(List<AddToCartDTO> addToCartDTO)
+    {
+        showLoading();
+        APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
+        Call<String> addCart = apiService.addToCartOrder(addToCartDTO);
+        addCart.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                hideLoading();
+                if(response.isSuccessful()){
+                    Intent intent = new Intent(OrderDetailActivity.this, MainActivity.class);
+                    intent.putExtra("navigate_to", "cart");  // Gửi thông điệp yêu cầu mở CartFragment
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(intent);
+                }
+                else {
+                    AppUtils.showDialogNotify(OrderDetailActivity.this, R.drawable.ic_check, "Process failed");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.e(TAG, t.getMessage());
+                hideLoading();
+                AppUtils.showDialogNotify(OrderDetailActivity.this, R.drawable.error, "Error");
+            }
+        });
+
+    }
+    private void setupReturnView(OrderResponse order){
+        binding.btnRefundDetail.setVisibility(View.VISIBLE);
+        binding.btnRefundDetail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(OrderDetailActivity.this, RefundDetail.class);
+                startActivity(intent);
+            }
+        });
+        binding.btnBuyAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                List<AddToCartDTO> addToCartDTOList = new ArrayList<>();
+
+                for (OrderItemResponse item : order.getOrderItems()) {
+                    AddToCartDTO dto = new AddToCartDTO();
+                    dto.setProductVariantId(item.getProductVariant().getId());
+                    dto.setQuantity(item.getCount());
+                    addToCartDTOList.add(dto);
+                }
+                BuyAgain(addToCartDTOList);
+            }
+        });
+    }
     private void setupPendingView(OrderResponse order) {
         binding.btnCancelOrder.setVisibility(View.VISIBLE);
         binding.btnCancelOrder.setOnClickListener(new View.OnClickListener() {
@@ -206,6 +382,8 @@ public class OrderDetailActivity extends AppCompatActivity {
                 binding.imageViewExpand.setImageResource(isExpanded ? R.drawable.ic_arrow_up : R.drawable.ic_arrow_down);
             }
         });
+
+        orderItemAdapter.setOrderStatus(order.getStatus().toString(), order.getId());
         // Ẩn nút nếu danh sách không thể mở rộng (số item <= 1)
         binding.btnToggleExpand.setVisibility(orderItemAdapter.canExpand() ? View.VISIBLE : View.GONE);
         binding.btnToggleExpand.setOnClickListener(new View.OnClickListener() {
@@ -238,12 +416,14 @@ public class OrderDetailActivity extends AppCompatActivity {
     }
 
     void cancelOrder(){
+        showLoading();
         APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
         Call<ResponseObject> cancelOrder = apiService.cancelOrder(currentOrder.getId());
         cancelOrder.enqueue(new Callback<ResponseObject>() {
             @Override
             public void onResponse(Call<ResponseObject> call, Response<ResponseObject> response) {
                 ResponseObject responseObject = (ResponseObject) response.body();
+                hideLoading();
                 if(response.isSuccessful()){
                     AppUtils.showDialogNotify(OrderDetailActivity.this, R.drawable.ic_tick, responseObject.getMessage());
                 }
@@ -255,6 +435,7 @@ public class OrderDetailActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<ResponseObject> call, Throwable t) {
                 Log.e(TAG, t.getMessage());
+                hideLoading();
                 AppUtils.showDialogNotify(OrderDetailActivity.this, R.drawable.error, "Error, please try again later!");
             }
         });

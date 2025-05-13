@@ -1,6 +1,8 @@
 package com.stepup.model;
 
-public enum PaymentMethod {
+import java.io.Serializable;
+
+public enum PaymentMethod implements Serializable {
     COD,
     MOMO,
     ZALOPAY,

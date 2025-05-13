@@ -101,6 +101,81 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txtTotalPrice">
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:visibility="gone">
+            </View>
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_cancel_order"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/otp_box"
+                android:backgroundTint="#F44336"
+                android:text="Hủy đơn hàng"
+                android:layout_margin="5dp"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:visibility="gone"
+                 />
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_detail"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/otp_box"
+                android:text="Chi Tiết"
+                android:layout_margin="5dp"
+                android:textAllCaps="false"
+                android:textColor="@color/black"
+                android:visibility="gone"
+                />
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_buy_again"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/black_bg"
+                android:text="Mua Lại"
+                android:layout_margin="5dp"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:visibility="gone"
+                />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_refund"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/otp_box"
+                android:text="Chi Tiết Hoàn Tiền"
+                android:layout_margin="5dp"
+                android:textAllCaps="false"
+                android:textColor="#F57C00"
+                android:visibility="gone"
+                />
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_pay"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/black_bg"
+                android:text="Thanh Toán"
+                android:layout_margin="5dp"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:visibility="gone"
+                />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

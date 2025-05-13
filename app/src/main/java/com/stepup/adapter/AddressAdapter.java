@@ -34,6 +34,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressV
     private Context context;
     private List<Address> addressList;
     private Long defaultAddressId;
+
     private static final int REQUEST_CODE_EDIT_ADDRESS = 103;
 
     public AddressAdapter(Context context, List<Address> addressList, Long defaultAddressId) {
@@ -71,6 +72,11 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressV
             intent.putExtra("name", address.getFullName());
             intent.putExtra("phoneNumber", address.getPhone());
             intent.putExtra("address", address.getAddr());
+            boolean isDefaut =false;
+            if(defaultAddressId != null && defaultAddressId.equals(address.getId())){
+                isDefaut = true;
+            }
+            intent.putExtra("default",isDefaut);
             ((AppCompatActivity) holder.itemView.getContext()).startActivityForResult(intent,0);
         });
 
@@ -151,6 +157,9 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressV
 //                    .setNegativeButton("Không", null)
 //                    .show();
 //        });
+    }
+    public void setDefaultAddressId(Long defaultAddressId) {
+        this.defaultAddressId = defaultAddressId;
     }
 
     @Override

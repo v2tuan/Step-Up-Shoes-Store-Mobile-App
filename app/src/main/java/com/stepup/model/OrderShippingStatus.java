@@ -1,6 +1,8 @@
 package com.stepup.model;
 
-public enum OrderShippingStatus {
+import java.io.Serializable;
+
+public enum OrderShippingStatus implements Serializable {
     PENDING,          // Đang chờ xử lý
     PREPARING,        // Đang chuẩn bị
     DELIVERING,       // Đang giao hàng

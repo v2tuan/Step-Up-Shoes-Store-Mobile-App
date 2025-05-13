@@ -152,6 +152,15 @@ public class CartFragment extends Fragment {
                 startActivity(intent);
             }
         });
+        binding.backBtn.setOnClickListener(v -> {
+            requireActivity().getSupportFragmentManager().popBackStack();
+        });
+        binding.backBtn.setOnClickListener(v -> {
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, new FavoriteFragment())
+                    .commit();
+        });
         return binding.getRoot();
     }
 

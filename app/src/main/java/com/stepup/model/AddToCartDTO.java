@@ -9,6 +9,10 @@ public class AddToCartDTO {
         this.quantity = quantity;
     }
 
+
+    public AddToCartDTO() {
+    }
+
     public long getProductVariantId() {
         return productVariantId;
     }

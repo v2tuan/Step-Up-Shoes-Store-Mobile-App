@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.stepup.AppUtils;
 import com.stepup.R;
 import com.stepup.adapter.AddressAdapter;
 import com.stepup.databinding.ActivityAddressBinding;
@@ -61,7 +62,8 @@ public class AddressActivity extends BaseActivity  {
             Intent intent = new Intent(AddressActivity.this, AddAddressActivity.class);
             startActivity(intent);
         });
-
+        // Cập nhật adapter
+        binding.recyclerViewAddress.setAdapter(addressAdapter);
         binding.btnBack.setOnClickListener(v -> onBackPressed());
     }
     private void getUserAddresses() {
@@ -88,12 +90,11 @@ public class AddressActivity extends BaseActivity  {
                     }
                     Object idValue = data.get("defaultAddressId");
                     defaultAddressId = (idValue != null) ? Long.valueOf(idValue.toString().split("\\.")[0]) : null;
-
-                    // Cập nhật adapter
-                    addressAdapter = new AddressAdapter(AddressActivity.this, addressList, defaultAddressId);
                     binding.recyclerViewAddress.setAdapter(addressAdapter);
+                    addressAdapter.setDefaultAddressId(defaultAddressId);
+                    addressAdapter.notifyDataSetChanged();
                 } else {
-                    Toast.makeText(AddressActivity.this, "Không tìm thấy địa chỉ", Toast.LENGTH_SHORT).show();
+                    AppUtils.showDialogNotify(AddressActivity.this, R.drawable.error,"Chưa có địa chỉ nào! "  );
                 }
             }
 
@@ -106,6 +107,6 @@ public class AddressActivity extends BaseActivity  {
     @Override
     protected void onResume() {
         super.onResume();
-       // getUserAddresses();
+        getUserAddresses();
     }
 }

@@ -1,5 +1,6 @@
 package com.stepup.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -104,6 +105,19 @@ public class MainActivity extends BaseActivity {
                 binding.bottomNav.setSelectedItemId(R.id.nav_profile);
             }
         });
+    }
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent); // Cập nhật lại Intent mới
+
+        if (intent.hasExtra("navigate_to")) {
+            String navigateTo = intent.getStringExtra("navigate_to");
+            if ("cart".equals(navigateTo)) {
+                switchFragment(CartFragment.class);
+                binding.bottomNav.setSelectedItemId(R.id.nav_cart);
+            }
+        }
     }
 
     private void switchFragment(Class<? extends Fragment> fragmentClass) {

@@ -1,9 +1,10 @@
 package com.stepup.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class OrderResponse {
+public class OrderResponse implements Serializable {
     private long id;
     private String orderCode;
     private Address address;

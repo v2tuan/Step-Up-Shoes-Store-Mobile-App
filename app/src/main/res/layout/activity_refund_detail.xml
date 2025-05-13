@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    tools:context=".activity.RefundDetail">
+
+    <!-- App Bar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@android:color/white"
+        android:elevation="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/btn_back"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Back"
+            android:scaleType="centerCrop"
+            android:src="@drawable/arrow_back" />
+
+        <TextView
+            android:id="@+id/title_order"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:paddingStart="20dp"
+            android:text="Chi tiết hoàn tiền"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <ScrollView
+        android:id="@+id/scrollView3"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Status Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp">
+
+                <TextView
+                    android:id="@+id/tv_order_status1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#00A86B"
+                    android:padding="16dp"
+                    android:text="Hoàn tiền thành công"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"/>
+                <TextView
+                    android:id="@+id/tv_order_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#FFC107"
+                    android:padding="16dp"
+                    android:text="Hoàn tiền đang được xử lý"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"/>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Message -->
+            <TextView
+                android:id="@+id/txt_chitiet1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Yêu cầu hoàn tiền của bạn đã được chấp nhận. Cảm ơn bạn đã trả hàng đúng thời hạn."
+                android:textSize="14sp"
+                android:textColor="#424242"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#E0E0E0"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Refund Details -->
+            <TextView
+                android:id="@+id/tv_refund_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Chi tiết hoàn tiền "
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:textColor="#EE4D2D"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Amount -->
+            <TextView
+                android:id="@+id/tv_refund_amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="359.100 VND"
+                android:textAlignment="center"
+                android:textSize="24sp"
+                android:textColor="#000000"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
+
+            <!-- Payment Method -->
+            <TextView
+                android:id="@+id/tv_chi_tiet"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text="Đã được hoàn tiền"
+                android:textSize="16sp"
+                android:textColor="#424242"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#E0E0E0"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Timeline Title -->
+            <TextView
+                android:id="@+id/tv_timeline_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Xử lý hoàn tiền"
+                android:textSize="16sp"
+                android:textColor="#424242"
+                android:layout_marginBottom="8dp"/>
+
+            <!-- Timeline Horizontal Layout -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+
+                <!-- Approval -->
+                <LinearLayout
+                    android:id="@+id/xuly"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_approval_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2 Th05 2025"
+                        android:textSize="14sp"
+                        android:textColor="#757575"/>
+                    <ImageView
+                        android:id="@+id/imageXuLy"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="3"
+                        app:tint="@color/green"
+                        android:src="@drawable/refund" />
+
+                    <TextView
+                        android:id="@+id/tv_approval_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Xử lý hoàn tiền"
+                        android:textSize="16sp"
+                        android:textColor="#424242"
+                        android:layout_marginTop="4dp"/>
+                </LinearLayout>
+
+                <!-- Completion -->
+                <LinearLayout
+                    android:id="@+id/hoantien"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/tv_completion_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2 Th05 2025"
+                        android:textSize="14sp"
+                        android:textColor="#757575"/>
+                    <ImageView
+                        android:id="@+id/imageHoanThanh"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="3"
+                        app:tint="@color/green"
+                        android:src="@drawable/money_back" />
+
+                    <TextView
+                        android:id="@+id/tv_completion_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Đã hoàn tiền"
+                        android:textSize="16sp"
+                        android:textColor="#424242"
+                        android:layout_marginTop="4dp"/>
+                </LinearLayout>
+            </LinearLayout>
+
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#E0E0E0"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Footer Note -->
+            <TextView
+                android:id="@+id/tv_footer_note1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Yêu cầu hoàn tiền của bạn đã được xử lý. Với đơn hoàn tiền về Thẻ tín dụng/ghi nợ, Apple Pay/Google Pay, sẽ cần thêm 7-14 ngày để ngân hàng cập nhật tiền hoàn. Bạn có thể liên hệ ngân hàng để kiểm tra ngày cập nhật cụ thể nhé."
+                android:textSize="14sp"
+                android:textColor="#757575"
+                android:visibility="gone"/>
+            <TextView
+                android:id="@+id/tv_footer_note"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Yêu cầu hoàn tiền của bạn sẽ được xử lý sớm . Với đơn hoàn tiền về Thẻ tín dụng/ghi nợ, Apple Pay/Google Pay, sẽ cần thêm 7-14 ngày để ngân hàng cập nhật tiền hoàn. Bạn có thể liên hệ ngân hàng để kiểm tra ngày cập nhật cụ thể nhé."
+                android:textSize="14sp"
+                android:textColor="#757575"
+                android:visibility="gone"/>
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

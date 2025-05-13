@@ -5,6 +5,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -19,9 +20,11 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.stepup.AppUtils;
 import com.stepup.R;
 import com.stepup.databinding.ActivityAddAddressBinding;
 import com.stepup.model.ApiResponse;
+import com.stepup.model.location.AddressRequest;
 import com.stepup.retrofit2.APIService;
 import com.stepup.retrofit2.RetrofitClient;
 import java.io.IOException;
@@ -58,7 +61,7 @@ public class AddAddressActivity extends AppCompatActivity implements OnMapReadyC
                 String houseNumber = binding.etHouseNumber.getText().toString().trim();
                 if (!houseNumber.isEmpty() && firstAddress != null && !firstAddress.isEmpty()) {
                     // Kết hợp houseNumber và firstAddress để tạo địa chỉ đầy đủ
-                    String fullAddress = houseNumber + ", " + firstAddress;
+                    String fullAddress = houseNumber + "," + firstAddress;
                     binding.etAddress.setText(fullAddress); // Hiển thị địa chỉ đầy đủ trong etAddress
 
                     // Lấy tọa độ từ địa chỉ đầy đủ và hiển thị trên bản đồ
@@ -66,13 +69,13 @@ public class AddAddressActivity extends AppCompatActivity implements OnMapReadyC
                     if (selectedLatLng != null) {
                         showMapLocation(selectedLatLng, fullAddress);
                     } else {
-                        Toast.makeText(AddAddressActivity.this, "Không tìm thấy tọa độ cho địa chỉ này", Toast.LENGTH_SHORT).show();
+                        AppUtils.showDialogNotify(AddAddressActivity.this, R.drawable.error,"Không tìm thấy tọa độ cho địa chỉ này"  );
                     }
                 } else {
                     if (houseNumber.isEmpty()) {
-                        Toast.makeText(AddAddressActivity.this, "Vui lòng nhập số nhà", Toast.LENGTH_SHORT).show();
+                        AppUtils.showDialogNotify(AddAddressActivity.this, R.drawable.error,"Vui lòng nhập số nhà"  );
                     } else if (firstAddress == null || firstAddress.isEmpty()) {
-                        Toast.makeText(AddAddressActivity.this, "Vui lòng chọn tỉnh, huyện, xã", Toast.LENGTH_SHORT).show();
+                        AppUtils.showDialogNotify(AddAddressActivity.this, R.drawable.error,"Vui lòng chọn tỉnh, huyện, xã"  );
                     }
                 }
             }
@@ -94,30 +97,38 @@ public class AddAddressActivity extends AppCompatActivity implements OnMapReadyC
             String address = binding.etAddress.getText().toString().trim();
 
             if (name.isEmpty() || phoneNumber.isEmpty() || address.isEmpty()) {
-                Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+                AppUtils.showDialogNotify(AddAddressActivity.this, R.drawable.error,"Vui lòng nhập đầy đủ thông tin"  );
                 return;
             }
+            showLoading();
             com.stepup.model.Address addressDTO = new com.stepup.model.Address(name, phoneNumber, address);
+            boolean isDefault = binding.setDefaut.isChecked();
+            AddressRequest addressRequest = new AddressRequest(addressDTO, isDefault);
             APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
-            apiService.createAddress(addressDTO).enqueue(new Callback<ApiResponse>() {
+            apiService.createAddress(addressRequest).enqueue(new Callback<ApiResponse>() {
                 @Override
                 public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
                         ApiResponse responseObject = response.body();
                         if (responseObject.getMessage().equals("Created new address successfully")) {
-                            Toast.makeText(AddAddressActivity.this, responseObject.getMessage(), Toast.LENGTH_SHORT).show();
+                           // AppUtils.showDialogNotify(AddAddressActivity.this, R.drawable.error,responseObject.getMessage()  );
+                            hideLoading();
                             finish();
                         } else {
-                            Toast.makeText(AddAddressActivity.this, responseObject.getMessage(), Toast.LENGTH_SHORT).show();
+                            hideLoading();
+                            AppUtils.showDialogNotify(AddAddressActivity.this, R.drawable.error,responseObject.getMessage()  );
                         }
                     } else {
-                        Toast.makeText(AddAddressActivity.this, "Lỗi: " + response.message(), Toast.LENGTH_SHORT).show();
+                        hideLoading();
+                        AppUtils.showDialogNotify(AddAddressActivity.this, R.drawable.error,"Lỗi: " + response.message()  );
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ApiResponse> call, Throwable t) {
-                    Toast.makeText(AddAddressActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    hideLoading();
+                    AppUtils.showDialogNotify(AddAddressActivity.this, R.drawable.error,"Lỗi kết nối: " + t.getMessage() );
+
                 }
             });
         });
@@ -131,9 +142,9 @@ public class AddAddressActivity extends AppCompatActivity implements OnMapReadyC
                 String province = data.getStringExtra("province");
                 String district = data.getStringExtra("district");
                 String ward = data.getStringExtra("ward");
-
-                String fullAddress = province + ", " + district + ", " + ward;
-                binding.etProvinceDistrictWard.setText(fullAddress);
+                firstAddress = ward + ", " + district + ", " + province;
+                String firstAddress1 = province + ", " + district + ", " + ward;
+                binding.etProvinceDistrictWard.setText(firstAddress1);
             }
         }
     }
@@ -171,5 +182,15 @@ public class AddAddressActivity extends AppCompatActivity implements OnMapReadyC
         Intent intent = new Intent(this, SelectLocationActivity.class);
         intent.putExtra("source", "SelectLocation");
         startActivityForResult(intent, 0);
+    }
+    private void showLoading() {
+        binding.overlay.setVisibility(View.VISIBLE);
+        binding.overlay.setClickable(true); // Chặn tương tác với các view bên dưới
+    }
+
+    // Ẩn process bar
+    private void hideLoading() {
+        binding.overlay.setVisibility(View.GONE);
+        binding.overlay.setClickable(false);
     }
 }

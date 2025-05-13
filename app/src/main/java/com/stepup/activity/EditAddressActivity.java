@@ -20,10 +20,12 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.stepup.AppUtils;
 import com.stepup.R;
 import com.stepup.databinding.ActivityAddAddressBinding;
 import com.stepup.databinding.ActivityEditAddressBinding;
 import com.stepup.model.ApiResponse;
+import com.stepup.model.location.AddressRequest;
 import com.stepup.retrofit2.APIService;
 import com.stepup.retrofit2.RetrofitClient;
 import java.io.IOException;
@@ -100,6 +102,10 @@ public class EditAddressActivity extends AppCompatActivity implements OnMapReady
         String name = intent.getStringExtra("name");
         String phoneNumber = intent.getStringExtra("phoneNumber");
         String address = intent.getStringExtra("address");
+        boolean isDefaut = intent.getBooleanExtra("default", false);
+        if (isDefaut) {
+            binding.setDefaut.setChecked(true);
+        }
         binding.etName.setText(name);
         binding.etPhoneNumber.setText(phoneNumber);
         binding.etAddress.setText(address);
@@ -130,7 +136,36 @@ public class EditAddressActivity extends AppCompatActivity implements OnMapReady
         });
 
 
+        binding.btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showLoading();
+                APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
+                apiService.deleteAddress(addressId).enqueue(new Callback<ApiResponse>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            if ("Xóa địa chỉ thành công".equals(response.body().getMessage())) {
+                                setResult(RESULT_OK);
+                                hideLoading();
+                              //  AppUtils.showDialogNotify(EditAddressActivity.this, R.drawable.ic_check,"Xóa địa chỉ thành công"  );
+                                finish();
+                            }
+                        } else {
+                            hideLoading();
+                            AppUtils.showDialogNotify(EditAddressActivity.this, R.drawable.error,"Lỗi: " + response.message()  );
 
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiResponse> call, Throwable t) {
+                        hideLoading();
+                        AppUtils.showDialogNotify(EditAddressActivity.this, R.drawable.error,"Lỗi kết nối: " + t.getMessage()  );
+                    }
+                });
+            }
+        });
         // Gửi cập nhật
         binding.btnComplete.setOnClickListener(v -> updateAddressAPI());
     }
@@ -172,12 +207,12 @@ public class EditAddressActivity extends AppCompatActivity implements OnMapReady
         String houseNumber = binding.etHouseNumber.getText().toString().trim();
 
         if (houseNumber.isEmpty()) {
-            Toast.makeText(this, "Vui lòng nhập số nhà", Toast.LENGTH_SHORT).show();
+            AppUtils.showDialogNotify(EditAddressActivity.this, R.drawable.error,"Vui lòng nhập số nhà"  );
             return;
         }
 
         if (firstAddress == null || firstAddress.isEmpty()) {
-            Toast.makeText(this, "Vui lòng chọn tỉnh, huyện, xã", Toast.LENGTH_SHORT).show();
+            AppUtils.showDialogNotify(EditAddressActivity.this, R.drawable.error,"Vui lòng chọn tỉnh, huyện, xã"  );
             return;
         }
 
@@ -189,7 +224,7 @@ public class EditAddressActivity extends AppCompatActivity implements OnMapReady
                 selectedLatLng = latLng;
                 showMapLocation(selectedLatLng, fullAddress);
             } else {
-                Toast.makeText(this, "Không tìm thấy tọa độ cho địa chỉ này", Toast.LENGTH_SHORT).show();
+                AppUtils.showDialogNotify(EditAddressActivity.this, R.drawable.error,"Không tìm thấy tọa độ cho địa chỉ này"  );
             }
         });
     }
@@ -200,30 +235,36 @@ public class EditAddressActivity extends AppCompatActivity implements OnMapReady
         String fullAddress = binding.etAddress.getText().toString().trim();
 
         if (name.isEmpty() || phone.isEmpty() || fullAddress.isEmpty()) {
-            Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+            AppUtils.showDialogNotify(EditAddressActivity.this, R.drawable.error,"Vui lòng nhập đầy đủ thông tin"  );
             return;
         }
-
+        showLoading();
+        boolean isDefault = binding.setDefaut.isChecked();
         com.stepup.model.Address addressDTO = new com.stepup.model.Address(name, phone, fullAddress);
+        AddressRequest addressRequest = new AddressRequest(addressDTO,isDefault);
         APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
-
-        apiService.updateAddress(addressId, addressDTO).enqueue(new Callback<ApiResponse>() {
+        apiService.updateAddress(addressId, addressRequest).enqueue(new Callback<ApiResponse>() {
             @Override
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(EditAddressActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                     if ("Cập nhật địa chỉ thành công".equals(response.body().getMessage())) {
                         setResult(RESULT_OK);
+                        hideLoading();
+                       // AppUtils.showDialogNotify(EditAddressActivity.this, R.drawable.ic_check,"Cập nhật địa chỉ thành công"  );
                         finish();
                     }
                 } else {
-                    Toast.makeText(EditAddressActivity.this, "Lỗi: " + response.message(), Toast.LENGTH_SHORT).show();
+                    hideLoading();
+                    AppUtils.showDialogNotify(EditAddressActivity.this, R.drawable.error,"Lỗi: " + response.message()  );
+
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse> call, Throwable t) {
-                Toast.makeText(EditAddressActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                hideLoading();
+                AppUtils.showDialogNotify(EditAddressActivity.this, R.drawable.error,"Lỗi kết nối: " + t.getMessage()  );
+
             }
         });
     }
@@ -253,7 +294,7 @@ public class EditAddressActivity extends AppCompatActivity implements OnMapReady
                     selectedLatLng = latLng;
                     showMapLocation(selectedLatLng, pendingAddress);
                 } else {
-                    Toast.makeText(this, "Không tìm thấy tọa độ cho địa chỉ này", Toast.LENGTH_SHORT).show();
+                    AppUtils.showDialogNotify(EditAddressActivity.this, R.drawable.error,"Không tìm thấy tọa độ cho địa chỉ này"  );
                 }
             });
         }
@@ -273,5 +314,15 @@ public class EditAddressActivity extends AppCompatActivity implements OnMapReady
         Intent intent = new Intent(this, SelectLocationActivity.class);
         intent.putExtra("source", "SelectLocation");
         startActivityForResult(intent, 0);
+    }
+    private void showLoading() {
+        binding.overlay.setVisibility(View.VISIBLE);
+        binding.overlay.setClickable(true); // Chặn tương tác với các view bên dưới
+    }
+
+    // Ẩn process bar
+    private void hideLoading() {
+        binding.overlay.setVisibility(View.GONE);
+        binding.overlay.setClickable(false);
     }
 }

@@ -2,6 +2,7 @@ package com.stepup.adapter;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Paint;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.stepup.R;
+import com.stepup.activity.RatingActivity;
 import com.stepup.databinding.FragmentCartBinding;
 import com.stepup.databinding.ViewholderCartBinding;
 import com.stepup.databinding.ViewholderOrderItem2Binding;
@@ -24,6 +26,7 @@ import com.stepup.listener.ChangeNumberItemsListener;
 import com.stepup.model.CartItem;
 import com.stepup.model.OrderItem;
 import com.stepup.model.OrderItemResponse;
+import com.stepup.model.OrderShippingStatus;
 import com.stepup.model.ProductVariant;
 import com.stepup.retrofit2.APIService;
 import com.stepup.retrofit2.RetrofitClient;
@@ -51,6 +54,8 @@ public class OrderItemAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewH
 
     // Số lượng item hiển thị ban đầu khi thu gọn
     private final int collapsedItemCount = 1;
+    private String orderStatus;
+    private long orderid;
 
     // Interface để callback khi trạng thái thay đổi
     public interface OnToggleExpandListener {
@@ -126,6 +131,11 @@ public class OrderItemAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewH
         return tList.size();
 
     }
+    public void setOrderStatus(String orderStatus, Long orderid) {
+        this.orderStatus = orderStatus;
+        this.orderid = orderid;
+        notifyDataSetChanged(); // Cập nhật lại RecyclerView
+    }
 
     /**
      * Binding dữ liệu cho CartItem (giỏ hàng) và gắn sự kiện tăng giảm số lượng.
@@ -187,7 +197,20 @@ public class OrderItemAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewH
                 ? format.format(item.getPromotionPrice())
                 : "0";
         holder.binding.txtPromotionPrice.setText(promoPrice);
-
+        if("DELIVERED".equals(orderStatus))
+        {
+            holder.binding.btnRating.setVisibility(View.VISIBLE);
+        }
+        holder.binding.btnRating.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Context context = view.getContext();
+                Intent intent = new Intent(context, RatingActivity.class);
+                intent.putExtra("orderItem", item);
+                intent.putExtra("orderid",orderid);
+                context.startActivity(intent);
+            }
+        });
         // Nếu có giảm giá -> hiển thị giá gốc có gạch ngang
         if (!item.getPromotionPrice().equals(item.getPrice())) {
             String originalPrice = item.getPrice() != null

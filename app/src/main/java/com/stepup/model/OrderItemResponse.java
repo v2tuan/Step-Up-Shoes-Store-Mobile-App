@@ -1,8 +1,12 @@
 package com.stepup.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class OrderItemResponse {
+public class OrderItemResponse implements Parcelable {
     private long id;
     private String title;
     private ProductVariant productVariant;
@@ -22,6 +26,65 @@ public class OrderItemResponse {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
+
+
+    protected OrderItemResponse(Parcel in) {
+        id = in.readLong();
+        title = in.readString();
+        productVariant = in.readParcelable(ProductVariant.class.getClassLoader());
+        if (in.readByte() == 0) {
+            price = null;
+        } else {
+            price = in.readDouble();
+        }
+        if (in.readByte() == 0) {
+            promotionPrice = null;
+        } else {
+            promotionPrice = in.readDouble();
+        }
+        count = in.readInt();
+        createdAt = in.readString();
+        updatedAt = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(title);
+        dest.writeParcelable(productVariant, flags);
+        if (price == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeDouble(price);
+        }
+        if (promotionPrice == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeDouble(promotionPrice);
+        }
+        dest.writeInt(count);
+        dest.writeString(createdAt);
+        dest.writeString(updatedAt);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<OrderItemResponse> CREATOR = new Creator<OrderItemResponse>() {
+        @Override
+        public OrderItemResponse createFromParcel(Parcel in) {
+            return new OrderItemResponse(in);
+        }
+
+        @Override
+        public OrderItemResponse[] newArray(int size) {
+            return new OrderItemResponse[size];
+        }
+    };
 
     public long getId() {
         return id;
