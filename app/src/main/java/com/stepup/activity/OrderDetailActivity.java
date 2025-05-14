@@ -36,6 +36,8 @@ import com.stepup.model.OrderItem;
 import com.stepup.model.OrderItemResponse;
 import com.stepup.model.OrderResponse;
 import com.stepup.model.OrderShippingStatus;
+import com.stepup.model.PaymentMethod;
+import com.stepup.model.PaymentStatus;
 import com.stepup.model.ResponseObject;
 import com.stepup.retrofit2.APIService;
 import com.stepup.retrofit2.RetrofitClient;
@@ -162,7 +164,14 @@ public class OrderDetailActivity extends AppCompatActivity {
         // Show appropriate layout based on order status
         switch (order.getStatus()) {
             case PENDING:
-                tvOrderStatus.setText("Đang xử lý đơn hàng");
+                if(order.getPaymentMethod().equals(PaymentMethod.VNPAY) && order.getPaymentStatus().equals(PaymentStatus.PENDING))
+                {
+                    tvOrderStatus.setText("Đang chờ thanh toán");
+                }
+                else
+                {
+                    tvOrderStatus.setText("Đang xử lý đơn hàng");
+                }
                 setupPendingView(order);
                 break;
 //            case OrderShippingStatus.PROCESSING_RETURN_REFUND:
