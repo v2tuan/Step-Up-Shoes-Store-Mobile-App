@@ -1,6 +1,7 @@
 package com.stepup.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,6 +20,7 @@ import com.stepup.AppUtils;
 import com.stepup.R;
 import com.stepup.adapter.BannerAdapter;
 import com.stepup.adapter.ColorAdapter;
+import com.stepup.adapter.ReviewAdapter;
 import com.stepup.adapter.SizeAdapter;
 import com.stepup.databinding.ActivityDetailBinding;
 import com.stepup.model.AddToCartDTO;
@@ -28,6 +30,7 @@ import com.stepup.model.FavoriteDTO;
 import com.stepup.model.Product;
 import com.stepup.model.ProductCard;
 import com.stepup.model.ProductVariant;
+import com.stepup.model.ReviewResponse;
 import com.stepup.model.Size;
 import com.stepup.retrofit2.APIService;
 import com.stepup.retrofit2.RetrofitClient;
@@ -37,6 +40,7 @@ import com.tbuonomo.viewpagerdotsindicator.DotsIndicator;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -52,6 +56,9 @@ public class DetailActivity extends AppCompatActivity {
     private Product product;
     private Map<Long, Boolean> favoriteStatusCache = new HashMap<>();
 
+    private List<ReviewResponse> reviewList;
+    private List<ReviewResponse> allReviews;
+    private ReviewAdapter reviewAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,18 +75,31 @@ public class DetailActivity extends AppCompatActivity {
         getBundle();
         getBanner();
 
+        reviewList = new ArrayList<>();
+        reviewAdapter = new ReviewAdapter(this, reviewList);
+        binding.rvReviews.setLayoutManager(new LinearLayoutManager(this));
+        binding.rvReviews.setAdapter(reviewAdapter);
+
+        // Handle "All" button click
+        binding.AllReview.setOnClickListener(v -> {
+            Intent intent = new Intent(DetailActivity.this, AllReviewActivity.class);
+            intent.putParcelableArrayListExtra("reviews", new ArrayList<>(allReviews));
+            startActivity(intent);
+        });
+        binding.backBtn.setOnClickListener(v -> finish());
         // Xử lý khi nhấn nút "Cart" -> chuyển sang màn hình giỏ hàng
         binding.addToCartBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Xử lý thêm vào giỏ hàng ở đây
                 if(ColorAdapter.colorSelected == null){
-                    Toast.makeText(DetailActivity.this, "Vui lòng chọn color", Toast.LENGTH_SHORT).show();
+                    AppUtils.showDialogNotify(DetailActivity.this, R.drawable.error,"Vui lòng chọn color");
+
                     return;
                 }
 
                 if(SizeAdapter.sizeSelected == null){
-                    Toast.makeText(DetailActivity.this, "Vui lòng chọn size", Toast.LENGTH_SHORT).show();
+                    AppUtils.showDialogNotify(DetailActivity.this, R.drawable.error,"Vui lòng chọn size");
                     return;
                 }
 
@@ -98,7 +118,7 @@ public class DetailActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
                         if (response.isSuccessful() && response.body() != null) {
-                            Toast.makeText(DetailActivity.this, response.body(), Toast.LENGTH_SHORT).show();
+                            AppUtils.showDialogNotify(DetailActivity.this, R.drawable.ic_tick,response.body());
                             Log.d("Add To Cart", "Message: : " + response.body());
                         }
                     }
@@ -142,7 +162,8 @@ public class DetailActivity extends AppCompatActivity {
                             // Hoàn tác nếu API thất bại
                             favoriteStatusCache.put(colorId, isCurrentlyFavorite);
                             binding.favBtn.setIconResource(isCurrentlyFavorite ? R.drawable.favorite_fill : R.drawable.favorite);
-                            Toast.makeText(DetailActivity.this, "Lỗi: " + response.message(), Toast.LENGTH_SHORT).show();
+                            AppUtils.showDialogNotify(DetailActivity.this, R.drawable.error,"Lỗi: " + response.message());
+
                         }
                     }
 
@@ -151,12 +172,14 @@ public class DetailActivity extends AppCompatActivity {
                         // Hoàn tác nếu API thất bại
                         favoriteStatusCache.put(colorId, isCurrentlyFavorite);
                         binding.favBtn.setIconResource(isCurrentlyFavorite ? R.drawable.favorite_fill : R.drawable.favorite);
-                        Toast.makeText(DetailActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        AppUtils.showDialogNotify(DetailActivity.this, R.drawable.error,"Lỗi kết nối: " + t.getMessage());
+
                     }
                 });
             }
         });
     }
+
 
     private void getBanner(){
         APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
@@ -174,7 +197,7 @@ public class DetailActivity extends AppCompatActivity {
                     String priceText = format.format(product.getProductVariants().get(0).getPrice());
                     binding.priceTxt.setText(priceText);
                     binding.descriptionTxt.setText(product.getDescription());
-                    //binding.ratingTxt.setText(product.getRating().toString());
+                    binding.ratingTxt.setText(String.format(Locale.getDefault(), "%.1f", product.getRating()));
 
                     // Tạo danh sách sliderItems chứa các hình ảnh để hiển thị
                     ArrayList<Banner> sliderItems = new ArrayList<>();
@@ -237,12 +260,57 @@ public class DetailActivity extends AppCompatActivity {
                     );
 
                     getSize();
+                    loadReviews(item.getId());
                 }
             }
 
             @Override
             public void onFailure(Call<Product> call, Throwable t) {
                 Log.e("RetrofitError", "Error: " + t.getMessage());
+            }
+        });
+    }
+    private void loadReviews(Long productId) {
+        APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
+        Call<List<ReviewResponse>> call = apiService.getReviewsByProductId(productId);
+        call.enqueue(new Callback<List<ReviewResponse>>() {
+            @Override
+            public void onResponse(Call<List<ReviewResponse>> call, Response<List<ReviewResponse>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    if (allReviews == null) {
+                        allReviews = new ArrayList<>();
+                    }
+                    allReviews.clear();
+                    allReviews.addAll(response.body());
+                    if(allReviews.isEmpty())
+                    {
+                        binding.tvNoReviews.setVisibility(View.VISIBLE);
+                    }
+                    reviewList.clear();
+                   // reviewList.addAll(response.body());
+                    reviewList.addAll(allReviews.subList(0, Math.min(allReviews.size(), 2)));
+                    reviewAdapter.notifyDataSetChanged();
+
+                    // Update average rating
+//                    if (!reviewList.isEmpty()) {
+//                        double averageRating = reviewList.stream()
+//                                .mapToInt(ReviewResponse::getRating)
+//                                .average()
+//                                .orElse(0.0);
+//                        binding.ratingTxt.setText(String.format(Locale.getDefault(), "%.1f", averageRating));
+//                    } else {
+//                        binding.ratingTxt.setText("0");
+//                    }
+                } else {
+                    AppUtils.showDialogNotify(DetailActivity.this, R.drawable.error,"Không thể tải đánh giá");
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ReviewResponse>> call, Throwable t) {
+                AppUtils.showDialogNotify(DetailActivity.this, R.drawable.error,"Lỗi khi tải đánh giá: " + t.getMessage());
+
             }
         });
     }

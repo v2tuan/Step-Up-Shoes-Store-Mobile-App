@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.stepup.R;
 import com.stepup.adapter.FavoriteAdapter;
 import com.stepup.databinding.FragmentFavoriteBinding;
 import com.stepup.model.Favorite;
@@ -90,7 +91,15 @@ public class FavoriteFragment extends Fragment {
                 }
             });
         }
-
+        binding.backBtn.setOnClickListener(v -> {
+            requireActivity().getSupportFragmentManager().popBackStack();
+        });
+//        binding.backBtn.setOnClickListener(v -> {
+//            requireActivity().getSupportFragmentManager()
+//                    .beginTransaction()
+//                    .replace(R.id.fragment_container, new HomeFragment())
+//                    .commit();
+//        });
         return binding.getRoot();
     }
 

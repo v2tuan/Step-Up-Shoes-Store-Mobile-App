@@ -54,6 +54,11 @@ public class AddressSelectActivity extends AppCompatActivity {
         binding.btnBack.setOnClickListener(v -> onBackPressed());
         selectedAddressId = getIntent().getLongExtra("selectedAddressId", -1);
         getUserAddresses(); // Lúc này chưa khởi tạo adapter
+
+        binding.btnAddNewAddress.setOnClickListener(v -> {
+            Intent intent = new Intent(AddressSelectActivity.this, AddAddressActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void getUserAddresses() {

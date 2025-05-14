@@ -13,7 +13,9 @@ import com.stepup.model.ProductVariant;
 import com.stepup.model.ResponseObject;
 import com.stepup.model.Favorite;
 import com.stepup.model.FavoriteDTO;
+import com.stepup.model.ReviewResponse;
 import com.stepup.model.UserDTO;
+import com.stepup.model.location.AddressRequest;
 import com.stepup.model.location.DistrictResponse;
 import com.stepup.model.Product;
 import com.stepup.model.ProductCard;
@@ -26,12 +28,16 @@ import com.stepup.model.payment.PaymentDTO;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.Multipart;
 import retrofit2.http.PUT;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
@@ -102,7 +108,8 @@ public interface APIService {
     @POST("cart/remove/{id}")
     Call<String> removeCartItem(@Path("id") long cartItemId);
 
-
+    @POST("cart/cartFromOrder")
+    Call<String> addToCartOrder(@Body List<AddToCartDTO> addToCartDTOList);
 
 //	@GET("/api/v1/address/user/addresses")
 //  Call<List<Address>> getAddressesByUserId();
@@ -111,10 +118,10 @@ public interface APIService {
     Call<Map<String, Object>> getAddressesByUserId();
 
     @POST("address")
-    Call<ApiResponse> createAddress(@Body Address address);
+    Call<ApiResponse> createAddress(@Body AddressRequest request);
 
     @PUT("address/{id}")
-    Call<ApiResponse> updateAddress(@Path("id") Long id, @Body Address address);
+    Call<ApiResponse> updateAddress(@Path("id") Long id, @Body AddressRequest address);
 
     @DELETE ("address/{id}")
     Call<ApiResponse> deleteAddress(@Path("id") Long id);
@@ -170,9 +177,27 @@ public interface APIService {
     @POST("orders/cancelOrder")
     Call<ResponseObject> cancelOrder(@Query("orderId") Long orderId);
 
+
+    @POST("orders/returnOrder")
+    Call<ResponseObject> returnOrder(@Query("orderId") Long orderId);
     // Payment
     @POST("payments/create_payment_url")
     Call<ResponseObject> createPayment(@Body PaymentDTO paymentDTO);
+    @POST("payments/payment")
+    Call<ResponseObject> payment(@Query("orderId") Long orderId);
+
+    @Multipart
+    @POST("/api/v1/reviews/add")
+    Call<String> submitReview(
+            @Part("productVariantId") RequestBody productVariantId,
+            @Part("orderId") RequestBody orderId,
+            @Part("content") RequestBody content,
+            @Part("rating") RequestBody rating,
+            @Part List<MultipartBody.Part> images
+    );
+    @GET("/api/v1/reviews")
+    Call<List<ReviewResponse>> getReviewsByProductId(@Query("id") Long productId);
+
 
     @GET("chat/conversations")
     Call<ConversationDTO> getMyConversations();

@@ -2,7 +2,10 @@ package com.stepup.fragment;
 
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -124,6 +127,19 @@ public class HomeFragment extends Fragment {
 
             homeViewModel.fetchBanners();
             homeViewModel.fetchProducts();
+        });
+        binding.searchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SearchInputFragment searchInputFragment = new SearchInputFragment();
+
+                // Thực hiện chuyển Fragment
+                FragmentManager fragmentManager = ((AppCompatActivity) view.getContext()).getSupportFragmentManager();
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.replace(R.id.fragment_container, searchInputFragment); // R.id.fragment_container là ID của FrameLayout chứa Fragment
+                transaction.addToBackStack(null); // Để có thể quay lại Fragment trước đó
+                transaction.commit();
+            }
         });
 
         // Theo dõi danh sách Banner
