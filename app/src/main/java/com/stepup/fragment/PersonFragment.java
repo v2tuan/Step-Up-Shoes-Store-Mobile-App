@@ -16,6 +16,7 @@ import android.widget.FrameLayout;
 import com.bumptech.glide.Glide;
 import com.stepup.R;
 import com.stepup.activity.AddressActivity;
+import com.stepup.activity.ChatActivity;
 import com.stepup.activity.OrderOverviewActivity;
 import com.stepup.adapter.CartAdapter;
 import com.stepup.databinding.FragmentHomeBinding;
@@ -118,6 +119,13 @@ public class PersonFragment extends Fragment {
             return true;
         });
 
+        binding.btnInbox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), ChatActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void getUser(){

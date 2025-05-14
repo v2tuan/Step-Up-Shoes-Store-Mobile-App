@@ -6,6 +6,8 @@ import com.stepup.model.ApiResponse;
 import com.stepup.model.Banner;
 import com.stepup.model.CartItem;
 import com.stepup.model.Color;
+import com.stepup.model.ConversationDTO;
+import com.stepup.model.MessageDTO;
 import com.stepup.model.OrderDTO;
 import com.stepup.model.ProductVariant;
 import com.stepup.model.ResponseObject;
@@ -171,4 +173,10 @@ public interface APIService {
     // Payment
     @POST("payments/create_payment_url")
     Call<ResponseObject> createPayment(@Body PaymentDTO paymentDTO);
+
+    @GET("chat/conversations")
+    Call<ConversationDTO> getMyConversations();
+
+    @GET("chat/messages")
+    Call<List<MessageDTO>> getMessages(@Query("conversationId") long conversationId);
 }
