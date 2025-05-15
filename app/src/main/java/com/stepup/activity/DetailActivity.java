@@ -86,7 +86,10 @@ public class DetailActivity extends AppCompatActivity {
             intent.putParcelableArrayListExtra("reviews", new ArrayList<>(allReviews));
             startActivity(intent);
         });
-        binding.backBtn.setOnClickListener(v -> finish());
+        binding.backBtn.setOnClickListener(v -> {
+            ColorAdapter.colorSelected = null;
+            SizeAdapter.sizeSelected = null;
+            finish();});
         // Xử lý khi nhấn nút "Cart" -> chuyển sang màn hình giỏ hàng
         binding.addToCartBtn.setOnClickListener(new View.OnClickListener() {
             @Override
