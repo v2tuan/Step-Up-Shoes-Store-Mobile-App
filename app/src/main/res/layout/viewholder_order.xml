@@ -136,19 +136,6 @@
                 android:textColor="@color/black"
                 android:visibility="gone"
                 />
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_buy_again"
-                android:layout_width="match_parent"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:background="@drawable/black_bg"
-                android:text="Mua Lại"
-                android:layout_margin="5dp"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:visibility="gone"
-                />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_refund"
@@ -163,6 +150,21 @@
                 android:textColor="#F57C00"
                 android:visibility="gone"
                 />
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_buy_again"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/black_bg"
+                android:text="Mua Lại"
+                android:layout_margin="5dp"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:visibility="gone"
+                />
+
+
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_pay"
                 android:layout_width="match_parent"

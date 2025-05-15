@@ -139,6 +139,23 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
             case CANCELLED:
                 holder.binding.view.setVisibility(View.VISIBLE);
                 holder.binding.btnBuyAgain.setVisibility(View.VISIBLE);
+
+                if(order.getPaymentMethod().equals(PaymentMethod.VNPAY)&& order.getPaymentStatus().equals(PaymentStatus.REFUNDING))
+                {
+                    holder.binding.view.setVisibility(View.GONE);
+                    holder.binding.txtStatus.setText("VNPayCancled - Refunding ");
+                    holder.binding.btnRefund.setVisibility(View.VISIBLE);
+                    holder.binding.btnRefund.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent((Activity) context , RefundDetail.class);
+                            intent.putExtra("price", order.getTotalPrice());        // nếu là double
+                            intent.putExtra("status", order.getPaymentStatus().toString());
+                            intent.putExtra("date", order.getUpdatedAt());
+                            context.startActivity(intent);
+                        }
+                    });
+                }
                 break;
             case PENDING:
                 holder.binding.view.setVisibility(View.VISIBLE);
@@ -220,7 +237,6 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
                         intent.putExtra("status", order.getPaymentStatus().toString());
                         intent.putExtra("date", order.getUpdatedAt());
                         context.startActivity(intent);
-
                     }
                 });
                 break;

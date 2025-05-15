@@ -135,53 +135,54 @@ public class DetailActivity extends AppCompatActivity {
         binding.favBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(ColorAdapter.colorSelected == null){
-                    AppUtils.showDialogNotify(DetailActivity.this, R.drawable.ic_tick, "Please Slect Shoes Color! ");
+                if (ColorAdapter.colorSelected == null) {
+                    AppUtils.showDialogNotify(DetailActivity.this, R.drawable.ic_tick, "Vui lòng chọn màu giày!");
                     return;
                 }
+
+                // Vô hiệu hóa nút để tránh nhấn liên tục
+                binding.favBtn.setEnabled(false);
                 Long colorId = ColorAdapter.colorSelected.getId();
                 boolean isCurrentlyFavorite = favoriteStatusCache.getOrDefault(colorId, false);
-                binding.favBtn.setIconResource(isCurrentlyFavorite ? R.drawable.favorite : R.drawable.favorite_fill);
-                favoriteStatusCache.put(colorId, !isCurrentlyFavorite);
-                FavoriteDTO favoriteItemDTO = new FavoriteDTO(ColorAdapter.colorSelected.getId(),item.getPrice());
+                FavoriteDTO favoriteDTO = new FavoriteDTO(colorId, item.getPrice());
+
                 showLoading();
                 APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
-                Call<String> call;
-                if (isCurrentlyFavorite) {
-                    // Giả định có API xóa yêu thích dựa trên colorId
-                    call = apiService.removeToFavorite2(colorId);
-                } else {
-                    FavoriteDTO favoriteDTO = new FavoriteDTO(colorId, item.getPrice());
-                    call = apiService.addToFavorite(favoriteDTO);
-                }
+                Call<String> call = isCurrentlyFavorite
+                        ? apiService.removeToFavorite2(colorId)
+                        : apiService.addToFavorite(favoriteDTO);
 
                 call.enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
                         hideLoading();
+                        binding.favBtn.setEnabled(true); // Kích hoạt lại nút
+                        if (isFinishing() || isDestroyed()) return; // Kiểm tra activity
+
                         if (response.isSuccessful() && response.body() != null) {
+                            // Cập nhật cache và giao diện chỉ khi API thành công
+                            favoriteStatusCache.put(colorId, !isCurrentlyFavorite);
+                            binding.favBtn.setIconResource(isCurrentlyFavorite ? R.drawable.favorite : R.drawable.favorite_fill);
                             AppUtils.showDialogNotify(DetailActivity.this, R.drawable.ic_tick,
                                     isCurrentlyFavorite ? "Xóa yêu thích thành công" : "Thêm yêu thích thành công");
                         } else {
-                            // Hoàn tác nếu API thất bại
-                            favoriteStatusCache.put(colorId, isCurrentlyFavorite);
-                            binding.favBtn.setIconResource(isCurrentlyFavorite ? R.drawable.favorite_fill : R.drawable.favorite);
-                            AppUtils.showDialogNotify(DetailActivity.this, R.drawable.error,"Lỗi: " + response.message());
-
+                            // Hiển thị lỗi nếu API thất bại
+                            Log.e("FavoriteError", "Lỗi API: Code=" + response.code() + ", Message=" + response.message());
+                            AppUtils.showDialogNotify(DetailActivity.this, R.drawable.error, "Lỗi: " + response.message());
                         }
                     }
 
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
                         hideLoading();
-                        // Hoàn tác nếu API thất bại
-                        favoriteStatusCache.put(colorId, isCurrentlyFavorite);
-                        binding.favBtn.setIconResource(isCurrentlyFavorite ? R.drawable.favorite_fill : R.drawable.favorite);
-                        AppUtils.showDialogNotify(DetailActivity.this, R.drawable.error,"Lỗi kết nối: " + t.getMessage());
-
+                        binding.favBtn.setEnabled(true); // Kích hoạt lại nút
+                        if (isFinishing() || isDestroyed()) return; // Kiểm tra activity
+                        Log.e("FavoriteError", "Lỗi kết nối: ", t);
+                        AppUtils.showDialogNotify(DetailActivity.this, R.drawable.error, "Lỗi kết nối: " + t.getMessage());
                     }
                 });
             }
+
         });
     }
 
@@ -253,7 +254,9 @@ public class DetailActivity extends AppCompatActivity {
                     binding.colorList.setAdapter(new ColorAdapter(product.getColors(), viewPager2, dotsIndicator, product, sliderItems, bannerAdapter, binding.sizeList, new ColorAdapter.OnColorSelectedListener() {
                         @Override
                         public void checkFavoriteStatus(Long colorId) {
+                            showLoading();
                             DetailActivity.this.checkFavoriteStatus(colorId);
+                            hideLoading();
                         }
                     }));
                     if (!product.getColors().isEmpty()) {

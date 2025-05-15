@@ -71,6 +71,7 @@ public class RefundDetail extends AppCompatActivity {
             binding.hoantien.setVisibility(View.VISIBLE);
             binding.tvCompletionDate.setText(formattedDate);
         }
+        binding.btnBack.setOnClickListener(v -> finish());
 
     }
 }
