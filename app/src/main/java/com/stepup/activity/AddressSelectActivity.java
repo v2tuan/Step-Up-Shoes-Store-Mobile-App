@@ -58,17 +58,17 @@ public class AddressSelectActivity extends AppCompatActivity {
         binding.btnBack.setOnClickListener(v -> onBackPressed());
         selectedAddressId = getIntent().getLongExtra("selectedAddressId", -1);
         getUserAddresses(); // Lúc này chưa khởi tạo adapter
-        addAddressLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
-                    @Override
-                    public void onActivityResult(ActivityResult result) {
-                        if (result.getResultCode() == RESULT_OK) {
-                            // Reload addresses when AddAddressActivity returns successfully
-                            getUserAddresses();
-                        }
-                    }
-                });
+//        addAddressLauncher = registerForActivityResult(
+//                new ActivityResultContracts.StartActivityForResult(),
+//                new ActivityResultCallback<ActivityResult>() {
+//                    @Override
+//                    public void onActivityResult(ActivityResult result) {
+//                        if (result.getResultCode() == RESULT_OK) {
+//                            // Reload addresses when AddAddressActivity returns successfully
+//                            getUserAddresses();
+//                        }
+//                    }
+//                });
         binding.btnAddNewAddress.setOnClickListener(v -> {
             Intent intent = new Intent(AddressSelectActivity.this, AddAddressActivity.class);
             startActivity(intent);
@@ -120,5 +120,10 @@ public class AddressSelectActivity extends AppCompatActivity {
                 Toast.makeText(AddressSelectActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getUserAddresses();
     }
 }

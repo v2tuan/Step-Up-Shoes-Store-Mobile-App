@@ -53,8 +53,15 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
     List<OrderResponse> orderList;
     private Context context;
 
+    private callbackOrder callbackOrder;
+
     public OrderAdapter(List<OrderResponse> orderList) {
         this.orderList = orderList;
+    }
+
+    public OrderAdapter(List<OrderResponse> orderList, OrderAdapter.callbackOrder callbackOrder) {
+        this.orderList = orderList;
+        this.callbackOrder = callbackOrder;
     }
 
     @NonNull
@@ -310,13 +317,13 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
     }
     private void BuyAgain (List<AddToCartDTO> addToCartDTO)
     {
-        //showLoading();
+//        callbackOrder.CallbackShow();
         APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
         Call<String> addCart = apiService.addToCartOrder(addToCartDTO);
         addCart.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                //hideLoading();
+//                callbackOrder.CallbackHide();
                 if(response.isSuccessful()){
                     Intent intent = new Intent(context , MainActivity.class);
                     intent.putExtra("navigate_to", "cart");  // Gửi thông điệp yêu cầu mở CartFragment
@@ -331,7 +338,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 Log.e(TAG, t.getMessage());
-                //hideLoading();
+//                callbackOrder.CallbackHide();
                 AppUtils.showDialogNotify((Activity) context, R.drawable.error, "Error");
             }
         });
@@ -377,5 +384,11 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
             super(itemView);
             binding = ViewholderOrderBinding.bind(itemView);
         }
+    }
+
+    public interface callbackOrder
+    {
+       public void CallbackShow();
+       public void CallbackHide();
     }
 }

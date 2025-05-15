@@ -108,7 +108,18 @@ public class CancelledOrdersFragment extends Fragment {
                     Type type = new TypeToken<List<OrderResponse>>() {}.getType();
                     List<OrderResponse> orderList = gson.fromJson(json, type); // parse lại JSON thành List<Order>
 
-                    OrderAdapter orderAdapter = new OrderAdapter(orderList);
+                    OrderAdapter orderAdapter = new OrderAdapter(orderList, new OrderAdapter.callbackOrder() {
+                        @Override
+                        public void CallbackShow() {
+                            showLoading();
+                        }
+
+                        @Override
+                        public void CallbackHide() {
+                            hideLoading();
+                        }
+
+                    });
                     binding.rvOrderContainer.setAdapter(orderAdapter);
                     binding.rvOrderContainer.setLayoutManager(
                             new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
@@ -145,5 +156,13 @@ public class CancelledOrdersFragment extends Fragment {
         if (callOrderByStatus != null && !callOrderByStatus.isCanceled()) {
             callOrderByStatus.cancel();
         }
+    }
+    private void showLoading() {
+        binding.progressBar.setVisibility(View.VISIBLE);
+    }
+
+    // Ẩn process bar
+    private void hideLoading() {
+        binding.progressBar.setVisibility(View.GONE);
     }
 }
