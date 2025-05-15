@@ -5,6 +5,10 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -34,7 +38,7 @@ public class AddressSelectActivity extends AppCompatActivity {
     private List<Address> addressList = new ArrayList<>();
     private Long defaultAddressId;
     private Long selectedAddressId;
-
+    private ActivityResultLauncher<Intent> addAddressLauncher;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +58,17 @@ public class AddressSelectActivity extends AppCompatActivity {
         binding.btnBack.setOnClickListener(v -> onBackPressed());
         selectedAddressId = getIntent().getLongExtra("selectedAddressId", -1);
         getUserAddresses(); // Lúc này chưa khởi tạo adapter
-
+        addAddressLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == RESULT_OK) {
+                            // Reload addresses when AddAddressActivity returns successfully
+                            getUserAddresses();
+                        }
+                    }
+                });
         binding.btnAddNewAddress.setOnClickListener(v -> {
             Intent intent = new Intent(AddressSelectActivity.this, AddAddressActivity.class);
             startActivity(intent);

@@ -80,11 +80,13 @@ public class FavoriteAdapter  extends RecyclerView.Adapter<FavoriteAdapter.ViewH
 
         holder.binding.favBtn.setOnClickListener(view -> {
             Long id = item.getId();
+            showLoading();
             APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
             Call<String> callRemoveCartItem = apiService.removeFavoriteItem(item.getId());
             callRemoveCartItem.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
+                    hideLoading();
                     if (response.isSuccessful() && response.body() != null) {
                         AppUtils.showDialogNotify((Activity) context, R.drawable.ic_tick, "Xóa yêu thích thành công");
                         int indexToRemove = -1;
@@ -104,10 +106,12 @@ public class FavoriteAdapter  extends RecyclerView.Adapter<FavoriteAdapter.ViewH
                             Log.e("FavoriteAdapter", "Invalid index: " + indexToRemove + ", size: " + listFavoriteItem.size());
                         }
                     }
+
                 }
 
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
+                    hideLoading();
                     Toast.makeText(context, "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
@@ -165,13 +169,13 @@ public class FavoriteAdapter  extends RecyclerView.Adapter<FavoriteAdapter.ViewH
             binding.scrollView2.setVisibility(View.VISIBLE);
         }
     }
-    private void showLoading(View itemView) {
+    private void showLoading() {
         binding.overlay.setVisibility(View.VISIBLE);
         binding.overlay.setClickable(true); // Chặn tương tác với các view bên dưới
     }
 
     // Ẩn process bar
-    private void hideLoading(View itemView) {
+    private void hideLoading() {
         binding.overlay.setVisibility(View.GONE);
         binding.overlay.setClickable(false);
     }

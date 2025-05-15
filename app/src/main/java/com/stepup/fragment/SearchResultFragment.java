@@ -164,17 +164,19 @@ public class SearchResultFragment extends Fragment {
                         filteredList = filteredList.stream()
                                 .filter(product -> product.getPrice() >= minPrice && product.getPrice() <= maxPrice)
                                 .collect(Collectors.toList());
-                    } else if (selectedPrice.startsWith(">")) {
+                    } else if (selectedPrice.contains("2")) {
                         // Trường hợp giá lớn hơn: "> 2.000.000"
-                        double minPrice = Double.parseDouble(selectedPrice.substring(1).trim().replace(".", ""));
+                        String numberOnly = selectedPrice.replaceAll("[^\\d]", ""); // Lấy toàn bộ chữ số
+                        double minPrice = Double.parseDouble(numberOnly);
                         filteredList = filteredList.stream()
-                                .filter(product -> product.getPrice() > minPrice)
+                                .filter(product -> product.getPrice() < minPrice)
                                 .collect(Collectors.toList());
-                    } else if (selectedPrice.startsWith("<")) {
+                    } else if (selectedPrice.contains("4")) {
                         // Trường hợp giá bé hơn: "< 4.000.000"
-                        double maxPrice = Double.parseDouble(selectedPrice.substring(1).trim().replace(".", ""));
+                        String numberOnly = selectedPrice.replaceAll("[^\\d]", ""); // Lấy toàn bộ chữ số
+                        double maxPrice = Double.parseDouble(numberOnly);
                         filteredList = filteredList.stream()
-                                .filter(product -> product.getPrice() < maxPrice)
+                                .filter(product -> product.getPrice() >= maxPrice)
                                 .collect(Collectors.toList());
                     } else {
                         // Trường hợp giá cố định: "2.000.000"

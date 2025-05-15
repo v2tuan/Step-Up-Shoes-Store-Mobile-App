@@ -1,6 +1,8 @@
 package com.stepup.fragment;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
@@ -17,6 +19,7 @@ import com.bumptech.glide.Glide;
 import com.stepup.R;
 import com.stepup.activity.AddressActivity;
 import com.stepup.activity.ChatActivity;
+import com.stepup.activity.LoginActivity;
 import com.stepup.activity.OrderOverviewActivity;
 import com.stepup.adapter.CartAdapter;
 import com.stepup.databinding.FragmentHomeBinding;
@@ -124,6 +127,21 @@ public class PersonFragment extends Fragment {
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), ChatActivity.class);
                 startActivity(intent);
+            }
+        });
+        binding.btnLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences.Editor editor = requireActivity().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE).edit();
+                editor.remove("token");
+                editor.remove("rememberMe");
+                editor.apply();
+
+                // Navigate to LoginActivity
+                Intent intent = new Intent(requireActivity(), LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Clear activity stack
+                startActivity(intent);
+                requireActivity().finish();
             }
         });
     }

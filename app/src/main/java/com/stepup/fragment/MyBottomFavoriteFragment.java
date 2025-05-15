@@ -1,5 +1,6 @@
 package com.stepup.fragment;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -121,6 +122,7 @@ public class MyBottomFavoriteFragment extends BottomSheetDialogFragment {
                         break;
                     }
                 }
+                showLoading();
               //  long variantId = SizeAdapter.sizeSelected.getId(); dang o day chua fix xong nut add to cart
                 AddToCartDTO addToCartDTO = new AddToCartDTO(productVariant_id, 1);
                 APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
@@ -128,13 +130,17 @@ public class MyBottomFavoriteFragment extends BottomSheetDialogFragment {
                 callAddCart.enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
+                        hideLoading();
                         if (response.isSuccessful() && response.body() != null) {
+                            AppUtils.showDialogNotify(requireActivity(), R.drawable.ic_tick,response.body());
                             Log.d("Add To Cart", "Message: : " + response.body());
                         }
                     }
 
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
+                        hideLoading();
+                        AppUtils.showDialogNotify(requireActivity(), R.drawable.error,"Error: " + t.getMessage());
                         Log.e("RetrofitError", "Error: " + t.getMessage());
                     }
                 });

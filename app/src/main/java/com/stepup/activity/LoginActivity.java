@@ -31,6 +31,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.stepup.AppUtils;
 import com.stepup.R;
 import com.stepup.adapter.BannerAdapter;
 import com.stepup.databinding.ActivityLoginBinding;
@@ -122,7 +123,8 @@ public class LoginActivity extends AppCompatActivity {
                     finish();
                 } else {
                     hideLoading(); // Ẩn process bar
-                    Toast.makeText(LoginActivity.this, "Sai tài khoản hoặc mật khẩu", Toast.LENGTH_SHORT).show();
+                    AppUtils.showDialogNotify(LoginActivity.this, R.drawable.error,"Sai tài khoản hoặc mật khẩu");
+
                 }
             }
 
@@ -130,7 +132,8 @@ public class LoginActivity extends AppCompatActivity {
             public void onFailure(Call<Map<String, String>> call, Throwable t) {
                 Log.e("LoginError", t.getMessage());
                 hideLoading(); // Ẩn process bar
-                Toast.makeText(LoginActivity.this, "Lỗi kết nối API", Toast.LENGTH_SHORT).show();
+                AppUtils.showDialogNotify(LoginActivity.this, R.drawable.error,"Lỗi kết nối API");
+
             }
         });
     }
@@ -158,7 +161,8 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             } else {
                 clearToken();
-                Toast.makeText(this, "Đăng nhập hết hạn. Vui lòng đăng nhập lại!", Toast.LENGTH_SHORT).show();
+                AppUtils.showDialogNotify(LoginActivity.this, R.drawable.error,"Đăng nhập hết hạn. Vui lòng đăng nhập lại!");
+
             }
         }
     }

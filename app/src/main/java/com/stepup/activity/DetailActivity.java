@@ -110,13 +110,14 @@ public class DetailActivity extends AppCompatActivity {
                         break;
                     }
                 }
-
+                showLoading();
                 AddToCartDTO addToCartDTO = new AddToCartDTO(productVariant_id, 1);
                 APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
                 Call<String> callAddCart = apiService.addCart(addToCartDTO);
                 callAddCart.enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
+                        hideLoading();
                         if (response.isSuccessful() && response.body() != null) {
                             AppUtils.showDialogNotify(DetailActivity.this, R.drawable.ic_tick,response.body());
                             Log.d("Add To Cart", "Message: : " + response.body());
@@ -125,6 +126,7 @@ public class DetailActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
+                        hideLoading();
                         Log.e("RetrofitError", "Error: " + t.getMessage());
                     }
                 });
@@ -142,6 +144,7 @@ public class DetailActivity extends AppCompatActivity {
                 binding.favBtn.setIconResource(isCurrentlyFavorite ? R.drawable.favorite : R.drawable.favorite_fill);
                 favoriteStatusCache.put(colorId, !isCurrentlyFavorite);
                 FavoriteDTO favoriteItemDTO = new FavoriteDTO(ColorAdapter.colorSelected.getId(),item.getPrice());
+                showLoading();
                 APIService apiService = RetrofitClient.getRetrofit().create(APIService.class);
                 Call<String> call;
                 if (isCurrentlyFavorite) {
@@ -155,6 +158,7 @@ public class DetailActivity extends AppCompatActivity {
                 call.enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
+                        hideLoading();
                         if (response.isSuccessful() && response.body() != null) {
                             AppUtils.showDialogNotify(DetailActivity.this, R.drawable.ic_tick,
                                     isCurrentlyFavorite ? "Xóa yêu thích thành công" : "Thêm yêu thích thành công");
@@ -169,6 +173,7 @@ public class DetailActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
+                        hideLoading();
                         // Hoàn tác nếu API thất bại
                         favoriteStatusCache.put(colorId, isCurrentlyFavorite);
                         binding.favBtn.setIconResource(isCurrentlyFavorite ? R.drawable.favorite_fill : R.drawable.favorite);
@@ -252,7 +257,9 @@ public class DetailActivity extends AppCompatActivity {
                         }
                     }));
                     if (!product.getColors().isEmpty()) {
+                        showLoading();
                         checkFavoriteStatus(product.getColors().get(0).getId());
+                        hideLoading();
                     }
                     // Gán layoutManager cho RecyclerView màu, cũng theo chiều ngang
                     binding.colorList.setLayoutManager(
@@ -362,5 +369,15 @@ public class DetailActivity extends AppCompatActivity {
     private void getBundle() {
         // Lấy đối tượng 'item' được truyền từ Intent (ở Activity trước) với key là "object"
         item = getIntent().getParcelableExtra("object");
+    }
+    private void showLoading()
+    {
+        binding.overlay.setVisibility(View.VISIBLE);
+        binding.overlay.setClickable(false);
+    }
+
+    private void hideLoading(){
+        binding.overlay.setVisibility(View.GONE);
+        binding.overlay.setClickable(false);
     }
 }

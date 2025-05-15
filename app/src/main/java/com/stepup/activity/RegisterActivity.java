@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -16,6 +17,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.gson.Gson;
+import com.stepup.AppUtils;
 import com.stepup.R;
 import com.stepup.model.ApiResponse;
 import com.stepup.model.User;
@@ -55,19 +57,20 @@ public class RegisterActivity extends AppCompatActivity {
         String confirmPassword = confirmPasswordTxt.getText().toString().trim();
 
         if (!password.equals(confirmPassword)) {
-            Toast.makeText(this, "Mật khẩu không khớp", Toast.LENGTH_SHORT).show();
+            AppUtils.showDialogNotify(RegisterActivity.this, R.drawable.error,"Mật khẩu không khớp");
             return;
         }
         if (password.length() < 8) {
-            Toast.makeText(this, "Mật khẩu phải có ít nhất 8 ký tự", Toast.LENGTH_SHORT).show();
+            AppUtils.showDialogNotify(RegisterActivity.this, R.drawable.error,"Mật khẩu phải có ít nhất 8 ký tự");
             return;
         }
         User userDTO = new User(name, email, password, confirmPassword);
-
+        showLoading();
         apiService.registerUser(userDTO).enqueue(new Callback<ApiResponse>() {
             @Override
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
+                    hideLoading();
                     String message = response.body().getMessage();
                     Log.d("API Response", "Code: " + response.code() + ", Body: " + new Gson().toJson(response.body()));
                     // Kiểm tra nội dung phản hồi từ API
@@ -81,13 +84,15 @@ public class RegisterActivity extends AppCompatActivity {
                         Toast.makeText(RegisterActivity.this, message, Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(RegisterActivity.this, "Đăng ký thất bại", Toast.LENGTH_SHORT).show();
+                    hideLoading();
+                    AppUtils.showDialogNotify(RegisterActivity.this, R.drawable.error,"Đăng ký thất bại");
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse> call, Throwable t) {
-                Toast.makeText(RegisterActivity.this, "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                hideLoading();
+                AppUtils.showDialogNotify(RegisterActivity.this, R.drawable.error,"Lỗi: " + t.getMessage());
             }
         });
     }
@@ -95,5 +100,17 @@ public class RegisterActivity extends AppCompatActivity {
     public void goToLogin(View view) {
         Intent intent = new Intent( RegisterActivity.this,  LoginActivity.class);
         startActivity(intent);
+    }
+    private void showLoading() {
+        FrameLayout overlay = findViewById(R.id.overlay);
+        overlay.setVisibility(View.VISIBLE);
+        overlay.setClickable(true); // Chặn tương tác với các view bên dưới
+    }
+
+    // Ẩn process bar
+    private void hideLoading() {
+        FrameLayout overlay = findViewById(R.id.overlay);
+        overlay.setVisibility(View.GONE);
+        overlay.setClickable(false);
     }
 }
