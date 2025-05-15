@@ -85,6 +85,7 @@ public class MyBottomFavoriteFragment extends BottomSheetDialogFragment {
         showLoading();
         Bundle args = getArguments();
         if (args != null) {
+            SizeAdapter.sizeSelected = null;
             String title = args.getString(ARG_TITLE);
             String price = args.getString(ARG_PRICE);
             String imageUrl = args.getString(ARG_IMAGE_URL);

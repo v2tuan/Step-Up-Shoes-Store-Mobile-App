@@ -22,6 +22,7 @@ import com.stepup.activity.ChatActivity;
 import com.stepup.activity.LoginActivity;
 import com.stepup.activity.OrderOverviewActivity;
 import com.stepup.adapter.CartAdapter;
+import com.stepup.config.WebSocketManager;
 import com.stepup.databinding.FragmentHomeBinding;
 import com.stepup.databinding.FragmentPersonBinding;
 import com.stepup.listener.ChangeNumberItemsListener;
@@ -136,6 +137,9 @@ public class PersonFragment extends Fragment {
                 editor.remove("token");
                 editor.remove("rememberMe");
                 editor.apply();
+
+                WebSocketManager webSocketManager = WebSocketManager.getInstance();
+                webSocketManager.disconnect();
 
                 // Navigate to LoginActivity
                 Intent intent = new Intent(requireActivity(), LoginActivity.class);
