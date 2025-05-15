@@ -10,6 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/background_sent_message"
+        android:backgroundTint="@color/grey"
         android:padding="12dp"
         android:textColor="@color/white"
         android:textSize="13sp"

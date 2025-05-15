@@ -12,22 +12,37 @@
         android:maxWidth="300dp"
         android:layout_marginStart="4dp"
         android:background="@drawable/background_received_message"
+        android:backgroundTint="#e9e9e9"
         android:padding="12dp"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:textSize="13sp"
-        app:layout_constraintStart_toEndOf="@id/imageProfile"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_percent="0.75" />
 
+    <!--    <TextView-->
+<!--        android:id="@+id/textMessage"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:maxWidth="300dp"-->
+<!--        android:layout_marginStart="4dp"-->
+<!--        android:background="@drawable/background_received_message"-->
+<!--        android:backgroundTint="@color/lightGrey"-->
+<!--        android:padding="12dp"-->
+<!--        android:textColor="@color/white"-->
+<!--        android:textSize="13sp"-->
+<!--        app:layout_constraintStart_toEndOf="@id/imageProfile"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintWidth_percent="0.75" />-->
 
-    <com.makeramen.roundedimageview.RoundedImageView
-        android:id="@+id/imageProfile"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:scaleType="centerCrop"
-        app:layout_constraintBottom_toBottomOf="@+id/textMessage"
-        app:layout_constraintStart_toStartOf="parent"
-        app:riv_oval="true" />
+
+<!--    <com.makeramen.roundedimageview.RoundedImageView-->
+<!--        android:id="@+id/imageProfile"-->
+<!--        android:layout_width="25dp"-->
+<!--        android:layout_height="25dp"-->
+<!--        android:scaleType="centerCrop"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/textMessage"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:riv_oval="true" />-->
 
     <TextView
         android:id="@+id/textDateTime"

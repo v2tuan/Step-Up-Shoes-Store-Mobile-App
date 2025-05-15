@@ -84,12 +84,12 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 ReceiveViewHolder receiveViewHolder = (ReceiveViewHolder) holder;
                 receiveViewHolder.textMessage.setText(chatMessages.get(position).getContent());
                 receiveViewHolder.textDateTime.setText(MessageTimeFormatter.formatTime(chatMessages.get(position).getCreatedAt()));
-                if(chatMessages.get(position).getSender() != null) {
-                    Glide.with(holder.itemView.getContext()) // Lấy context từ itemView
-                            .load(chatMessages.get(position).getSender().getProfileImage()) // Load ảnh từ item (có thể là URL hoặc resource)
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .into(((ReceiveViewHolder) holder).avatar);         // Hiển thị ảnh trong ImageView pic
-                }
+//                if(chatMessages.get(position).getSender() != null) {
+//                    Glide.with(holder.itemView.getContext()) // Lấy context từ itemView
+//                            .load(chatMessages.get(position).getSender().getProfileImage()) // Load ảnh từ item (có thể là URL hoặc resource)
+//                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                            .into(((ReceiveViewHolder) holder).avatar);         // Hiển thị ảnh trong ImageView pic
+//                }
                 break;
             case SESSION:
                 SessionViewHolder joinViewHolder = (SessionViewHolder) holder;
@@ -140,7 +140,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             super(itemView);
             textMessage = itemView.findViewById(R.id.textMessage);
             textDateTime = itemView.findViewById(R.id.textDateTime);
-            avatar = itemView.findViewById(R.id.imageProfile);
+//            avatar = itemView.findViewById(R.id.imageProfile);
         }
     }
 

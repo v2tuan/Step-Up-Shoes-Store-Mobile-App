@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".activity.ChatActivity"
     android:animateLayoutChanges="true"
-    android:background="@color/primary">
+    android:background="@color/white">
 
     <View
         android:id="@+id/viewBackground"
@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/imageBack"
+        android:id="@+id/btnBack"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginStart="16dp"
@@ -52,10 +52,11 @@
         android:textColor="@color/primary_text"
         android:textSize="14sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/imageBack"
+        android:text="Customer Support"
+        app:layout_constraintBottom_toBottomOf="@id/btnBack"
         app:layout_constraintEnd_toStartOf="@id/imageInfo"
-        app:layout_constraintStart_toEndOf="@id/imageBack"
-        app:layout_constraintTop_toTopOf="@id/imageBack" />
+        app:layout_constraintStart_toEndOf="@id/btnBack"
+        app:layout_constraintTop_toTopOf="@id/btnBack" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chatRecyclerView"
@@ -66,7 +67,7 @@
         android:padding="10dp"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@id/viewBackground"
-        app:layout_constraintTop_toBottomOf="@id/imageBack" />
+        app:layout_constraintTop_toBottomOf="@id/btnBack" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -84,6 +85,7 @@
         android:layout_height="40dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/background_chat_input"
+        android:backgroundTint="@color/black"
         app:layout_constraintBottom_toBottomOf="@+id/inputMessage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/inputMessage">
@@ -115,7 +117,7 @@
         android:inputType="text"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:textColorHint="@color/secondary_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/layoutSend"

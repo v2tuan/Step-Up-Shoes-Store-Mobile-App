@@ -64,6 +64,13 @@ public class ChatActivity extends AppCompatActivity {
 
         AndroidThreeTen.init(this);
         getConversation();
+
+        binding.btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
     }
 
     private void getConversation() {
