@@ -56,7 +56,7 @@ A mobile e-commerce application for browsing and purchasing shoes, inspired by t
 
 ## ▶️ How to Run
 
-### 1. Clone the Repositories
+### Clone the Repositories
 
 ```bash
 # Clone Android (Frontend)
